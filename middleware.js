@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
 // Array of paths that require authentication
-const protectedPaths = ["/dashboard", "/account"];
+const protectedPaths = ["/dashboard", "/account", "/create"];
 
 // Array of paths that are only accessible to non-authenticated users
 const authPaths = ["/login", "/register", "/forgot", "/reset-password"];
