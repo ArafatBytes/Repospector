@@ -80,23 +80,51 @@ const inspectionSchema = new mongoose.Schema(
       weldingOperator: String,
       licenseNumber: String,
       expDate: Date,
-      shopOrFieldWelded: String,
-      weldingProcedureSpecification: [String],
-      structuralSteelSpecification: [String],
-      machineTypeCapacity: String,
+      shopOrField: String,
+      weldingProcedureSpec: {
+        toBeReceived: Boolean,
+        received: Boolean,
+      },
+      structuralSteelSpec: {
+        toBeReceived: Boolean,
+        received: Boolean,
+      },
+      machineType: String,
       electrodes: String,
       polarity: String,
       sizes: String,
       weldSize: String,
       typeOfWelds: String,
       layerOfBeads: String,
-      weldingPositionUsed: [String],
+      weldingPosition: {
+        flat: Boolean,
+        horizontal: Boolean,
+        vertical: Boolean,
+        overhead: Boolean,
+      },
       totalLinealInches: String,
       accepted: String,
       rejected: String,
       completeJointPenetrationLocations: String,
       partialJointPenetrationLocations: String,
       nonDestructiveTests: String,
+      testEquipment: {
+        ultrasonicTest: {
+          contractor: Boolean,
+          amaa: Boolean,
+          notApplicable: Boolean,
+        },
+        magneticParticle: {
+          contractor: Boolean,
+          amaa: Boolean,
+          notApplicable: Boolean,
+        },
+        dyePenetrant: {
+          contractor: Boolean,
+          amaa: Boolean,
+          notApplicable: Boolean,
+        },
+      },
       comments: String,
     },
     structuralSteelDetails: {
@@ -104,76 +132,64 @@ const inspectionSchema = new mongoose.Schema(
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
-      bracingStiffening: {
+      bracingAndStiffening: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
-      locationMembers: {
+      locationOfMembers: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
       jointDetails: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
       seismicDesign: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
       comments: String,
     },
     structuralSteelBolting: {
-      approvedShopDrawings: {
+      shopDrawings: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
-      assemblyMillTests: {
+      millTests: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
-      boltsFlushWithNuts: {
+      installedBolts: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
-      slipCriticalConnections: {
+      slipCritical: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
       connectionsTightened: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
-      boltsProperlyStored: {
+      boltsStored: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
       jointsSnugTight: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
       comments: String,
     },
@@ -182,199 +198,193 @@ const inspectionSchema = new mongoose.Schema(
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
-      supportsBracing: {
+      supportsAndBracing: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
       requiredSignage: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
-      electricalFireAlarm: {
+      electricalAndFireAlarm: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
       ventilationBalancing: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
       requiredLabeling: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
       noiseCompliance: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
       fireDampers: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
       installedUnit: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
       airBalancingTest: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
       materialsApproved: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
+      testEquipment: {
+        balometer: {
+          contractor: Boolean,
+          amaa: Boolean,
+          notApplicable: Boolean,
+        },
+        noiseMeter: {
+          contractor: Boolean,
+          amaa: Boolean,
+          notApplicable: Boolean,
+        },
+        smokeTest: {
+          contractor: Boolean,
+          notApplicable: Boolean,
+        },
+      },
+      serialNumber: String,
       comments: String,
     },
     sprinklerSystems: {
-      installationPerCode: {
+      installation: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
-      correctHeadNumber: {
+      correctHeads: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
       headSpacing: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
       sprayPattern: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
-      hangingSupports: {
+      hangingAndSupports: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
-      observeRecordTesting: {
+      observeAndRecord: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
       materialsApproved: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
       maintenanceInstructions: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
       certificationForms: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
+      testEquipment: {
+        pressureGauge: {
+          contractor: Boolean,
+          amaa: Boolean,
+          notApplicable: Boolean,
+        },
+      },
+      serialNumber: String,
       comments: String,
     },
     heatingSystems: {
       comments: String,
     },
     fireResistantPenetrations: {
-      penetrationsFireRatedWalls: {
+      fireRatedWalls: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
-      penetrationsFloors: {
+      floors: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
       constructionJoints: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
       draftstopping: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
       fireblocking: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
       comments: String,
     },
     postInstalledAnchors: {
-      storagePreparation: {
+      storage: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
-      placementTypeSize: {
+      placement: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
-      labelingAnchors: {
+      labeling: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
       evaluationReport: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
-      predrillHoles: {
+      predrilled: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
-      installerCertification: {
+      installer: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
       comments: String,
     },
@@ -383,71 +393,211 @@ const inspectionSchema = new mongoose.Schema(
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
       insulationPlacement: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
       fenestrationRatings: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
-      fenestrationLeakage: {
+      airLeakage: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
       fenestrationAreas: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
+      airBarrierVisual: {
+        approved: Boolean,
+        disapproved: Boolean,
+        notApplicable: Boolean,
+      },
+      airBarrierTesting: {
+        approved: Boolean,
+        disapproved: Boolean,
+        notApplicable: Boolean,
+      },
+      airBarrierContinuity: {
+        approved: Boolean,
+        disapproved: Boolean,
+        notApplicable: Boolean,
+      },
+      vestibules: {
+        approved: Boolean,
+        disapproved: Boolean,
+        notApplicable: Boolean,
+      },
+      fireplaces: {
+        approved: Boolean,
+        disapproved: Boolean,
+        notApplicable: Boolean,
+      },
+      ventilationSystem: {
+        approved: Boolean,
+        disapproved: Boolean,
+        notApplicable: Boolean,
+      },
+      shutoffDampers: {
+        approved: Boolean,
+        disapproved: Boolean,
+        notApplicable: Boolean,
+      },
+      hvacEquipment: {
+        approved: Boolean,
+        disapproved: Boolean,
+        notApplicable: Boolean,
+      },
+      hvacControls: {
+        approved: Boolean,
+        disapproved: Boolean,
+        notApplicable: Boolean,
+      },
+      hvacPiping: {
+        approved: Boolean,
+        disapproved: Boolean,
+        notApplicable: Boolean,
+      },
+      ductLeakage: {
+        approved: Boolean,
+        disapproved: Boolean,
+        notApplicable: Boolean,
+      },
+      metering: {
+        approved: Boolean,
+        disapproved: Boolean,
+        notApplicable: Boolean,
+      },
+      dwellingLighting: {
+        approved: Boolean,
+        disapproved: Boolean,
+        notApplicable: Boolean,
+      },
+      interiorLighting: {
+        approved: Boolean,
+        disapproved: Boolean,
+        notApplicable: Boolean,
+      },
+      exteriorLighting: {
+        approved: Boolean,
+        disapproved: Boolean,
+        notApplicable: Boolean,
+      },
+      lightingControls: {
+        approved: Boolean,
+        disapproved: Boolean,
+        notApplicable: Boolean,
+      },
+      electricalMotors: {
+        approved: Boolean,
+        disapproved: Boolean,
+        notApplicable: Boolean,
+      },
+      maintenanceInfo: {
+        approved: Boolean,
+        disapproved: Boolean,
+        notApplicable: Boolean,
+      },
+      permanentCertificate: {
+        approved: Boolean,
+        disapproved: Boolean,
+        notApplicable: Boolean,
+      },
+      testEquipment: {
+        blowerDoor: {
+          contractor: Boolean,
+          amaa: Boolean,
+          notApplicable: Boolean,
+        },
+        infraredCamera: {
+          contractor: Boolean,
+          amaa: Boolean,
+          notApplicable: Boolean,
+        },
+        smokeTest: {
+          contractor: Boolean,
+          amaa: Boolean,
+          notApplicable: Boolean,
+        },
+        lightMeter: {
+          contractor: Boolean,
+          amaa: Boolean,
+          notApplicable: Boolean,
+        },
+      },
+      serialNumber: String,
       comments: String,
     },
     fireResistanceRated: {
-      fireResistanceWalls: {
+      fireRatedPartitions: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
-      floors: {
+      fireRatedFloors: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
-      constructionJoints: {
+      fireRatedCeilings: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
-      draftstopping: {
+      fireRatedShafts: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
-      fireblocking: {
+      fireShutters: {
         approved: Boolean,
         disapproved: Boolean,
         notApplicable: Boolean,
-        comments: String,
       },
       comments: String,
     },
     finalInspection: {
-      approved: Boolean,
-      disapproved: Boolean,
-      notApplicable: Boolean,
+      constructionComplete: {
+        approved: Boolean,
+        disapproved: Boolean,
+        notApplicable: Boolean,
+      },
+      codeCompliance: {
+        approved: Boolean,
+        disapproved: Boolean,
+        notApplicable: Boolean,
+      },
+      inspectionItems: {
+        approved: Boolean,
+        disapproved: Boolean,
+        notApplicable: Boolean,
+      },
+      egressPaths: {
+        approved: Boolean,
+        disapproved: Boolean,
+        notApplicable: Boolean,
+      },
+      exitSigns: {
+        approved: Boolean,
+        disapproved: Boolean,
+        notApplicable: Boolean,
+      },
+      adaCompliance: {
+        approved: Boolean,
+        disapproved: Boolean,
+        notApplicable: Boolean,
+      },
+      doorsDirection: {
+        approved: Boolean,
+        disapproved: Boolean,
+        notApplicable: Boolean,
+      },
       comments: String,
     },
     images: [
