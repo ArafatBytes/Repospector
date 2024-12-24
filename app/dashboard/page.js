@@ -4,28 +4,32 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
+import toast from "react-hot-toast";
 
 export default function Dashboard() {
   const router = useRouter();
   const [inspections, setInspections] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [inspectionToDelete, setInspectionToDelete] = useState(null);
+
+  const fetchInspections = async () => {
+    try {
+      const response = await fetch("/api/inspections");
+      if (!response.ok) {
+        throw new Error("Failed to fetch inspections");
+      }
+      const data = await response.json();
+      console.log("Fetched inspections:", data);
+      setInspections(data);
+    } catch (error) {
+      console.error("Error fetching inspections:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchInspections = async () => {
-      try {
-        const response = await fetch("/api/inspections");
-        if (!response.ok) {
-          throw new Error("Failed to fetch inspections");
-        }
-        const data = await response.json();
-        setInspections(data);
-      } catch (error) {
-        console.error("Error fetching inspections:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchInspections();
   }, []);
 
@@ -48,8 +52,67 @@ export default function Dashboard() {
     }
   };
 
+  const handleDelete = async () => {
+    if (!inspectionToDelete) return;
+
+    try {
+      const response = await fetch(`/api/inspections/${inspectionToDelete}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete inspection");
+      }
+
+      toast.success("Inspection deleted successfully");
+      // Refresh the inspections list
+      fetchInspections();
+    } catch (error) {
+      console.error("Error deleting inspection:", error);
+      toast.error("Failed to delete inspection");
+    } finally {
+      setShowDeleteModal(false);
+      setInspectionToDelete(null);
+    }
+  };
+
+  // Delete confirmation modal
+  const DeleteConfirmationModal = () => {
+    if (!showDeleteModal) return null;
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4">
+          <h3 className="text-xl font-semibold mb-4">Delete Inspection</h3>
+          <p className="text-gray-600 mb-6">
+            Are you sure you want to delete this inspection? This action cannot
+            be undone.
+          </p>
+          <div className="flex justify-end gap-4">
+            <button
+              onClick={() => {
+                setShowDeleteModal(false);
+                setInspectionToDelete(null);
+              }}
+              className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleDelete}
+              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="max-w-6xl w-[85%] mx-auto pt-8">
+      <DeleteConfirmationModal />
       <div className="flex justify-between mb-8">
         <p className="text-xl text-[#888]">
           {format(new Date(), "dd MMM yyyy").toUpperCase()}
@@ -115,7 +178,9 @@ export default function Dashboard() {
                     {inspection.projectName}
                   </h3>
                   <p className="text-gray-600 text-xl">
-                    {inspection.cityCounty}
+                    {inspection.address ||
+                      inspection.cityCounty ||
+                      "No address provided"}
                   </p>
                 </div>
                 <div className="flex gap-2 bg-[#E6E0FF] p-3 rounded-xl">
@@ -184,7 +249,11 @@ export default function Dashboard() {
                     </svg>
                   </button>
                   <button
-                    className="p-2 text-[#834CFF] hover:bg-white rounded-md transition-colors"
+                    onClick={() => {
+                      setInspectionToDelete(inspection._id);
+                      setShowDeleteModal(true);
+                    }}
+                    className="p-2 text-red-500 hover:bg-white rounded-md transition-colors"
                     title="Delete"
                   >
                     <svg
@@ -197,7 +266,7 @@ export default function Dashboard() {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth={1.5}
-                        d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                       />
                     </svg>
                   </button>
