@@ -6,6 +6,16 @@ import Info from "@/models/Info";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
+// Helper function to verify token
+const verifyToken = (token) => {
+  return new Promise((resolve, reject) => {
+    jwt.verify(token, JWT_SECRET, (err, decoded) => {
+      if (err) reject(err);
+      resolve(decoded);
+    });
+  });
+};
+
 export async function POST(request) {
   try {
     // Verify user is authenticated
@@ -45,6 +55,39 @@ export async function POST(request) {
     console.error("Error submitting inspection:", error);
     return NextResponse.json(
       { error: "Error submitting inspection report" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET(request) {
+  try {
+    // Get token from cookies
+    const token = request.cookies.get("token")?.value;
+    if (!token) {
+      return NextResponse.json(
+        { error: "Authentication required" },
+        { status: 401 }
+      );
+    }
+
+    // Verify token and get user ID
+    const decoded = await verifyToken(token);
+    const userId = decoded.userId;
+
+    // Connect to database
+    await connectDB();
+
+    // Fetch inspections for the user
+    const inspections = await Inspection.find({ userId })
+      .sort({ createdAt: -1 })
+      .select("projectName cityCounty date");
+
+    return NextResponse.json(inspections);
+  } catch (error) {
+    console.error("Error fetching inspections:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch inspections" },
       { status: 500 }
     );
   }
