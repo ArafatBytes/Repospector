@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
+import { generateInspectionPDF } from "../utils/generatePDF";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -73,6 +74,15 @@ export default function Dashboard() {
     } finally {
       setShowDeleteModal(false);
       setInspectionToDelete(null);
+    }
+  };
+
+  const handleDownload = async (inspection) => {
+    try {
+      await generateInspectionPDF(inspection._id, inspection.projectName);
+    } catch (error) {
+      console.error("Error downloading inspection:", error);
+      toast.error("Failed to download inspection");
     }
   };
 
@@ -231,6 +241,7 @@ export default function Dashboard() {
                     </svg>
                   </button>
                   <button
+                    onClick={() => handleDownload(inspection)}
                     className="p-2 text-[#834CFF] hover:bg-white rounded-md transition-colors"
                     title="Download"
                   >
