@@ -3,16 +3,23 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { format } from "date-fns";
+import { format, subDays } from "date-fns";
 import toast from "react-hot-toast";
 import { generateInspectionPDF } from "../utils/generatePDF";
 
 export default function Dashboard() {
   const router = useRouter();
   const [inspections, setInspections] = useState([]);
+  const [filteredInspections, setFilteredInspections] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [inspectionToDelete, setInspectionToDelete] = useState(null);
+  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+  const [activeFilters, setActiveFilters] = useState({
+    dateRange: "all",
+    reportType: "all",
+    sortBy: "newest",
+  });
 
   const fetchInspections = async () => {
     try {
@@ -21,8 +28,8 @@ export default function Dashboard() {
         throw new Error("Failed to fetch inspections");
       }
       const data = await response.json();
-      console.log("Fetched inspections:", data);
       setInspections(data);
+      applyFilters(data, activeFilters);
     } catch (error) {
       console.error("Error fetching inspections:", error);
     } finally {
@@ -33,6 +40,71 @@ export default function Dashboard() {
   useEffect(() => {
     fetchInspections();
   }, []);
+
+  useEffect(() => {
+    applyFilters(inspections, activeFilters);
+  }, [activeFilters, inspections]);
+
+  const applyFilters = (data, filters) => {
+    let filtered = [...data];
+
+    // Date Range Filter
+    if (filters.dateRange !== "all") {
+      const today = new Date();
+      const days = {
+        "7days": 7,
+        "30days": 30,
+        "90days": 90,
+      }[filters.dateRange];
+
+      if (days) {
+        const cutoffDate = subDays(today, days);
+        filtered = filtered.filter(
+          (inspection) => new Date(inspection.date) >= cutoffDate
+        );
+      }
+    }
+
+    // Report Type Filter
+    if (filters.reportType !== "all") {
+      console.log("Report Type Filter:", filters.reportType);
+      console.log(
+        "Inspections before filter:",
+        filtered.map((i) => ({ id: i._id, reportType: i.reportType }))
+      );
+      filtered = filtered.filter((inspection) => {
+        console.log(
+          "Checking inspection:",
+          inspection._id,
+          "Report Type:",
+          inspection.reportType
+        );
+        return inspection.reportType === filters.reportType;
+      });
+      console.log(
+        "Inspections after filter:",
+        filtered.map((i) => ({ id: i._id, reportType: i.reportType }))
+      );
+    }
+
+    // Sort
+    filtered.sort((a, b) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      return filters.sortBy === "newest" ? dateB - dateA : dateA - dateB;
+    });
+
+    setFilteredInspections(filtered);
+  };
+
+  const handleFilterChange = (filterType, value) => {
+    const newFilters = {
+      ...activeFilters,
+      [filterType]: value,
+    };
+    setActiveFilters(newFilters);
+    setShowFilterDropdown(false);
+  };
 
   const handleLogout = async () => {
     try {
@@ -120,6 +192,68 @@ export default function Dashboard() {
     );
   };
 
+  // Filter Dropdown Component
+  const FilterDropdown = () => {
+    if (!showFilterDropdown) return null;
+
+    return (
+      <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg z-50 border border-gray-200">
+        <div className="p-4">
+          {/* Date Range */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Date Range
+            </label>
+            <select
+              value={activeFilters.dateRange}
+              onChange={(e) => handleFilterChange("dateRange", e.target.value)}
+              className="w-full border rounded-md p-2 text-sm"
+            >
+              <option value="all">All Time</option>
+              <option value="7days">Last 7 Days</option>
+              <option value="30days">Last 30 Days</option>
+              <option value="90days">Last 90 Days</option>
+            </select>
+          </div>
+
+          {/* Report Type */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Report Type
+            </label>
+            <select
+              value={activeFilters.reportType}
+              onChange={(e) => {
+                console.log("Selected Report Type:", e.target.value);
+                handleFilterChange("reportType", e.target.value);
+              }}
+              className="w-full border rounded-md p-2 text-sm"
+            >
+              <option value="all">All Types</option>
+              <option value="PROGRESS">Progress</option>
+              <option value="FINAL">Final</option>
+            </select>
+          </div>
+
+          {/* Sort By */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Sort By
+            </label>
+            <select
+              value={activeFilters.sortBy}
+              onChange={(e) => handleFilterChange("sortBy", e.target.value)}
+              className="w-full border rounded-md p-2 text-sm"
+            >
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="max-w-6xl w-[85%] mx-auto pt-8">
       <DeleteConfirmationModal />
@@ -156,9 +290,30 @@ export default function Dashboard() {
       <div className="flex justify-between mb-8">
         <p className="text-3xl font-[500]">My Inspections</p>
         <div className="flex items-center gap-4">
-          <button className="text-[#888] px-4 py-2 rounded-sm font-[400] text-xl">
-            Filter by
-          </button>
+          <div className="relative">
+            <button
+              onClick={() => setShowFilterDropdown(!showFilterDropdown)}
+              className="text-[#888] px-4 py-2 rounded-sm font-[400] text-xl hover:text-[#666] transition-colors flex items-center gap-2"
+            >
+              Filter by
+              <svg
+                className={`w-5 h-5 transition-transform ${
+                  showFilterDropdown ? "rotate-180" : ""
+                }`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+            <FilterDropdown />
+          </div>
           <Link
             href="/create"
             className="bg-[#834CFF] px-4 py-2 rounded-sm text-white font-[400] text-xl hover:bg-[#6617CB] transition-colors"
@@ -170,11 +325,11 @@ export default function Dashboard() {
 
       {loading ? (
         <div className="text-center text-gray-500">Loading inspections...</div>
-      ) : inspections.length === 0 ? (
+      ) : filteredInspections.length === 0 ? (
         <div className="text-center text-gray-500">No inspections found</div>
       ) : (
         <div className="grid grid-cols-1 gap-4">
-          {inspections.map((inspection) => (
+          {filteredInspections.map((inspection) => (
             <div
               key={inspection._id}
               className="bg-[#F3F0FF] rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow"

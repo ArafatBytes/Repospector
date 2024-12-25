@@ -81,7 +81,7 @@ export async function GET(request) {
     // Fetch inspections for the user
     const inspections = await Inspection.find({ userId })
       .sort({ createdAt: -1 })
-      .select("projectName address date");
+      .select("projectName address date reportType");
 
     return NextResponse.json(inspections);
   } catch (error) {
