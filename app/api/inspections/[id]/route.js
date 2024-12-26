@@ -36,11 +36,18 @@ export async function GET(req) {
     const decoded = await verifyToken(token);
     const userId = decoded.userId;
 
-    // Fetch the inspection using the ID from URL
-    const inspection = await Inspection.findOne({
-      _id: id,
-      userId,
-    });
+    // Fetch the inspection
+    let inspection;
+    if (decoded.role === "admin") {
+      // Admin can view any inspection
+      inspection = await Inspection.findById(id);
+    } else {
+      // Regular users can only view their own inspections
+      inspection = await Inspection.findOne({
+        _id: id,
+        userId,
+      });
+    }
 
     if (!inspection) {
       return NextResponse.json(
@@ -83,11 +90,20 @@ export async function PUT(req) {
     const updatedData = await req.json();
 
     // Update the inspection
-    const inspection = await Inspection.findOneAndUpdate(
-      { _id: id, userId },
-      updatedData,
-      { new: true }
-    );
+    let inspection;
+    if (decoded.role === "admin") {
+      // Admin can update any inspection
+      inspection = await Inspection.findByIdAndUpdate(id, updatedData, {
+        new: true,
+      });
+    } else {
+      // Regular users can only update their own inspections
+      inspection = await Inspection.findOneAndUpdate(
+        { _id: id, userId },
+        updatedData,
+        { new: true }
+      );
+    }
 
     if (!inspection) {
       return NextResponse.json(
@@ -127,10 +143,31 @@ export async function DELETE(req) {
     const userId = decoded.userId;
 
     // Delete the inspection
-    const inspection = await Inspection.findOneAndDelete({
-      _id: id,
-      userId,
-    });
+    let inspection;
+    if (decoded.role === "admin") {
+      // Admin can delete any inspection
+      inspection = await Inspection.findByIdAndDelete(id);
+      if (inspection) {
+        // Decrement the total inspections count in Info model for the inspection's owner
+        await Info.findOneAndUpdate(
+          { userId: inspection.userId },
+          { $inc: { totalInspections: -1 } }
+        );
+      }
+    } else {
+      // Regular users can only delete their own inspections
+      inspection = await Inspection.findOneAndDelete({
+        _id: id,
+        userId,
+      });
+      if (inspection) {
+        // Decrement the total inspections count in Info model
+        await Info.findOneAndUpdate(
+          { userId },
+          { $inc: { totalInspections: -1 } }
+        );
+      }
+    }
 
     if (!inspection) {
       return NextResponse.json(
@@ -138,9 +175,6 @@ export async function DELETE(req) {
         { status: 404 }
       );
     }
-
-    // Decrement the total inspections count in Info model
-    await Info.findOneAndUpdate({ userId }, { $inc: { totalInspections: -1 } });
 
     return NextResponse.json({ message: "Inspection deleted successfully" });
   } catch (error) {

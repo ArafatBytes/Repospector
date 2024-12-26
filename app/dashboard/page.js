@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { format, subDays } from "date-fns";
 import toast from "react-hot-toast";
@@ -9,6 +9,8 @@ import { generateInspectionPDF } from "../utils/generatePDF";
 
 export default function Dashboard() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const userId = searchParams.get("userId");
   const [inspections, setInspections] = useState([]);
   const [filteredInspections, setFilteredInspections] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,23 +25,40 @@ export default function Dashboard() {
 
   const fetchInspections = async () => {
     try {
-      const response = await fetch("/api/inspections");
+      setLoading(true);
+      const url = userId
+        ? `/api/inspections?userId=${userId}`
+        : "/api/inspections";
+      const response = await fetch(url);
+
+      if (response.status === 403) {
+        // If unauthorized, redirect to dashboard
+        router.push("/dashboard");
+        return;
+      }
+
       if (!response.ok) {
         throw new Error("Failed to fetch inspections");
       }
+
       const data = await response.json();
       setInspections(data);
       applyFilters(data, activeFilters);
     } catch (error) {
       console.error("Error fetching inspections:", error);
+      toast.error("Failed to fetch inspections");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchInspections();
-  }, []);
+    if (userId) {
+      fetchInspections();
+    } else {
+      fetchInspections();
+    }
+  }, [userId]);
 
   useEffect(() => {
     applyFilters(inspections, activeFilters);
@@ -138,7 +157,7 @@ export default function Dashboard() {
       }
 
       toast.success("Inspection deleted successfully");
-      // Refresh the inspections list
+      // Refresh the inspections list without redirecting
       fetchInspections();
     } catch (error) {
       console.error("Error deleting inspection:", error);
@@ -261,34 +280,38 @@ export default function Dashboard() {
         <p className="text-xl text-[#888]">
           {format(new Date(), "dd MMM yyyy").toUpperCase()}
         </p>
-        <div className="flex items-center gap-6">
-          <Link href="/account" className="block text-xl text-[#888]">
-            ACCOUNT
-          </Link>
-          <button
-            onClick={handleLogout}
-            className="flex items-center text-lg bg-[#834CFF] text-white px-3 py-1.5 rounded-md hover:bg-[#6617CB] transition-colors"
-          >
-            <span>LOGOUT</span>
-            <svg
-              className="w-5 h-5 ml-2"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+        {!userId && (
+          <div className="flex items-center gap-6">
+            <Link href="/account" className="block text-xl text-[#888]">
+              ACCOUNT
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="flex items-center text-lg bg-[#834CFF] text-white px-3 py-1.5 rounded-md hover:bg-[#6617CB] transition-colors"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"
-              />
-            </svg>
-          </button>
-        </div>
+              <span>LOGOUT</span>
+              <svg
+                className="w-5 h-5 ml-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"
+                />
+              </svg>
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="flex justify-between mb-8">
-        <p className="text-3xl font-[500]">My Inspections</p>
+        <p className="text-3xl font-[500]">
+          {userId ? "User Inspections" : "My Inspections"}
+        </p>
         <div className="flex items-center gap-4">
           <div className="relative">
             <button
@@ -314,12 +337,14 @@ export default function Dashboard() {
             </button>
             <FilterDropdown />
           </div>
-          <Link
-            href="/create"
-            className="bg-[#834CFF] px-4 py-2 rounded-sm text-white font-[400] text-xl hover:bg-[#6617CB] transition-colors"
-          >
-            RECORD NEW INSPECTION
-          </Link>
+          {!userId && (
+            <Link
+              href="/create"
+              className="bg-[#834CFF] px-4 py-2 rounded-sm text-white font-[400] text-xl hover:bg-[#6617CB] transition-colors"
+            >
+              RECORD NEW INSPECTION
+            </Link>
+          )}
         </div>
       </div>
 
@@ -350,7 +375,12 @@ export default function Dashboard() {
                 </div>
                 <div className="flex gap-2 bg-[#E6E0FF] p-3 rounded-xl">
                   <button
-                    onClick={() => router.push(`/inspection/${inspection._id}`)}
+                    onClick={() => {
+                      const url = `/inspection/${inspection._id}${
+                        userId ? `?userId=${userId}` : ""
+                      }`;
+                      router.push(url);
+                    }}
                     className="p-2 text-[#834CFF] hover:bg-white rounded-md transition-colors"
                     title="View"
                   >
@@ -375,9 +405,12 @@ export default function Dashboard() {
                     </svg>
                   </button>
                   <button
-                    onClick={() =>
-                      router.push(`/inspection/${inspection._id}/edit`)
-                    }
+                    onClick={() => {
+                      const url = `/inspection/${inspection._id}/edit${
+                        userId ? `?userId=${userId}` : ""
+                      }`;
+                      router.push(url);
+                    }}
                     className="p-2 text-[#834CFF] hover:bg-white rounded-md transition-colors"
                     title="Edit"
                   >

@@ -75,11 +75,23 @@ export async function GET(request) {
     const decoded = await verifyToken(token);
     const userId = decoded.userId;
 
+    // Get userId from query params if it exists
+    const url = new URL(request.url);
+    const queryUserId = url.searchParams.get("userId");
+
+    // If queryUserId exists, verify that the current user is an admin
+    if (queryUserId && decoded.role !== "admin") {
+      return NextResponse.json(
+        { error: "Unauthorized: Admin access required" },
+        { status: 403 }
+      );
+    }
+
     // Connect to database
     await connectDB();
 
-    // Fetch inspections for the user
-    const inspections = await Inspection.find({ userId })
+    // Fetch inspections for the specified user or the current user
+    const inspections = await Inspection.find({ userId: queryUserId || userId })
       .sort({ createdAt: -1 })
       .select("projectName address date reportType");
 
