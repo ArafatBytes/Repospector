@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 
-export default function ResetPassword() {
+function ResetPasswordContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [formData, setFormData] = useState({
@@ -235,5 +235,25 @@ export default function ResetPassword() {
         </div>
       </div>
     </div>
+  );
+}
+
+// Loading component
+function LoadingState() {
+  return (
+    <div className="min-h-screen py-6 flex flex-col justify-center sm:py-12">
+      <div className="relative py-3 sm:max-w-xl sm:mx-auto">
+        <div className="text-center">Loading...</div>
+      </div>
+    </div>
+  );
+}
+
+// Main export
+export default function ResetPassword() {
+  return (
+    <Suspense fallback={<LoadingState />}>
+      <ResetPasswordContent />
+    </Suspense>
   );
 }
