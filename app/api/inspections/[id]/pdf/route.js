@@ -1,4 +1,4 @@
-import chrome from "@chrome-aws-lambda";
+import chromium from "chrome-aws-lambda";
 import puppeteer from "puppeteer-core";
 import { headers } from "next/headers";
 import { cookies } from "next/headers";
@@ -25,17 +25,11 @@ export async function GET(request, { params }) {
 
     // Launch browser
     browser = await puppeteer.launch({
-      args: chrome.args,
-      executablePath:
-        process.env.NODE_ENV === "development"
-          ? "/usr/bin/chromium-browser" // Local Chrome path
-          : await chrome.executablePath, // Lambda Chrome path
-      headless: true,
-      defaultViewport: {
-        width: 1280,
-        height: 1024,
-        deviceScaleFactor: 1,
-      },
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath,
+      headless: chromium.headless,
+      ignoreHTTPSErrors: true,
     });
 
     const page = await browser.newPage();
