@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { format, subDays } from "date-fns";
 import toast from "react-hot-toast";
 import { generateInspectionPDF } from "../utils/generatePDF";
 
-export default function Dashboard() {
+function DashboardContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const userId = searchParams.get("userId");
@@ -476,5 +476,25 @@ export default function Dashboard() {
         </div>
       )}
     </div>
+  );
+}
+
+// Loading component
+function LoadingDashboard() {
+  return (
+    <div className="min-h-screen bg-gray-50 p-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center">Loading dashboard...</div>
+      </div>
+    </div>
+  );
+}
+
+// Main export
+export default function Dashboard() {
+  return (
+    <Suspense fallback={<LoadingDashboard />}>
+      <DashboardContent />
+    </Suspense>
   );
 }
