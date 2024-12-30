@@ -22,11 +22,21 @@ export async function GET(request, { params }) {
       });
     }
 
-    // Launch browser
+    // Launch browser with specific configuration for Vercel
     const browser = await puppeteer.launch({
       headless: "new",
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--single-process",
+      ],
+      executablePath:
+        process.env.NODE_ENV === "production"
+          ? process.env.PUPPETEER_EXECUTABLE_PATH
+          : puppeteer.executablePath(),
     });
+
     const page = await browser.newPage();
 
     // Set the authentication cookie
@@ -42,18 +52,13 @@ export async function GET(request, { params }) {
 
     // Navigate to the inspection view page
     const url = `${protocol}://${host}/inspection/${id}`;
-    await page.goto(url, { waitUntil: "networkidle0" });
+    await page.goto(url, {
+      waitUntil: "networkidle0",
+      timeout: 30000, // Increase timeout to 30 seconds
+    });
 
     // Wait for the content to be loaded
-    await page.waitForSelector(".max-w-4xl", { timeout: 5000 });
-
-    // Hide the "Back to Dashboard" link
-    await page.evaluate(() => {
-      const backLink = document.querySelector('a[href="/dashboard"]');
-      if (backLink) {
-        backLink.style.display = "none";
-      }
-    });
+    await page.waitForSelector(".max-w-4xl", { timeout: 30000 });
 
     // Generate PDF
     const pdf = await page.pdf({
@@ -67,18 +72,15 @@ export async function GET(request, { params }) {
       },
     });
 
+    // Close browser
     await browser.close();
 
-    // Set response headers
-    const responseHeaders = new Headers();
-    responseHeaders.set("Content-Type", "application/pdf");
-    responseHeaders.set(
-      "Content-Disposition",
-      "attachment; filename=inspection.pdf"
-    );
-
+    // Return PDF
     return new Response(pdf, {
-      headers: responseHeaders,
+      headers: {
+        "Content-Type": "application/pdf",
+        "Content-Disposition": `attachment; filename="inspection-${id}.pdf"`,
+      },
     });
   } catch (error) {
     console.error("Error generating PDF:", error);
