@@ -23,15 +23,55 @@ export async function GET(request, { params }) {
       });
     }
 
-    // Configure browser
-    const executablePath = await chromium.executablePath();
+    // Configure chromium
+    await chromium.font(
+      "https://raw.githubusercontent.com/googlefonts/roboto/main/src/hinted/Roboto-Regular.ttf"
+    );
 
     // Launch browser with specific configuration for Vercel
     const browser = await puppeteer.launch({
-      args: chromium.args,
+      args: [
+        ...chromium.args,
+        "--autoplay-policy=user-gesture-required",
+        "--disable-background-networking",
+        "--disable-background-timer-throttling",
+        "--disable-backgrounding-occluded-windows",
+        "--disable-breakpad",
+        "--disable-client-side-phishing-detection",
+        "--disable-component-update",
+        "--disable-default-apps",
+        "--disable-dev-shm-usage",
+        "--disable-domain-reliability",
+        "--disable-extensions",
+        "--disable-features=AudioServiceOutOfProcess",
+        "--disable-hang-monitor",
+        "--disable-ipc-flooding-protection",
+        "--disable-notifications",
+        "--disable-offer-store-unmasked-wallet-cards",
+        "--disable-popup-blocking",
+        "--disable-print-preview",
+        "--disable-prompt-on-repost",
+        "--disable-renderer-backgrounding",
+        "--disable-setuid-sandbox",
+        "--disable-speech-api",
+        "--disable-sync",
+        "--hide-scrollbars",
+        "--ignore-gpu-blacklist",
+        "--metrics-recording-only",
+        "--mute-audio",
+        "--no-default-browser-check",
+        "--no-first-run",
+        "--no-pings",
+        "--no-sandbox",
+        "--no-zygote",
+        "--password-store=basic",
+        "--use-gl=swiftshader",
+        "--use-mock-keychain",
+      ],
       defaultViewport: chromium.defaultViewport,
-      executablePath: executablePath,
-      headless: chromium.headless,
+      executablePath: await chromium.executablePath(),
+      headless: true,
+      ignoreHTTPSErrors: true,
     });
 
     const page = await browser.newPage();
@@ -45,19 +85,33 @@ export async function GET(request, { params }) {
     });
 
     // Set viewport to ensure consistent rendering
-    await page.setViewport({ width: 1280, height: 1024 });
+    await page.setViewport({
+      width: 1280,
+      height: 1024,
+      deviceScaleFactor: 1,
+    });
 
     // Navigate to the inspection view page
     const url = `${protocol}://${host}/inspection/${id}`;
+
+    console.log("Navigating to URL:", url);
+
     await page.goto(url, {
-      waitUntil: "networkidle0",
-      timeout: 30000,
+      waitUntil: ["networkidle0", "domcontentloaded"],
+      timeout: 60000, // Increased timeout to 60 seconds
     });
 
-    // Wait for the content to be loaded
-    await page.waitForSelector(".max-w-4xl", { timeout: 30000 });
+    console.log("Page loaded, waiting for content");
 
-    // Generate PDF
+    // Wait for the content to be loaded
+    await page.waitForSelector(".max-w-4xl", {
+      timeout: 60000,
+      visible: true,
+    });
+
+    console.log("Content loaded, generating PDF");
+
+    // Generate PDF with specific settings
     const pdf = await page.pdf({
       format: "A4",
       printBackground: true,
@@ -67,7 +121,11 @@ export async function GET(request, { params }) {
         bottom: "20px",
         left: "20px",
       },
+      preferCSSPageSize: true,
+      timeout: 60000,
     });
+
+    console.log("PDF generated successfully");
 
     // Close browser
     await browser.close();
@@ -77,19 +135,28 @@ export async function GET(request, { params }) {
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": `attachment; filename="inspection-${id}.pdf"`,
+        "Cache-Control": "no-cache",
       },
     });
   } catch (error) {
-    console.error("Error generating PDF:", error);
+    console.error("Error details:", {
+      message: error.message,
+      stack: error.stack,
+      name: error.name,
+    });
+
     return new Response(
       JSON.stringify({
         error: "Failed to generate PDF",
         details: error.message,
+        stack: error.stack,
+        name: error.name,
       }),
       {
         status: 500,
         headers: {
           "Content-Type": "application/json",
+          "Cache-Control": "no-cache",
         },
       }
     );
