@@ -1,10 +1,8 @@
-import { chromium } from "playwright-core";
+import puppeteer from "puppeteer";
 import { headers } from "next/headers";
 import { cookies } from "next/headers";
 
 export async function GET(request, { params }) {
-  let browser = null;
-
   try {
     // Get the headers and params
     const headersList = await headers();
@@ -18,56 +16,45 @@ export async function GET(request, { params }) {
     if (!authCookie) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
     }
 
-    // Launch browser with specific configuration for Vercel
-    browser = await chromium.launch({
-      headless: true,
-      args: [
-        "--disable-dev-shm-usage",
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--single-process",
-        "--no-zygote",
-      ],
+    // Launch browser
+    const browser = await puppeteer.launch({
+      headless: "new",
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
+    const page = await browser.newPage();
+
+    // Set the authentication cookie
+    await page.setCookie({
+      name: "token",
+      value: authCookie.value,
+      domain: host,
+      path: "/",
     });
 
-    const context = await browser.newContext({
-      viewport: { width: 1280, height: 1024 },
-      deviceScaleFactor: 1,
-    });
+    // Set viewport to ensure consistent rendering
+    await page.setViewport({ width: 1280, height: 1024 });
 
-    const page = await context.newPage();
-
-    // Set cookie
-    await context.addCookies([
-      {
-        name: "token",
-        value: authCookie.value,
-        domain: host,
-        path: "/",
-      },
-    ]);
-
-    // Navigate to page
+    // Navigate to the inspection view page
     const url = `${protocol}://${host}/inspection/${id}`;
-    console.log("Navigating to:", url);
+    await page.goto(url, { waitUntil: "networkidle0" });
 
-    await page.goto(url, {
-      waitUntil: "networkidle",
-      timeout: 30000,
+    // Wait for the content to be loaded
+    await page.waitForSelector(".max-w-4xl", { timeout: 5000 });
+
+    // Hide the "Back to Dashboard" link
+    await page.evaluate(() => {
+      const backLink = document.querySelector('a[href="/dashboard"]');
+      if (backLink) {
+        backLink.style.display = "none";
+      }
     });
 
-    console.log("Waiting for content selector");
-    // Wait for content
-    await page.waitForSelector(".max-w-4xl", {
-      timeout: 30000,
-      state: "visible",
-    });
-
-    console.log("Generating PDF");
     // Generate PDF
     const pdf = await page.pdf({
       format: "A4",
@@ -78,45 +65,28 @@ export async function GET(request, { params }) {
         bottom: "20px",
         left: "20px",
       },
-      timeout: 30000,
     });
 
-    console.log("PDF generated successfully");
+    await browser.close();
 
-    // Close browser
-    if (browser !== null) {
-      await browser.close();
-    }
+    // Set response headers
+    const responseHeaders = new Headers();
+    responseHeaders.set("Content-Type", "application/pdf");
+    responseHeaders.set(
+      "Content-Disposition",
+      "attachment; filename=inspection.pdf"
+    );
 
-    // Return PDF
     return new Response(pdf, {
-      headers: {
-        "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename="inspection-${id}.pdf"`,
-      },
+      headers: responseHeaders,
     });
   } catch (error) {
-    // Make sure to close browser on error
-    if (browser !== null) {
-      await browser.close();
-    }
-
-    console.error("PDF Generation Error:", {
-      message: error.message,
-      stack: error.stack,
-      url: `${protocol}://${host}/inspection/${params.id}`,
+    console.error("Error generating PDF:", error);
+    return new Response(JSON.stringify({ error: "Failed to generate PDF" }), {
+      status: 500,
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
-
-    return new Response(
-      JSON.stringify({
-        error: "Failed to generate PDF",
-        details: error.message,
-        url: `${protocol}://${host}/inspection/${params.id}`,
-      }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
   }
 }
