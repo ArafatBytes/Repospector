@@ -22,12 +22,23 @@ export async function GET(request, { params }) {
       });
     }
 
-    // Launch browser
+    // Launch browser with specific configuration for Vercel
     browser = await chromium.launch({
       headless: true,
+      args: [
+        "--disable-dev-shm-usage",
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--single-process",
+        "--no-zygote",
+      ],
     });
 
-    const context = await browser.newContext();
+    const context = await browser.newContext({
+      viewport: { width: 1280, height: 1024 },
+      deviceScaleFactor: 1,
+    });
+
     const page = await context.newPage();
 
     // Set cookie
@@ -42,17 +53,21 @@ export async function GET(request, { params }) {
 
     // Navigate to page
     const url = `${protocol}://${host}/inspection/${id}`;
+    console.log("Navigating to:", url);
+
     await page.goto(url, {
       waitUntil: "networkidle",
       timeout: 30000,
     });
 
+    console.log("Waiting for content selector");
     // Wait for content
     await page.waitForSelector(".max-w-4xl", {
       timeout: 30000,
       state: "visible",
     });
 
+    console.log("Generating PDF");
     // Generate PDF
     const pdf = await page.pdf({
       format: "A4",
@@ -63,7 +78,10 @@ export async function GET(request, { params }) {
         bottom: "20px",
         left: "20px",
       },
+      timeout: 30000,
     });
+
+    console.log("PDF generated successfully");
 
     // Close browser
     if (browser !== null) {
@@ -86,12 +104,14 @@ export async function GET(request, { params }) {
     console.error("PDF Generation Error:", {
       message: error.message,
       stack: error.stack,
+      url: `${protocol}://${host}/inspection/${params.id}`,
     });
 
     return new Response(
       JSON.stringify({
         error: "Failed to generate PDF",
         details: error.message,
+        url: `${protocol}://${host}/inspection/${params.id}`,
       }),
       {
         status: 500,
