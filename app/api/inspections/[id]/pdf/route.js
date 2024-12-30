@@ -1,5 +1,4 @@
-import chromium from "chrome-aws-lambda";
-import puppeteer from "puppeteer-core";
+import { chromium } from "playwright-core";
 import { headers } from "next/headers";
 import { cookies } from "next/headers";
 
@@ -24,35 +23,34 @@ export async function GET(request, { params }) {
     }
 
     // Launch browser
-    browser = await puppeteer.launch({
-      args: chromium.args,
-      defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath,
-      headless: chromium.headless,
-      ignoreHTTPSErrors: true,
+    browser = await chromium.launch({
+      headless: true,
     });
 
-    const page = await browser.newPage();
+    const context = await browser.newContext();
+    const page = await context.newPage();
 
     // Set cookie
-    await page.setCookie({
-      name: "token",
-      value: authCookie.value,
-      domain: host,
-      path: "/",
-    });
+    await context.addCookies([
+      {
+        name: "token",
+        value: authCookie.value,
+        domain: host,
+        path: "/",
+      },
+    ]);
 
     // Navigate to page
     const url = `${protocol}://${host}/inspection/${id}`;
     await page.goto(url, {
-      waitUntil: "networkidle0",
+      waitUntil: "networkidle",
       timeout: 30000,
     });
 
     // Wait for content
     await page.waitForSelector(".max-w-4xl", {
       timeout: 30000,
-      visible: true,
+      state: "visible",
     });
 
     // Generate PDF
