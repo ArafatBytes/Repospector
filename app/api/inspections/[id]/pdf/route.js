@@ -1,4 +1,5 @@
-import puppeteer from "puppeteer";
+import chromium from "@sparticuz/chromium-min";
+import puppeteer from "puppeteer-core";
 import { headers } from "next/headers";
 import { cookies } from "next/headers";
 
@@ -22,19 +23,15 @@ export async function GET(request, { params }) {
       });
     }
 
+    // Configure browser
+    const executablePath = await chromium.executablePath();
+
     // Launch browser with specific configuration for Vercel
     const browser = await puppeteer.launch({
-      headless: "new",
-      args: [
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage",
-        "--single-process",
-      ],
-      executablePath:
-        process.env.NODE_ENV === "production"
-          ? process.env.PUPPETEER_EXECUTABLE_PATH
-          : puppeteer.executablePath(),
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: executablePath,
+      headless: chromium.headless,
     });
 
     const page = await browser.newPage();
@@ -54,7 +51,7 @@ export async function GET(request, { params }) {
     const url = `${protocol}://${host}/inspection/${id}`;
     await page.goto(url, {
       waitUntil: "networkidle0",
-      timeout: 30000, // Increase timeout to 30 seconds
+      timeout: 30000,
     });
 
     // Wait for the content to be loaded
@@ -84,11 +81,17 @@ export async function GET(request, { params }) {
     });
   } catch (error) {
     console.error("Error generating PDF:", error);
-    return new Response(JSON.stringify({ error: "Failed to generate PDF" }), {
-      status: 500,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    return new Response(
+      JSON.stringify({
+        error: "Failed to generate PDF",
+        details: error.message,
+      }),
+      {
+        status: 500,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
   }
 }
