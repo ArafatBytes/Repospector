@@ -40,3 +40,66 @@ body {
 .Toastify__toast-theme--light.Toastify__toast--success .Toastify__close-button {
   color: #834cff;
 }
+
+@media print {
+  /* Hide elements that shouldn't be printed */
+  button,
+  .no-print,
+  [href="/dashboard"] {
+    display: none !important;
+  }
+
+  /* Remove browser's default header and footer */
+  @page {
+    margin: 0;
+    size: auto;
+  }
+
+  body {
+    margin: 1cm;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .max-w-4xl {
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Control page breaks */
+  .border-t {
+    page-break-inside: avoid;
+    break-inside: avoid;
+    margin-top: 1cm !important;
+  }
+
+  /* Prevent forced page breaks */
+  div {
+    page-break-inside: auto;
+    break-inside: auto;
+  }
+
+  /* Ensure content flows naturally */
+  .space-y-4 {
+    page-break-inside: auto;
+    break-inside: auto;
+  }
+
+  /* Keep section headers with their content */
+  h3 {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .bg-\[\#4A90E2\] {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+}

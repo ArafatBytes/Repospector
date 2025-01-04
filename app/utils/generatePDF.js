@@ -1,39 +1,39 @@
-import toast from "react-hot-toast";
+export function generateInspectionPDF(inspectionId) {
+  // Store the current URL to return to
+  const returnUrl = window.location.href;
 
-export async function generateInspectionPDF(inspectionId, projectName) {
-  const loadingToast = toast.loading("Generating PDF...");
+  // Open inspection view in a new window
+  const printWindow = window.open(`/inspection/${inspectionId}`, "_blank");
 
-  try {
-    const response = await fetch(`/api/inspections/${inspectionId}/pdf`);
+  // Wait for the page to fully load
+  printWindow.addEventListener("load", function () {
+    // Add a small delay to ensure all content is rendered
+    setTimeout(() => {
+      // Trigger print
+      printWindow.print();
 
-    if (!response.ok) {
-      throw new Error("Failed to generate PDF");
-    }
+      // Add event listener to the print window's document
+      printWindow.document.addEventListener(
+        "mouseover",
+        function closeWindow() {
+          printWindow.document.removeEventListener("mouseover", closeWindow);
+          printWindow.close();
+          window.location.href = returnUrl;
+        }
+      );
 
-    // Get the PDF blob from the response
-    const pdfBlob = await response.blob();
-
-    // Create a URL for the blob
-    const url = window.URL.createObjectURL(pdfBlob);
-
-    // Create a temporary link element
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `${projectName
-      .replace(/[^a-z0-9]/gi, "_")
-      .toLowerCase()}_inspection.pdf`;
-
-    // Append to document, click, and remove
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    // Clean up the URL
-    window.URL.revokeObjectURL(url);
-
-    toast.success("PDF downloaded successfully", { id: loadingToast });
-  } catch (error) {
-    console.error("Error generating PDF:", error);
-    toast.error("Failed to generate PDF", { id: loadingToast });
-  }
+      // Fallback for when print dialog is cancelled
+      const checkPrintDialog = setInterval(() => {
+        try {
+          if (!printWindow || printWindow.closed) {
+            clearInterval(checkPrintDialog);
+            window.location.href = returnUrl;
+          }
+        } catch (e) {
+          clearInterval(checkPrintDialog);
+          window.location.href = returnUrl;
+        }
+      }, 500);
+    }, 1000);
+  });
 }
