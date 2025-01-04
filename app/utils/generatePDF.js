@@ -7,7 +7,7 @@ export function generateInspectionPDF(inspectionId) {
 
   // Wait for the page to fully load
   printWindow.addEventListener("load", function () {
-    // Add a small delay to ensure all content is rendered
+    // Add a longer delay to ensure all content is rendered
     setTimeout(() => {
       // Trigger print
       printWindow.print();
@@ -34,6 +34,6 @@ export function generateInspectionPDF(inspectionId) {
           window.location.href = returnUrl;
         }
       }, 500);
-    }, 1000);
+    }, 5000); // Increased delay to 5 seconds
   });
 }
