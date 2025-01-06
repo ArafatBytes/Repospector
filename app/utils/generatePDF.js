@@ -5,14 +5,30 @@ export function generateInspectionPDF(inspectionId) {
   // Open inspection view in a new window
   const printWindow = window.open(`/inspection/${inspectionId}`, "_blank");
 
-  // Wait for the page to fully load
-  printWindow.addEventListener("load", function () {
-    // Add a longer delay to ensure all content is rendered
+  if (!printWindow) {
+    console.error("Failed to open print window");
+    return;
+  }
+
+  // Function to check if the page is fully loaded
+  const checkPageLoaded = () => {
+    if (
+      printWindow.document.readyState === "complete" &&
+      printWindow.document.querySelector(".max-w-4xl") // Check for main content container
+    ) {
+      return true;
+    }
+    return false;
+  };
+
+  // Function to handle printing
+  const handlePrint = () => {
+    // Add a small delay to ensure all styles are applied
     setTimeout(() => {
       // Trigger print
       printWindow.print();
 
-      // Add event listener to the print window's document
+      // Add event listener to close window after printing
       printWindow.document.addEventListener(
         "mouseover",
         function closeWindow() {
@@ -34,6 +50,22 @@ export function generateInspectionPDF(inspectionId) {
           window.location.href = returnUrl;
         }
       }, 500);
-    }, 5000); // Increased delay to 5 seconds
-  });
+    }, 1000); // 1 second delay after content is loaded
+  };
+
+  // Check if page is loaded
+  const loadCheck = setInterval(() => {
+    if (checkPageLoaded()) {
+      clearInterval(loadCheck);
+      handlePrint();
+    }
+  }, 100); // Check every 100ms
+
+  // Fallback if load check fails
+  setTimeout(() => {
+    clearInterval(loadCheck);
+    if (checkPageLoaded()) {
+      handlePrint();
+    }
+  }, 10000); // 10 second maximum wait time
 }
