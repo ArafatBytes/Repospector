@@ -1,9 +1,19 @@
-export function generateInspectionPDF(inspectionId) {
+export function generateInspectionPDF(
+  inspectionId,
+  projectName,
+  reportType = "SPECIAL_INSPECTION"
+) {
   // Store the current URL to return to
   const returnUrl = window.location.href;
 
-  // Open inspection view in a new window
-  const printWindow = window.open(`/inspection/${inspectionId}`, "_blank");
+  // Open inspection view in a new window based on report type
+  const viewUrl =
+    reportType === "AIR_BALANCING"
+      ? `/air-balancing/${inspectionId}`
+      : reportType === "CONCRETE"
+      ? `/concrete/${inspectionId}`
+      : `/inspection/${inspectionId}`;
+  const printWindow = window.open(viewUrl, "_blank");
 
   if (!printWindow) {
     console.error("Failed to open print window");

@@ -29,24 +29,62 @@ function DashboardContent() {
       const url = userId
         ? `/api/inspections?userId=${userId}`
         : "/api/inspections";
-      const response = await fetch(url);
+      const airBalancingUrl = userId
+        ? `/api/air-balancing?userId=${userId}`
+        : "/api/air-balancing";
+      const concreteUrl = userId
+        ? `/api/concrete?userId=${userId}`
+        : "/api/concrete";
 
-      if (response.status === 403) {
-        // If unauthorized, redirect to dashboard
+      const [inspectionsResponse, airBalancingResponse, concreteResponse] =
+        await Promise.all([
+          fetch(url),
+          fetch(airBalancingUrl),
+          fetch(concreteUrl),
+        ]);
+
+      if (
+        inspectionsResponse.status === 403 ||
+        airBalancingResponse.status === 403 ||
+        concreteResponse.status === 403
+      ) {
         router.push("/dashboard");
         return;
       }
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch inspections");
+      if (
+        !inspectionsResponse.ok ||
+        !airBalancingResponse.ok ||
+        !concreteResponse.ok
+      ) {
+        throw new Error("Failed to fetch reports");
       }
 
-      const data = await response.json();
-      setInspections(data);
-      applyFilters(data, activeFilters);
+      const inspectionsData = await inspectionsResponse.json();
+      const airBalancingData = await airBalancingResponse.json();
+      const concreteData = await concreteResponse.json();
+
+      // Combine all types of reports
+      const allReports = [
+        ...inspectionsData.map((report) => ({
+          ...report,
+          reportType: "SPECIAL_INSPECTION",
+        })),
+        ...airBalancingData.map((report) => ({
+          ...report,
+          reportType: "AIR_BALANCING",
+        })),
+        ...concreteData.map((report) => ({
+          ...report,
+          reportType: "CONCRETE",
+        })),
+      ];
+
+      setInspections(allReports);
+      applyFilters(allReports, activeFilters);
     } catch (error) {
-      console.error("Error fetching inspections:", error);
-      toast.error("Failed to fetch inspections");
+      console.error("Error fetching reports:", error);
+      toast.error("Failed to fetch reports");
     } finally {
       setLoading(false);
     }
@@ -148,20 +186,37 @@ function DashboardContent() {
     if (!inspectionToDelete) return;
 
     try {
-      const response = await fetch(`/api/inspections/${inspectionToDelete}`, {
+      // Get the report to delete
+      const reportToDelete = inspections.find(
+        (inspection) => inspection._id === inspectionToDelete
+      );
+
+      if (!reportToDelete) {
+        throw new Error("Report not found");
+      }
+
+      // Determine the correct API endpoint based on report type
+      const endpoint =
+        reportToDelete.reportType === "AIR_BALANCING"
+          ? `/api/air-balancing/${inspectionToDelete}`
+          : reportToDelete.reportType === "CONCRETE"
+          ? `/api/concrete/${inspectionToDelete}`
+          : `/api/inspections/${inspectionToDelete}`;
+
+      const response = await fetch(endpoint, {
         method: "DELETE",
       });
 
       if (!response.ok) {
-        throw new Error("Failed to delete inspection");
+        throw new Error("Failed to delete report");
       }
 
-      toast.success("Inspection deleted successfully");
+      toast.success("Report deleted successfully");
       // Refresh the inspections list without redirecting
       fetchInspections();
     } catch (error) {
-      console.error("Error deleting inspection:", error);
-      toast.error("Failed to delete inspection");
+      console.error("Error deleting report:", error);
+      toast.error("Failed to delete report");
     } finally {
       setShowDeleteModal(false);
       setInspectionToDelete(null);
@@ -171,7 +226,11 @@ function DashboardContent() {
   const handleDownload = async (inspection) => {
     const loadingToast = toast.loading("Generating PDF...");
     try {
-      await generateInspectionPDF(inspection._id, inspection.projectName);
+      await generateInspectionPDF(
+        inspection._id,
+        inspection.projectName || inspection.client,
+        inspection.reportType
+      );
       toast.success("PDF downloaded successfully", { id: loadingToast });
     } catch (error) {
       console.error("Error downloading inspection:", error);
@@ -251,8 +310,9 @@ function DashboardContent() {
               className="w-full border rounded-md p-2 text-sm"
             >
               <option value="all">All Types</option>
-              <option value="PROGRESS">Progress</option>
-              <option value="FINAL">Final</option>
+              <option value="SPECIAL_INSPECTION">Special Inspection</option>
+              <option value="AIR_BALANCING">Air Balancing</option>
+              <option value="CONCRETE">Concrete</option>
             </select>
           </div>
 
@@ -273,6 +333,33 @@ function DashboardContent() {
         </div>
       </div>
     );
+  };
+
+  // Update the view/edit button click handlers
+  const handleViewReport = (inspection) => {
+    const baseUrl =
+      inspection.reportType === "AIR_BALANCING"
+        ? "/air-balancing"
+        : inspection.reportType === "CONCRETE"
+        ? "/concrete"
+        : "/inspection";
+    const url = `${baseUrl}/${inspection._id}${
+      userId ? `?userId=${userId}` : ""
+    }`;
+    router.push(url);
+  };
+
+  const handleEditReport = (inspection) => {
+    const baseUrl =
+      inspection.reportType === "AIR_BALANCING"
+        ? "/air-balancing"
+        : inspection.reportType === "CONCRETE"
+        ? "/concrete"
+        : "/inspection";
+    const url = `${baseUrl}/${inspection._id}/edit${
+      userId ? `?userId=${userId}` : ""
+    }`;
+    router.push(url);
   };
 
   return (
@@ -341,7 +428,7 @@ function DashboardContent() {
           </div>
           {!userId && (
             <Link
-              href="/create"
+              href="/select-form"
               className="bg-[#834CFF] px-4 py-2 rounded-sm text-white font-[400] text-xl hover:bg-[#6617CB] transition-colors"
             >
               RECORD NEW INSPECTION
@@ -364,25 +451,26 @@ function DashboardContent() {
               <div className="flex justify-between items-start">
                 <div>
                   <p className="text-[#FF7A00] mb-1 text-lg">
-                    {inspection.date.split("T")[0]}
+                    {inspection.inspectionDate
+                      ? format(
+                          new Date(inspection.inspectionDate),
+                          "MM/dd/yyyy"
+                        )
+                      : format(new Date(inspection.date), "MM/dd/yyyy")}
                   </p>
                   <h3 className="text-3xl font-medium mb-2">
-                    {inspection.projectName}
+                    {inspection.projectName || inspection.client}
                   </h3>
                   <p className="text-gray-600 text-xl">
-                    {inspection.address ||
+                    {inspection.projectSiteAddress ||
+                      inspection.address ||
                       inspection.cityCounty ||
                       "No address provided"}
                   </p>
                 </div>
                 <div className="flex gap-2 bg-[#E6E0FF] p-3 rounded-xl">
                   <button
-                    onClick={() => {
-                      const url = `/inspection/${inspection._id}${
-                        userId ? `?userId=${userId}` : ""
-                      }`;
-                      router.push(url);
-                    }}
+                    onClick={() => handleViewReport(inspection)}
                     className="p-2 text-[#834CFF] hover:bg-white rounded-md transition-colors"
                     title="View"
                   >
@@ -407,12 +495,7 @@ function DashboardContent() {
                     </svg>
                   </button>
                   <button
-                    onClick={() => {
-                      const url = `/inspection/${inspection._id}/edit${
-                        userId ? `?userId=${userId}` : ""
-                      }`;
-                      router.push(url);
-                    }}
+                    onClick={() => handleEditReport(inspection)}
                     className="p-2 text-[#834CFF] hover:bg-white rounded-md transition-colors"
                     title="Edit"
                   >
