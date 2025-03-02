@@ -41,6 +41,9 @@ function DashboardContent() {
       const firestoppingUrl = userId
         ? `/api/firestopping?userId=${userId}`
         : "/api/firestopping";
+      const insulationUrl = userId
+        ? `/api/insulation?userId=${userId}`
+        : "/api/insulation";
 
       const [
         inspectionsResponse,
@@ -48,12 +51,14 @@ function DashboardContent() {
         concreteResponse,
         dailyFieldResponse,
         firestoppingResponse,
+        insulationResponse,
       ] = await Promise.all([
         fetch(url),
         fetch(airBalancingUrl),
         fetch(concreteUrl),
         fetch(dailyFieldUrl),
         fetch(firestoppingUrl),
+        fetch(insulationUrl),
       ]);
 
       if (
@@ -61,7 +66,8 @@ function DashboardContent() {
         airBalancingResponse.status === 403 ||
         concreteResponse.status === 403 ||
         dailyFieldResponse.status === 403 ||
-        firestoppingResponse.status === 403
+        firestoppingResponse.status === 403 ||
+        insulationResponse.status === 403
       ) {
         router.push("/dashboard");
         return;
@@ -72,7 +78,8 @@ function DashboardContent() {
         !airBalancingResponse.ok ||
         !concreteResponse.ok ||
         !dailyFieldResponse.ok ||
-        !firestoppingResponse.ok
+        !firestoppingResponse.ok ||
+        !insulationResponse.ok
       ) {
         throw new Error("Failed to fetch reports");
       }
@@ -82,6 +89,7 @@ function DashboardContent() {
       const concreteData = await concreteResponse.json();
       const dailyFieldData = await dailyFieldResponse.json();
       const firestoppingData = await firestoppingResponse.json();
+      const insulationData = await insulationResponse.json();
 
       // Combine all types of reports
       const allReports = [
@@ -104,6 +112,10 @@ function DashboardContent() {
         ...firestoppingData.map((report) => ({
           ...report,
           reportType: "FIRESTOPPING",
+        })),
+        ...insulationData.map((report) => ({
+          ...report,
+          reportType: "INSULATION",
         })),
       ];
 
@@ -232,6 +244,8 @@ function DashboardContent() {
           ? `/api/daily-field/${inspectionToDelete}`
           : reportToDelete.reportType === "FIRESTOPPING"
           ? `/api/firestopping/${inspectionToDelete}`
+          : reportToDelete.reportType === "INSULATION"
+          ? `/api/insulation/${inspectionToDelete}`
           : `/api/inspections/${inspectionToDelete}`;
 
       const response = await fetch(endpoint, {
@@ -346,6 +360,7 @@ function DashboardContent() {
               <option value="CONCRETE">Concrete</option>
               <option value="DAILY_FIELD">Daily Field</option>
               <option value="FIRESTOPPING">Firestopping</option>
+              <option value="INSULATION">Insulation</option>
             </select>
           </div>
 
@@ -376,6 +391,7 @@ function DashboardContent() {
       CONCRETE: `/concrete/${inspection._id}`,
       DAILY_FIELD: `/daily-field/${inspection._id}`,
       FIRESTOPPING: `/firestopping/${inspection._id}`,
+      INSULATION: `/insulation/${inspection._id}`,
     };
 
     const route = reportTypeRoutes[inspection.reportType];
@@ -391,6 +407,7 @@ function DashboardContent() {
       CONCRETE: `/concrete/${inspection._id}/edit`,
       DAILY_FIELD: `/daily-field/${inspection._id}/edit`,
       FIRESTOPPING: `/firestopping/${inspection._id}/edit`,
+      INSULATION: `/insulation/${inspection._id}/edit`,
     };
 
     const route = reportTypeRoutes[inspection.reportType];

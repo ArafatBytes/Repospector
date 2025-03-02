@@ -16,6 +16,8 @@ export function generateInspectionPDF(
       ? `/daily-field/${inspectionId}`
       : reportType === "FIRESTOPPING"
       ? `/firestopping/${inspectionId}`
+      : reportType === "INSULATION"
+      ? `/insulation/${inspectionId}`
       : `/inspection/${inspectionId}`;
   const printWindow = window.open(viewUrl, "_blank");
 
