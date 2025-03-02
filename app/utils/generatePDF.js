@@ -12,6 +12,10 @@ export function generateInspectionPDF(
       ? `/air-balancing/${inspectionId}`
       : reportType === "CONCRETE"
       ? `/concrete/${inspectionId}`
+      : reportType === "DAILY_FIELD"
+      ? `/daily-field/${inspectionId}`
+      : reportType === "FIRESTOPPING"
+      ? `/firestopping/${inspectionId}`
       : `/inspection/${inspectionId}`;
   const printWindow = window.open(viewUrl, "_blank");
 

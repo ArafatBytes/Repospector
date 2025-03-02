@@ -35,18 +35,33 @@ function DashboardContent() {
       const concreteUrl = userId
         ? `/api/concrete?userId=${userId}`
         : "/api/concrete";
+      const dailyFieldUrl = userId
+        ? `/api/daily-field?userId=${userId}`
+        : "/api/daily-field";
+      const firestoppingUrl = userId
+        ? `/api/firestopping?userId=${userId}`
+        : "/api/firestopping";
 
-      const [inspectionsResponse, airBalancingResponse, concreteResponse] =
-        await Promise.all([
-          fetch(url),
-          fetch(airBalancingUrl),
-          fetch(concreteUrl),
-        ]);
+      const [
+        inspectionsResponse,
+        airBalancingResponse,
+        concreteResponse,
+        dailyFieldResponse,
+        firestoppingResponse,
+      ] = await Promise.all([
+        fetch(url),
+        fetch(airBalancingUrl),
+        fetch(concreteUrl),
+        fetch(dailyFieldUrl),
+        fetch(firestoppingUrl),
+      ]);
 
       if (
         inspectionsResponse.status === 403 ||
         airBalancingResponse.status === 403 ||
-        concreteResponse.status === 403
+        concreteResponse.status === 403 ||
+        dailyFieldResponse.status === 403 ||
+        firestoppingResponse.status === 403
       ) {
         router.push("/dashboard");
         return;
@@ -55,7 +70,9 @@ function DashboardContent() {
       if (
         !inspectionsResponse.ok ||
         !airBalancingResponse.ok ||
-        !concreteResponse.ok
+        !concreteResponse.ok ||
+        !dailyFieldResponse.ok ||
+        !firestoppingResponse.ok
       ) {
         throw new Error("Failed to fetch reports");
       }
@@ -63,6 +80,8 @@ function DashboardContent() {
       const inspectionsData = await inspectionsResponse.json();
       const airBalancingData = await airBalancingResponse.json();
       const concreteData = await concreteResponse.json();
+      const dailyFieldData = await dailyFieldResponse.json();
+      const firestoppingData = await firestoppingResponse.json();
 
       // Combine all types of reports
       const allReports = [
@@ -77,6 +96,14 @@ function DashboardContent() {
         ...concreteData.map((report) => ({
           ...report,
           reportType: "CONCRETE",
+        })),
+        ...dailyFieldData.map((report) => ({
+          ...report,
+          reportType: "DAILY_FIELD",
+        })),
+        ...firestoppingData.map((report) => ({
+          ...report,
+          reportType: "FIRESTOPPING",
         })),
       ];
 
@@ -201,6 +228,10 @@ function DashboardContent() {
           ? `/api/air-balancing/${inspectionToDelete}`
           : reportToDelete.reportType === "CONCRETE"
           ? `/api/concrete/${inspectionToDelete}`
+          : reportToDelete.reportType === "DAILY_FIELD"
+          ? `/api/daily-field/${inspectionToDelete}`
+          : reportToDelete.reportType === "FIRESTOPPING"
+          ? `/api/firestopping/${inspectionToDelete}`
           : `/api/inspections/${inspectionToDelete}`;
 
       const response = await fetch(endpoint, {
@@ -313,6 +344,8 @@ function DashboardContent() {
               <option value="SPECIAL_INSPECTION">Special Inspection</option>
               <option value="AIR_BALANCING">Air Balancing</option>
               <option value="CONCRETE">Concrete</option>
+              <option value="DAILY_FIELD">Daily Field</option>
+              <option value="FIRESTOPPING">Firestopping</option>
             </select>
           </div>
 
@@ -337,29 +370,33 @@ function DashboardContent() {
 
   // Update the view/edit button click handlers
   const handleViewReport = (inspection) => {
-    const baseUrl =
-      inspection.reportType === "AIR_BALANCING"
-        ? "/air-balancing"
-        : inspection.reportType === "CONCRETE"
-        ? "/concrete"
-        : "/inspection";
-    const url = `${baseUrl}/${inspection._id}${
-      userId ? `?userId=${userId}` : ""
-    }`;
-    router.push(url);
+    const reportTypeRoutes = {
+      SPECIAL_INSPECTION: `/inspection/${inspection._id}`,
+      AIR_BALANCING: `/air-balancing/${inspection._id}`,
+      CONCRETE: `/concrete/${inspection._id}`,
+      DAILY_FIELD: `/daily-field/${inspection._id}`,
+      FIRESTOPPING: `/firestopping/${inspection._id}`,
+    };
+
+    const route = reportTypeRoutes[inspection.reportType];
+    if (route) {
+      router.push(route);
+    }
   };
 
   const handleEditReport = (inspection) => {
-    const baseUrl =
-      inspection.reportType === "AIR_BALANCING"
-        ? "/air-balancing"
-        : inspection.reportType === "CONCRETE"
-        ? "/concrete"
-        : "/inspection";
-    const url = `${baseUrl}/${inspection._id}/edit${
-      userId ? `?userId=${userId}` : ""
-    }`;
-    router.push(url);
+    const reportTypeRoutes = {
+      SPECIAL_INSPECTION: `/inspection/${inspection._id}/edit`,
+      AIR_BALANCING: `/air-balancing/${inspection._id}/edit`,
+      CONCRETE: `/concrete/${inspection._id}/edit`,
+      DAILY_FIELD: `/daily-field/${inspection._id}/edit`,
+      FIRESTOPPING: `/firestopping/${inspection._id}/edit`,
+    };
+
+    const route = reportTypeRoutes[inspection.reportType];
+    if (route) {
+      router.push(route);
+    }
   };
 
   return (
