@@ -18,6 +18,10 @@ export function generateInspectionPDF(
       ? `/firestopping/${inspectionId}`
       : reportType === "INSULATION"
       ? `/insulation/${inspectionId}`
+      : reportType === "PARAPET"
+      ? `/parapet/${inspectionId}`
+      : reportType === "STRUCTURAL"
+      ? `/structural/${inspectionId}`
       : `/inspection/${inspectionId}`;
   const printWindow = window.open(viewUrl, "_blank");
 

@@ -44,6 +44,12 @@ function DashboardContent() {
       const insulationUrl = userId
         ? `/api/insulation?userId=${userId}`
         : "/api/insulation";
+      const parapetUrl = userId
+        ? `/api/parapet?userId=${userId}`
+        : "/api/parapet";
+      const structuralUrl = userId
+        ? `/api/structural?userId=${userId}`
+        : "/api/structural";
 
       const [
         inspectionsResponse,
@@ -52,6 +58,8 @@ function DashboardContent() {
         dailyFieldResponse,
         firestoppingResponse,
         insulationResponse,
+        parapetResponse,
+        structuralResponse,
       ] = await Promise.all([
         fetch(url),
         fetch(airBalancingUrl),
@@ -59,6 +67,8 @@ function DashboardContent() {
         fetch(dailyFieldUrl),
         fetch(firestoppingUrl),
         fetch(insulationUrl),
+        fetch(parapetUrl),
+        fetch(structuralUrl),
       ]);
 
       if (
@@ -67,7 +77,9 @@ function DashboardContent() {
         concreteResponse.status === 403 ||
         dailyFieldResponse.status === 403 ||
         firestoppingResponse.status === 403 ||
-        insulationResponse.status === 403
+        insulationResponse.status === 403 ||
+        parapetResponse.status === 403 ||
+        structuralResponse.status === 403
       ) {
         router.push("/dashboard");
         return;
@@ -79,7 +91,9 @@ function DashboardContent() {
         !concreteResponse.ok ||
         !dailyFieldResponse.ok ||
         !firestoppingResponse.ok ||
-        !insulationResponse.ok
+        !insulationResponse.ok ||
+        !parapetResponse.ok ||
+        !structuralResponse.ok
       ) {
         throw new Error("Failed to fetch reports");
       }
@@ -90,6 +104,8 @@ function DashboardContent() {
       const dailyFieldData = await dailyFieldResponse.json();
       const firestoppingData = await firestoppingResponse.json();
       const insulationData = await insulationResponse.json();
+      const parapetData = await parapetResponse.json();
+      const structuralData = await structuralResponse.json();
 
       // Combine all types of reports
       const allReports = [
@@ -116,6 +132,14 @@ function DashboardContent() {
         ...insulationData.map((report) => ({
           ...report,
           reportType: "INSULATION",
+        })),
+        ...parapetData.map((report) => ({
+          ...report,
+          reportType: "PARAPET",
+        })),
+        ...structuralData.map((report) => ({
+          ...report,
+          reportType: "STRUCTURAL",
         })),
       ];
 
@@ -246,6 +270,10 @@ function DashboardContent() {
           ? `/api/firestopping/${inspectionToDelete}`
           : reportToDelete.reportType === "INSULATION"
           ? `/api/insulation/${inspectionToDelete}`
+          : reportToDelete.reportType === "PARAPET"
+          ? `/api/parapet/${inspectionToDelete}`
+          : reportToDelete.reportType === "STRUCTURAL"
+          ? `/api/structural/${inspectionToDelete}`
           : `/api/inspections/${inspectionToDelete}`;
 
       const response = await fetch(endpoint, {
@@ -361,6 +389,8 @@ function DashboardContent() {
               <option value="DAILY_FIELD">Daily Field</option>
               <option value="FIRESTOPPING">Firestopping</option>
               <option value="INSULATION">Insulation</option>
+              <option value="PARAPET">Parapet Inspection</option>
+              <option value="STRUCTURAL">Structural Inspection</option>
             </select>
           </div>
 
@@ -392,6 +422,8 @@ function DashboardContent() {
       DAILY_FIELD: `/daily-field/${inspection._id}`,
       FIRESTOPPING: `/firestopping/${inspection._id}`,
       INSULATION: `/insulation/${inspection._id}`,
+      PARAPET: `/parapet/${inspection._id}`,
+      STRUCTURAL: `/structural/${inspection._id}`,
     };
 
     const route = reportTypeRoutes[inspection.reportType];
@@ -408,6 +440,8 @@ function DashboardContent() {
       DAILY_FIELD: `/daily-field/${inspection._id}/edit`,
       FIRESTOPPING: `/firestopping/${inspection._id}/edit`,
       INSULATION: `/insulation/${inspection._id}/edit`,
+      PARAPET: `/parapet/${inspection._id}/edit`,
+      STRUCTURAL: `/structural/${inspection._id}/edit`,
     };
 
     const route = reportTypeRoutes[inspection.reportType];
@@ -505,19 +539,28 @@ function DashboardContent() {
               <div className="flex justify-between items-start">
                 <div>
                   <p className="text-[#FF7A00] mb-1 text-lg">
-                    {inspection.inspectionDate
+                    {inspection.reportType === "STRUCTURAL"
+                      ? format(new Date(inspection.createdAt), "MM/dd/yyyy")
+                      : inspection.inspectionDate || inspection.date
                       ? format(
-                          new Date(inspection.inspectionDate),
+                          new Date(
+                            inspection.inspectionDate || inspection.date
+                          ),
                           "MM/dd/yyyy"
                         )
-                      : format(new Date(inspection.date), "MM/dd/yyyy")}
+                      : "No date"}
                   </p>
                   <h3 className="text-3xl font-medium mb-2">
-                    {inspection.projectName || inspection.client}
+                    {inspection.reportType === "STRUCTURAL"
+                      ? "Structural Inspection Report"
+                      : inspection.reportType === "PARAPET"
+                      ? inspection.ownerName
+                      : inspection.projectName || inspection.client}
                   </h3>
                   <p className="text-gray-600 text-xl">
                     {inspection.projectSiteAddress ||
                       inspection.address ||
+                      inspection.location ||
                       inspection.cityCounty ||
                       "No address provided"}
                   </p>
