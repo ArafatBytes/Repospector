@@ -960,68 +960,183 @@ export default function CreateInspection() {
 
   const handleImageCapture = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      // Check if the browser supports getUserMedia
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        // Fallback for browsers that don't support getUserMedia
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = "image/*";
+        input.setAttribute("capture", "camera");
+
+        input.addEventListener("change", (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            processImageFile(file);
+          }
+        });
+
+        input.click();
+        return;
+      }
+
+      // Create UI elements for camera preview
+      const videoContainer = document.createElement("div");
+      videoContainer.style.position = "fixed";
+      videoContainer.style.top = "0";
+      videoContainer.style.left = "0";
+      videoContainer.style.width = "100%";
+      videoContainer.style.height = "100%";
+      videoContainer.style.backgroundColor = "rgba(0,0,0,0.8)";
+      videoContainer.style.zIndex = "9999";
+      videoContainer.style.display = "flex";
+      videoContainer.style.flexDirection = "column";
+      videoContainer.style.alignItems = "center";
+      videoContainer.style.justifyContent = "center";
+
       const video = document.createElement("video");
+      video.style.maxWidth = "100%";
+      video.style.maxHeight = "80%";
+      video.style.backgroundColor = "#000";
+      video.autoplay = true;
+      video.playsInline = true; // Important for iOS
+
+      const buttonContainer = document.createElement("div");
+      buttonContainer.style.display = "flex";
+      buttonContainer.style.marginTop = "20px";
+      buttonContainer.style.gap = "10px";
+
+      const captureButton = document.createElement("button");
+      captureButton.textContent = "Capture";
+      captureButton.style.padding = "10px 20px";
+      captureButton.style.backgroundColor = "#4A90E2";
+      captureButton.style.color = "white";
+      captureButton.style.border = "none";
+      captureButton.style.borderRadius = "5px";
+      captureButton.style.cursor = "pointer";
+
+      const cancelButton = document.createElement("button");
+      cancelButton.textContent = "Cancel";
+      cancelButton.style.padding = "10px 20px";
+      cancelButton.style.backgroundColor = "#f44336";
+      cancelButton.style.color = "white";
+      cancelButton.style.border = "none";
+      cancelButton.style.borderRadius = "5px";
+      cancelButton.style.cursor = "pointer";
+
+      buttonContainer.appendChild(captureButton);
+      buttonContainer.appendChild(cancelButton);
+
+      videoContainer.appendChild(video);
+      videoContainer.appendChild(buttonContainer);
+
+      document.body.appendChild(videoContainer);
+
+      // Get access to the camera
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment" },
+      });
+
+      // Connect the stream to the video element
       video.srcObject = stream;
 
-      // Wait for video to be ready
-      return new Promise((resolve) => {
-        video.onloadedmetadata = () => {
-          video.play();
-
-          // Create a canvas to capture the image
-          const canvas = document.createElement("canvas");
-          canvas.width = video.videoWidth || 640;
-          canvas.height = video.videoHeight || 480;
-
-          const context = canvas.getContext("2d");
-          context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-          // Convert canvas to base64 image
-          const imageData = canvas.toDataURL("image/jpeg");
-
-          // Add image to form data
-          setFormData((prev) => {
-            // Ensure images array exists
-            const currentImages = Array.isArray(prev.images) ? prev.images : [];
-            return {
-              ...prev,
-              images: [...currentImages, imageData],
-            };
-          });
-
-          // Stop camera stream
+      // Set up event handlers
+      const cleanup = () => {
+        // Stop all tracks in the stream
+        if (stream) {
           stream.getTracks().forEach((track) => track.stop());
+        }
 
-          // Hide options
-          setShowImageOptions(false);
+        // Remove the video container from the DOM
+        if (videoContainer && videoContainer.parentNode) {
+          videoContainer.parentNode.removeChild(videoContainer);
+        }
+      };
 
-          resolve();
-        };
+      cancelButton.addEventListener("click", () => {
+        cleanup();
+      });
+
+      captureButton.addEventListener("click", () => {
+        // Create a canvas to capture the current video frame
+        const canvas = document.createElement("canvas");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        const context = canvas.getContext("2d");
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Convert the canvas to a data URL
+        const imageDataUrl = canvas.toDataURL("image/jpeg");
+
+        // Add the image to form data
+        setFormData((prev) => {
+          const currentImages = Array.isArray(prev.images) ? prev.images : [];
+          return {
+            ...prev,
+            images: [
+              ...currentImages,
+              {
+                urls: [imageDataUrl],
+                comment: "",
+              },
+            ],
+          };
+        });
+
+        // Clean up
+        cleanup();
+
+        // Hide options
+        setShowImageOptions(false);
       });
     } catch (error) {
       console.error("Error accessing camera:", error);
-      toast.error("Error accessing camera");
+      toast.error("Error accessing camera. Please check camera permissions.");
+
+      // Fallback to file input if camera access fails
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "image/*";
+
+      input.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          processImageFile(file);
+        }
+      });
+
+      input.click();
     }
+  };
+
+  // Helper function to process image files
+  const processImageFile = (file) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setFormData((prev) => {
+        const currentImages = Array.isArray(prev.images) ? prev.images : [];
+        return {
+          ...prev,
+          images: [
+            ...currentImages,
+            {
+              urls: [reader.result],
+              comment: "",
+            },
+          ],
+        };
+      });
+
+      // Hide options
+      setShowImageOptions(false);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData((prev) => {
-          // Ensure images array exists
-          const currentImages = Array.isArray(prev.images) ? prev.images : [];
-          return {
-            ...prev,
-            images: [...currentImages, reader.result],
-          };
-        });
-        // Hide options
-        setShowImageOptions(false);
-      };
-      reader.readAsDataURL(file);
+      processImageFile(file);
     }
   };
 
@@ -4959,24 +5074,25 @@ export default function CreateInspection() {
                       </button>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-4">
-                      {imageGroup.urls.map((url, imageIndex) => (
-                        <div key={imageIndex} className="relative">
-                          <img
-                            src={url}
-                            alt={`Uploaded image ${groupIndex + 1}-${
-                              imageIndex + 1
-                            }`}
-                            className="w-full h-auto rounded-lg"
-                          />
-                        </div>
-                      ))}
+                      {imageGroup.urls &&
+                        imageGroup.urls.map((url, imageIndex) => (
+                          <div key={imageIndex} className="relative">
+                            <img
+                              src={url}
+                              alt={`Uploaded image ${groupIndex + 1}-${
+                                imageIndex + 1
+                              }`}
+                              className="w-full h-auto rounded-lg"
+                            />
+                          </div>
+                        ))}
                     </div>
                     <div className="mb-4">
                       <label className="block text-sm font-medium mb-2">
                         Comments/Information about these images:
                       </label>
                       <textarea
-                        value={imageGroup.comment}
+                        value={imageGroup.comment || ""}
                         onChange={(e) => {
                           const newImages = [...formData.images];
                           newImages[groupIndex].comment = e.target.value;
@@ -4990,70 +5106,67 @@ export default function CreateInspection() {
                     </div>
                   </div>
                 ))}
-              </div>
-            </div>
 
-            {/* Add image section at the bottom of the form */}
-            <div className="mt-8">
-              <button
-                type="button"
-                onClick={() => setShowImageOptions(!showImageOptions)}
-                className="bg-[#4A90E2] text-white px-4 py-2 rounded hover:bg-[#357ABD] transition-colors"
-              >
-                Add image
-              </button>
-
-              {showImageOptions && (
-                <div className="mt-4 space-y-2">
+                {/* Add image button - moved inside and centered */}
+                <div className="flex justify-center mt-6 mb-4">
                   <button
                     type="button"
-                    onClick={handleImageCapture}
-                    className="block w-full bg-gray-100 text-gray-800 px-4 py-2 rounded hover:bg-gray-200 transition-colors"
+                    onClick={() => setShowImageOptions(!showImageOptions)}
+                    className="bg-[#4A90E2] text-white px-4 py-2 rounded hover:bg-[#357ABD] transition-colors"
                   >
-                    Take image
+                    Add image
                   </button>
-                  <label className="block w-full">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFileUpload}
-                      className="hidden"
-                    />
-                    <span className="block w-full bg-gray-100 text-gray-800 px-4 py-2 rounded hover:bg-gray-200 transition-colors text-center cursor-pointer">
-                      Choose image
-                    </span>
-                  </label>
                 </div>
-              )}
 
-              {/* Display uploaded images */}
-              {formData.images.length > 0 && (
-                <div className="mt-4 grid grid-cols-2 gap-4">
-                  {formData.images.map((image, index) => (
-                    <div key={index} className="relative">
-                      <Image
-                        src={image}
-                        alt={`Uploaded image ${index + 1}`}
-                        width={300}
-                        height={200}
-                        className="rounded object-contain"
+                {showImageOptions && (
+                  <div className="mt-4 space-y-2 max-w-md mx-auto">
+                    <button
+                      type="button"
+                      onClick={handleImageCapture}
+                      className="block w-full bg-gray-100 text-gray-800 px-4 py-2 rounded hover:bg-gray-200 transition-colors"
+                    >
+                      <span className="flex items-center justify-center">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5 mr-2"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                        Take image with camera
+                      </span>
+                    </button>
+                    <label className="block w-full">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileUpload}
+                        className="hidden"
                       />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setFormData((prev) => ({
-                            ...prev,
-                            images: prev.images.filter((_, i) => i !== index),
-                          }));
-                        }}
-                        className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600 transition-colors"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
+                      <span className="block w-full bg-gray-100 text-gray-800 px-4 py-2 rounded hover:bg-gray-200 transition-colors text-center cursor-pointer flex items-center justify-center">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5 mr-2"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a3 3 0 00-3-3H8zm7 7a3 3 0 01-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3H8a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a3 3 0 01-6 0z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                        Choose image from gallery
+                      </span>
+                    </label>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Submit Button */}

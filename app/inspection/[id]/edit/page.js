@@ -113,91 +113,206 @@ export default function InspectionEdit() {
 
   const handleImageCapture = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      const video = document.createElement("video");
-      const canvas = document.createElement("canvas");
+      // Check if the browser supports getUserMedia
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        // Fallback for browsers that don't support getUserMedia
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = "image/*";
+        input.setAttribute("capture", "camera");
 
-      // Set up video element
+        input.addEventListener("change", (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            processImageFile(file);
+          }
+        });
+
+        input.click();
+        return;
+      }
+
+      // Create UI elements for camera preview
+      const videoContainer = document.createElement("div");
+      videoContainer.style.position = "fixed";
+      videoContainer.style.top = "0";
+      videoContainer.style.left = "0";
+      videoContainer.style.width = "100%";
+      videoContainer.style.height = "100%";
+      videoContainer.style.backgroundColor = "rgba(0,0,0,0.8)";
+      videoContainer.style.zIndex = "9999";
+      videoContainer.style.display = "flex";
+      videoContainer.style.flexDirection = "column";
+      videoContainer.style.alignItems = "center";
+      videoContainer.style.justifyContent = "center";
+
+      const video = document.createElement("video");
+      video.style.maxWidth = "100%";
+      video.style.maxHeight = "80%";
+      video.style.backgroundColor = "#000";
+      video.autoplay = true;
+      video.playsInline = true; // Important for iOS
+
+      const buttonContainer = document.createElement("div");
+      buttonContainer.style.display = "flex";
+      buttonContainer.style.marginTop = "20px";
+      buttonContainer.style.gap = "10px";
+
+      const captureButton = document.createElement("button");
+      captureButton.textContent = "Capture";
+      captureButton.style.padding = "10px 20px";
+      captureButton.style.backgroundColor = "#4A90E2";
+      captureButton.style.color = "white";
+      captureButton.style.border = "none";
+      captureButton.style.borderRadius = "5px";
+      captureButton.style.cursor = "pointer";
+
+      const cancelButton = document.createElement("button");
+      cancelButton.textContent = "Cancel";
+      cancelButton.style.padding = "10px 20px";
+      cancelButton.style.backgroundColor = "#f44336";
+      cancelButton.style.color = "white";
+      cancelButton.style.border = "none";
+      cancelButton.style.borderRadius = "5px";
+      cancelButton.style.cursor = "pointer";
+
+      buttonContainer.appendChild(captureButton);
+      buttonContainer.appendChild(cancelButton);
+
+      videoContainer.appendChild(video);
+      videoContainer.appendChild(buttonContainer);
+
+      document.body.appendChild(videoContainer);
+
+      // Get access to the camera
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment" },
+      });
+
+      // Connect the stream to the video element
       video.srcObject = stream;
 
-      // Wait for video to be ready
-      return new Promise((resolve) => {
-        video.onloadedmetadata = async () => {
-          await video.play();
-
-          // Set canvas dimensions
-          canvas.width = video.videoWidth || 640;
-          canvas.height = video.videoHeight || 480;
-
-          // Draw video frame to canvas
-          canvas
-            .getContext("2d")
-            .drawImage(video, 0, 0, canvas.width, canvas.height);
-
-          // Get image data
-          const imageDataUrl = canvas.toDataURL("image/jpeg");
-
-          // Stop all tracks
+      // Set up event handlers
+      const cleanup = () => {
+        // Stop all tracks in the stream
+        if (stream) {
           stream.getTracks().forEach((track) => track.stop());
+        }
 
-          // Update state with new image
-          setInspection((prev) => {
-            // Ensure images array exists
-            const currentImages = Array.isArray(prev.images) ? prev.images : [];
-            return {
-              ...prev,
-              images: [...currentImages, imageDataUrl],
-            };
-          });
+        // Remove the video container from the DOM
+        if (videoContainer && videoContainer.parentNode) {
+          videoContainer.parentNode.removeChild(videoContainer);
+        }
+      };
 
-          // Hide options menu
-          setShowImageOptions(false);
+      cancelButton.addEventListener("click", () => {
+        cleanup();
+      });
 
-          resolve();
-        };
+      captureButton.addEventListener("click", () => {
+        // Create a canvas to capture the current video frame
+        const canvas = document.createElement("canvas");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        const context = canvas.getContext("2d");
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Convert the canvas to a data URL
+        const imageDataUrl = canvas.toDataURL("image/jpeg");
+
+        // Add the image to inspection data
+        setInspection((prev) => {
+          const currentImages = Array.isArray(prev.images) ? prev.images : [];
+          return {
+            ...prev,
+            images: [
+              ...currentImages,
+              {
+                urls: [imageDataUrl],
+                comment: "",
+              },
+            ],
+          };
+        });
+
+        // Clean up
+        cleanup();
+
+        // Hide options
+        setShowImageOptions(false);
       });
     } catch (error) {
-      console.error("Error capturing image:", error);
-      toast.error("Failed to capture image. Please try again.");
+      console.error("Error accessing camera:", error);
+      toast.error("Error accessing camera. Please check camera permissions.");
+
+      // Fallback to file input if camera access fails
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "image/*";
+
+      input.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          processImageFile(file);
+        }
+      });
+
+      input.click();
     }
+  };
+
+  // Helper function to process image files
+  const processImageFile = (file) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setInspection((prev) => {
+        const currentImages = Array.isArray(prev.images) ? prev.images : [];
+        return {
+          ...prev,
+          images: [
+            ...currentImages,
+            {
+              urls: [reader.result],
+              comment: "",
+            },
+          ],
+        };
+      });
+
+      // Hide options
+      setShowImageOptions(false);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setInspection((prev) => {
-          // Ensure images array exists
-          const currentImages = Array.isArray(prev.images) ? prev.images : [];
-          return {
-            ...prev,
-            images: [...currentImages, reader.result],
-          };
-        });
-        setShowImageOptions(false);
-      };
-      reader.readAsDataURL(file);
+      processImageFile(file);
     }
   };
 
-  const handleRemoveImage = (index) => {
-    setInspection((prev) => {
-      // Ensure images array exists
-      const currentImages = Array.isArray(prev.images) ? prev.images : [];
-      return {
-        ...prev,
-        images: currentImages.filter((_, i) => i !== index),
-      };
-    });
-  };
-
   if (loading) {
-    return <div className="text-center mt-8">Loading inspection...</div>;
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#4A90E2]"></div>
+      </div>
+    );
   }
 
   if (!inspection) {
-    return <div className="text-center mt-8">Inspection not found</div>;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <h1 className="text-2xl font-bold mb-4">Inspection not found</h1>
+        <Link
+          href="/dashboard"
+          className="text-[#4A90E2] hover:underline flex items-center"
+        >
+          <ArrowLeftIcon className="h-4 w-4 mr-1" /> Back to Dashboard
+        </Link>
+      </div>
+    );
   }
 
   return (
@@ -7365,11 +7480,9 @@ export default function InspectionEdit() {
                 No images available
               </p>
             )}
-          </div>
 
-          {/* Add images section after the form grid */}
-          <div className="mt-8">
-            <div className="relative">
+            {/* Add Image button - centered */}
+            <div className="flex justify-center mt-6 mb-4">
               <button
                 type="button"
                 onClick={() => setShowImageOptions(!showImageOptions)}
@@ -7377,47 +7490,28 @@ export default function InspectionEdit() {
               >
                 Add Image
               </button>
-
-              {showImageOptions && (
-                <div className="absolute top-full left-0 mt-2 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
-                  <button
-                    type="button"
-                    onClick={handleImageCapture}
-                    className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                  >
-                    Take Image
-                  </button>
-                  <label className="block w-full text-left px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                    Choose Image
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFileUpload}
-                      className="hidden"
-                    />
-                  </label>
-                </div>
-              )}
             </div>
 
-            {inspection.images && inspection.images.length > 0 && (
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-                {inspection.images.map((image, index) => (
-                  <div key={index} className="relative">
-                    <img
-                      src={image}
-                      alt={`Inspection image ${index + 1}`}
-                      className="w-full h-48 object-cover rounded"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveImage(index)}
-                      className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600 transition-colors"
-                    >
-                      <TrashIcon className="h-4 w-4" />
-                    </button>
-                  </div>
-                ))}
+            {showImageOptions && (
+              <div className="mt-4 space-y-2 max-w-md mx-auto">
+                <button
+                  type="button"
+                  onClick={handleImageCapture}
+                  className="block w-full bg-gray-100 text-gray-800 px-4 py-2 rounded hover:bg-gray-200 transition-colors"
+                >
+                  Take Image
+                </button>
+                <label className="block w-full">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                  />
+                  <span className="block w-full bg-gray-100 text-gray-800 px-4 py-2 rounded hover:bg-gray-200 transition-colors text-center cursor-pointer">
+                    Choose Image
+                  </span>
+                </label>
               </div>
             )}
           </div>
