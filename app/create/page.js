@@ -3,10 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
+import Image from "next/image";
 
 export default function CreateInspection() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showImageOptions, setShowImageOptions] = useState(false);
   const [formData, setFormData] = useState({
     reportType: "",
     inspectorEmail: "",
@@ -24,42 +26,42 @@ export default function CreateInspection() {
     dobApplication: "",
     inspectionItems: [
       {
-        name: "Structural Steel – Welding, as per BC 1704.3.1",
+        name: "Structural Steel – Welding, as per BC 1705.2.1",
         approved: false,
         seeComments: false,
       },
       {
-        name: "Structural Steel – Details, as per BC 1704.3.2",
+        name: "Structural Steel – Details, as per BC 1705.2.2",
         approved: false,
         seeComments: false,
       },
       {
-        name: "Structural Steel – High Strength Bolting, as per BC 1704.3.3",
+        name: "Structural Steel – High Strength Bolting, as per BC 1705.2.3",
         approved: false,
         seeComments: false,
       },
       {
-        name: "Mechanical Systems, as per BC 1704.16",
+        name: "Mechanical Systems, as per BC 1705.21",
         approved: false,
         seeComments: false,
       },
       {
-        name: "Sprinkler Systems, as per BC 1704.23",
+        name: "Sprinkler Systems, as per BC 1705.29",
         approved: false,
         seeComments: false,
       },
       {
-        name: "Heating Systems, as per BC 1704.25",
+        name: "Heating Systems, as per BC 1705.31",
         approved: false,
         seeComments: false,
       },
       {
-        name: "Fire-Resistant Penetrations and Joints, as per BC 1704.27",
+        name: "Fire-Resistant Penetrations and Joints, as per BC 1705.17",
         approved: false,
         seeComments: false,
       },
       {
-        name: "Post-Installed Anchors (BB# 2014-018, 2014-019), as per BC 1704.32",
+        name: "Post-Installed Anchors (BB# 2014-018, 2014-019), as per BC 1705.37",
         approved: false,
         seeComments: false,
       },
@@ -956,10 +958,87 @@ export default function CreateInspection() {
     }
   };
 
+  const handleImageCapture = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const video = document.createElement("video");
+      video.srcObject = stream;
+
+      // Wait for video to be ready
+      return new Promise((resolve) => {
+        video.onloadedmetadata = () => {
+          video.play();
+
+          // Create a canvas to capture the image
+          const canvas = document.createElement("canvas");
+          canvas.width = video.videoWidth || 640;
+          canvas.height = video.videoHeight || 480;
+
+          const context = canvas.getContext("2d");
+          context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+          // Convert canvas to base64 image
+          const imageData = canvas.toDataURL("image/jpeg");
+
+          // Add image to form data
+          setFormData((prev) => {
+            // Ensure images array exists
+            const currentImages = Array.isArray(prev.images) ? prev.images : [];
+            return {
+              ...prev,
+              images: [...currentImages, imageData],
+            };
+          });
+
+          // Stop camera stream
+          stream.getTracks().forEach((track) => track.stop());
+
+          // Hide options
+          setShowImageOptions(false);
+
+          resolve();
+        };
+      });
+    } catch (error) {
+      console.error("Error accessing camera:", error);
+      toast.error("Error accessing camera");
+    }
+  };
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData((prev) => {
+          // Ensure images array exists
+          const currentImages = Array.isArray(prev.images) ? prev.images : [];
+          return {
+            ...prev,
+            images: [...currentImages, reader.result],
+          };
+        });
+        // Hide options
+        setShowImageOptions(false);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white py-8">
       <div className="max-w-5xl mx-auto px-4">
         <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+          {/* Logo */}
+          <div className="flex justify-center mb-8">
+            <Image
+              src="/images/logo.jpg"
+              alt="SHAHRISH"
+              width={300}
+              height={100}
+              priority
+            />
+          </div>
           {/* Header */}
           <div className="bg-[#4A90E2] text-white text-center py-3 text-2xl font-semibold">
             Special Inspection Report
@@ -1023,7 +1102,7 @@ export default function CreateInspection() {
               </div>
               <div>
                 <label className="block text-sm font-bold mb-1">
-                  AMAA Project #:
+                  SSE Project #:
                 </label>
                 <input
                   type="text"
@@ -4911,60 +4990,70 @@ export default function CreateInspection() {
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
 
-                <div className="flex justify-center">
-                  <label className="cursor-pointer">
-                    <div className="bg-[#4A90E2] text-white px-6 py-3 rounded hover:bg-[#357ABD] transition-colors flex items-center gap-2">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                      Add images
-                    </div>
+            {/* Add image section at the bottom of the form */}
+            <div className="mt-8">
+              <button
+                type="button"
+                onClick={() => setShowImageOptions(!showImageOptions)}
+                className="bg-[#4A90E2] text-white px-4 py-2 rounded hover:bg-[#357ABD] transition-colors"
+              >
+                Add image
+              </button>
+
+              {showImageOptions && (
+                <div className="mt-4 space-y-2">
+                  <button
+                    type="button"
+                    onClick={handleImageCapture}
+                    className="block w-full bg-gray-100 text-gray-800 px-4 py-2 rounded hover:bg-gray-200 transition-colors"
+                  >
+                    Take image
+                  </button>
+                  <label className="block w-full">
                     <input
                       type="file"
                       accept="image/*"
-                      multiple
+                      onChange={handleFileUpload}
                       className="hidden"
-                      onChange={(e) => {
-                        const files = Array.from(e.target.files);
-                        const urls = [];
-                        let loadedCount = 0;
-
-                        files.forEach((file) => {
-                          const reader = new FileReader();
-                          reader.onloadend = () => {
-                            urls.push(reader.result);
-                            loadedCount++;
-
-                            if (loadedCount === files.length) {
-                              setFormData((prev) => ({
-                                ...prev,
-                                images: [
-                                  ...(prev.images || []),
-                                  {
-                                    urls,
-                                    comment: "",
-                                  },
-                                ],
-                              }));
-                            }
-                          };
-                          reader.readAsDataURL(file);
-                        });
-                      }}
                     />
+                    <span className="block w-full bg-gray-100 text-gray-800 px-4 py-2 rounded hover:bg-gray-200 transition-colors text-center cursor-pointer">
+                      Choose image
+                    </span>
                   </label>
                 </div>
-              </div>
+              )}
+
+              {/* Display uploaded images */}
+              {formData.images.length > 0 && (
+                <div className="mt-4 grid grid-cols-2 gap-4">
+                  {formData.images.map((image, index) => (
+                    <div key={index} className="relative">
+                      <Image
+                        src={image}
+                        alt={`Uploaded image ${index + 1}`}
+                        width={300}
+                        height={200}
+                        className="rounded object-contain"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            images: prev.images.filter((_, i) => i !== index),
+                          }));
+                        }}
+                        className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600 transition-colors"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Submit Button */}

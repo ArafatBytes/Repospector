@@ -12,6 +12,7 @@ export default function InspectionEdit() {
   const params = useParams();
   const [inspection, setInspection] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showImageOptions, setShowImageOptions] = useState(false);
 
   useEffect(() => {
     async function fetchInspection() {
@@ -110,6 +111,87 @@ export default function InspectionEdit() {
     }));
   };
 
+  const handleImageCapture = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const video = document.createElement("video");
+      const canvas = document.createElement("canvas");
+
+      // Set up video element
+      video.srcObject = stream;
+
+      // Wait for video to be ready
+      return new Promise((resolve) => {
+        video.onloadedmetadata = async () => {
+          await video.play();
+
+          // Set canvas dimensions
+          canvas.width = video.videoWidth || 640;
+          canvas.height = video.videoHeight || 480;
+
+          // Draw video frame to canvas
+          canvas
+            .getContext("2d")
+            .drawImage(video, 0, 0, canvas.width, canvas.height);
+
+          // Get image data
+          const imageDataUrl = canvas.toDataURL("image/jpeg");
+
+          // Stop all tracks
+          stream.getTracks().forEach((track) => track.stop());
+
+          // Update state with new image
+          setInspection((prev) => {
+            // Ensure images array exists
+            const currentImages = Array.isArray(prev.images) ? prev.images : [];
+            return {
+              ...prev,
+              images: [...currentImages, imageDataUrl],
+            };
+          });
+
+          // Hide options menu
+          setShowImageOptions(false);
+
+          resolve();
+        };
+      });
+    } catch (error) {
+      console.error("Error capturing image:", error);
+      toast.error("Failed to capture image. Please try again.");
+    }
+  };
+
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setInspection((prev) => {
+          // Ensure images array exists
+          const currentImages = Array.isArray(prev.images) ? prev.images : [];
+          return {
+            ...prev,
+            images: [...currentImages, reader.result],
+          };
+        });
+        setShowImageOptions(false);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveImage = (index) => {
+    setInspection((prev) => {
+      // Ensure images array exists
+      const currentImages = Array.isArray(prev.images) ? prev.images : [];
+      return {
+        ...prev,
+        images: currentImages.filter((_, i) => i !== index),
+      };
+    });
+  };
+
   if (loading) {
     return <div className="text-center mt-8">Loading inspection...</div>;
   }
@@ -131,6 +213,17 @@ export default function InspectionEdit() {
       </div>
 
       <div className="bg-white rounded-lg shadow-sm">
+        {/* Logo */}
+        <div className="flex justify-center mb-8">
+          <Image
+            src="/images/logo.jpg"
+            alt="SHAHRISH"
+            width={300}
+            height={100}
+            priority
+          />
+        </div>
+
         {/* Header */}
         <div className="bg-[#4A90E2] text-white text-center py-3 rounded-t-lg text-xl font-medium">
           Special Inspection Report
@@ -167,15 +260,15 @@ export default function InspectionEdit() {
           {/* Form Grid */}
           <div className="grid grid-cols-2 gap-x-8 gap-y-4">
             <div>
-              <label className="block text-sm font-medium mb-1">
-                Special Inspector Email:
-              </label>
+              <label className="block text-sm font-medium mb-1">Date:</label>
               <input
-                type="email"
-                value={inspection.inspectorEmail || ""}
-                onChange={(e) =>
-                  handleInputChange("inspectorEmail", e.target.value)
+                type="date"
+                value={
+                  inspection.date
+                    ? new Date(inspection.date).toISOString().split("T")[0]
+                    : ""
                 }
+                onChange={(e) => handleInputChange("date", e.target.value)}
                 className="w-full border-b border-gray-300 py-1 focus:outline-none focus:border-blue-500"
               />
             </div>
@@ -194,7 +287,7 @@ export default function InspectionEdit() {
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">
-                  AMAA Project #:
+                  SSE Project #:
                 </label>
                 <input
                   type="text"
@@ -241,16 +334,6 @@ export default function InspectionEdit() {
                 onChange={(e) =>
                   handleInputChange("projectName", e.target.value)
                 }
-                className="w-full border-b border-gray-300 py-1 focus:outline-none focus:border-blue-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1">Date:</label>
-              <input
-                type="date"
-                value={inspection.date?.split("T")[0] || ""}
-                onChange={(e) => handleInputChange("date", e.target.value)}
                 className="w-full border-b border-gray-300 py-1 focus:outline-none focus:border-blue-500"
               />
             </div>
@@ -349,35 +432,35 @@ export default function InspectionEdit() {
 
             {[
               {
-                name: "Structural Steel – Welding, as per BC 1704.3.1",
+                name: "Structural Steel – Welding, as per BC 1705.2.1",
                 key: "structuralSteelWelding",
               },
               {
-                name: "Structural Steel – Details, as per BC 1704.3.2",
+                name: "Structural Steel – Details, as per BC 1705.2.2",
                 key: "structuralSteelDetails",
               },
               {
-                name: "Structural Steel – High Strength Bolting, as per BC 1704.3.3",
+                name: "Structural Steel – High Strength Bolting, as per BC 1705.2.3",
                 key: "structuralSteelBolting",
               },
               {
-                name: "Mechanical Systems, as per BC 1704.16",
+                name: "Mechanical Systems, as per BC 1705.21",
                 key: "mechanicalSystems",
               },
               {
-                name: "Sprinkler Systems, as per BC 1704.23",
+                name: "Sprinkler Systems, as per BC 1705.29",
                 key: "sprinklerSystems",
               },
               {
-                name: "Heating Systems, as per BC 1704.25",
+                name: "Heating Systems, as per BC 1705.31",
                 key: "heatingSystems",
               },
               {
-                name: "Fire-Resistant Penetrations and Joints, as per BC 1704.27",
+                name: "Fire-Resistant Penetrations and Joints, as per BC 1705.17",
                 key: "fireResistantPenetrations",
               },
               {
-                name: "Post-Installed Anchors (BB# 2014-018, 2014-019), as per BC 1704.32",
+                name: "Post-Installed Anchors (BB# 2014-018, 2014-019), as per BC 1705.37",
                 key: "postInstalledAnchors",
               },
               {
@@ -7281,6 +7364,61 @@ export default function InspectionEdit() {
               <p className="text-center text-gray-500 italic">
                 No images available
               </p>
+            )}
+          </div>
+
+          {/* Add images section after the form grid */}
+          <div className="mt-8">
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setShowImageOptions(!showImageOptions)}
+                className="bg-[#4A90E2] text-white px-4 py-2 rounded hover:bg-[#357ABD] transition-colors"
+              >
+                Add Image
+              </button>
+
+              {showImageOptions && (
+                <div className="absolute top-full left-0 mt-2 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
+                  <button
+                    type="button"
+                    onClick={handleImageCapture}
+                    className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                  >
+                    Take Image
+                  </button>
+                  <label className="block w-full text-left px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                    Choose Image
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileUpload}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+              )}
+            </div>
+
+            {inspection.images && inspection.images.length > 0 && (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+                {inspection.images.map((image, index) => (
+                  <div key={index} className="relative">
+                    <img
+                      src={image}
+                      alt={`Inspection image ${index + 1}`}
+                      className="w-full h-48 object-cover rounded"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage(index)}
+                      className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600 transition-colors"
+                    >
+                      <TrashIcon className="h-4 w-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
 

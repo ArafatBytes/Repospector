@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import { format } from "date-fns";
 
 export default function InspectionView() {
   const router = useRouter();
@@ -63,6 +64,17 @@ export default function InspectionView() {
       </div>
 
       <div className="bg-white rounded-lg shadow-sm">
+        {/* Logo */}
+        <div className="flex justify-center mb-8">
+          <Image
+            src="/images/logo.jpg"
+            alt="SHAHRISH"
+            width={300}
+            height={100}
+            priority
+          />
+        </div>
+
         {/* Header */}
         <div className="bg-[#4A90E2] text-white text-center py-3 rounded-t-lg text-xl font-medium">
           Special Inspection Report
@@ -99,11 +111,11 @@ export default function InspectionView() {
           {/* Form Grid */}
           <div className="grid grid-cols-2 gap-x-8 gap-y-4">
             <div>
-              <label className="block text-sm font-medium mb-1">
-                Special Inspector Email:
-              </label>
+              <label className="block text-sm font-medium mb-1">Date:</label>
               <p className="border-b border-gray-300 py-1">
-                {inspection.inspectorEmail}
+                {inspection.date
+                  ? format(new Date(inspection.date), "MM/dd/yyyy")
+                  : "No date"}
               </p>
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -117,7 +129,7 @@ export default function InspectionView() {
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">
-                  AMAA Project #:
+                  SSE Project #:
                 </label>
                 <p className="border-b border-gray-300 py-1">
                   {inspection.amaaProjectNumber}
@@ -148,13 +160,6 @@ export default function InspectionView() {
                 {inspection.projectName}
               </p>
             </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Date:</label>
-              <p className="border-b border-gray-300 py-1">
-                {inspection.date?.split("T")[0]}
-              </p>
-            </div>
-
             <div>
               <label className="block text-sm font-medium mb-1">Address:</label>
               <p className="border-b border-gray-300 py-1">
@@ -221,35 +226,35 @@ export default function InspectionView() {
 
             {[
               {
-                name: "Structural Steel – Welding, as per BC 1704.3.1",
+                name: "Structural Steel – Welding, as per BC 1705.2.1",
                 key: "structuralSteelWelding",
               },
               {
-                name: "Structural Steel – Details, as per BC 1704.3.2",
+                name: "Structural Steel – Details, as per BC 1705.2.2",
                 key: "structuralSteelDetails",
               },
               {
-                name: "Structural Steel – High Strength Bolting, as per BC 1704.3.3",
+                name: "Structural Steel – High Strength Bolting, as per BC 1705.2.3",
                 key: "structuralSteelBolting",
               },
               {
-                name: "Mechanical Systems, as per BC 1704.16",
+                name: "Mechanical Systems, as per BC 1705.21",
                 key: "mechanicalSystems",
               },
               {
-                name: "Sprinkler Systems, as per BC 1704.23",
+                name: "Sprinkler Systems, as per BC 1705.29",
                 key: "sprinklerSystems",
               },
               {
-                name: "Heating Systems, as per BC 1704.25",
+                name: "Heating Systems, as per BC 1705.31",
                 key: "heatingSystems",
               },
               {
-                name: "Fire-Resistant Penetrations and Joints, as per BC 1704.27",
+                name: "Fire-Resistant Penetrations and Joints, as per BC 1705.17",
                 key: "fireResistantPenetrations",
               },
               {
-                name: "Post-Installed Anchors (BB# 2014-018, 2014-019), as per BC 1704.32",
+                name: "Post-Installed Anchors (BB# 2014-018, 2014-019), as per BC 1705.37",
                 key: "postInstalledAnchors",
               },
               {
