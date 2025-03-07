@@ -570,6 +570,7 @@ export default function CreateInspection() {
       comments: "",
     },
     images: [],
+    nonConformanceReason: "",
   });
 
   const handleInputChange = (e) => {
@@ -1168,25 +1169,63 @@ export default function CreateInspection() {
                   <input
                     type="radio"
                     name="reportType"
-                    value="PROGRESS"
-                    checked={formData.reportType === "PROGRESS"}
+                    value="INCOMPLETE_WORK"
+                    checked={formData.reportType === "INCOMPLETE_WORK"}
                     onChange={handleInputChange}
                     className="mr-1"
                   />
-                  PROGRESS
+                  Incomplete work
                 </label>
                 <label className="flex items-center ml-4">
                   <input
                     type="radio"
                     name="reportType"
-                    value="FINAL"
-                    checked={formData.reportType === "FINAL"}
+                    value="COMPLETE"
+                    checked={formData.reportType === "COMPLETE"}
                     onChange={handleInputChange}
                     className="mr-1"
                   />
-                  FINAL
+                  Complete
+                </label>
+                <label className="flex items-center ml-4">
+                  <input
+                    type="radio"
+                    name="reportType"
+                    value="CONFORMANCE"
+                    checked={formData.reportType === "CONFORMANCE"}
+                    onChange={handleInputChange}
+                    className="mr-1"
+                  />
+                  Conformance
+                </label>
+                <label className="flex items-center ml-4">
+                  <input
+                    type="radio"
+                    name="reportType"
+                    value="NON_CONFORMANCE"
+                    checked={formData.reportType === "NON_CONFORMANCE"}
+                    onChange={handleInputChange}
+                    className="mr-1"
+                  />
+                  Non-conformance
                 </label>
               </div>
+
+              {formData.reportType === "NON_CONFORMANCE" && (
+                <div className="mt-3 ml-6">
+                  <label className="block text-sm font-medium mb-1">
+                    Reason for Non-conformance:
+                  </label>
+                  <textarea
+                    name="nonConformanceReason"
+                    value={formData.nonConformanceReason || ""}
+                    onChange={handleInputChange}
+                    className="w-full border rounded-md p-2 focus:border-[#4A90E2] focus:outline-none"
+                    rows="3"
+                    required
+                  />
+                </div>
+              )}
             </div>
 
             {/* Inspector Email */}

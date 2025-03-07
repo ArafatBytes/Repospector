@@ -353,23 +353,64 @@ export default function InspectionEdit() {
                 <div className="flex items-center gap-1">
                   <input
                     type="radio"
-                    checked={inspection.reportType === "PROGRESS"}
-                    onChange={() => handleInputChange("reportType", "PROGRESS")}
+                    checked={inspection.reportType === "INCOMPLETE_WORK"}
+                    onChange={() =>
+                      handleInputChange("reportType", "INCOMPLETE_WORK")
+                    }
                     className="form-radio"
                   />
-                  <span>PROGRESS</span>
+                  <span>Incomplete work</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <input
                     type="radio"
-                    checked={inspection.reportType === "FINAL"}
-                    onChange={() => handleInputChange("reportType", "FINAL")}
+                    checked={inspection.reportType === "COMPLETE"}
+                    onChange={() => handleInputChange("reportType", "COMPLETE")}
                     className="form-radio"
                   />
-                  <span>FINAL</span>
+                  <span>Complete</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <input
+                    type="radio"
+                    checked={inspection.reportType === "CONFORMANCE"}
+                    onChange={() =>
+                      handleInputChange("reportType", "CONFORMANCE")
+                    }
+                    className="form-radio"
+                  />
+                  <span>Conformance</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <input
+                    type="radio"
+                    checked={inspection.reportType === "NON_CONFORMANCE"}
+                    onChange={() =>
+                      handleInputChange("reportType", "NON_CONFORMANCE")
+                    }
+                    className="form-radio"
+                  />
+                  <span>Non-conformance</span>
                 </div>
               </div>
             </div>
+
+            {inspection.reportType === "NON_CONFORMANCE" && (
+              <div className="mt-3 ml-6">
+                <label className="block text-sm font-medium mb-1">
+                  Reason for Non-conformance:
+                </label>
+                <textarea
+                  value={inspection.nonConformanceReason || ""}
+                  onChange={(e) =>
+                    handleInputChange("nonConformanceReason", e.target.value)
+                  }
+                  className="w-full border rounded-md p-2 focus:outline-none focus:border-blue-500"
+                  rows="3"
+                  required
+                />
+              </div>
+            )}
           </div>
 
           {/* Form Grid */}

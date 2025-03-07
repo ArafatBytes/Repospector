@@ -89,23 +89,51 @@ export default function InspectionView() {
                 <div className="flex items-center gap-1">
                   <input
                     type="radio"
-                    checked={inspection.reportType === "PROGRESS"}
+                    checked={inspection.reportType === "INCOMPLETE_WORK"}
                     readOnly
                     className="form-radio"
                   />
-                  <span>PROGRESS</span>
+                  <span>Incomplete work</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <input
                     type="radio"
-                    checked={inspection.reportType === "FINAL"}
+                    checked={inspection.reportType === "COMPLETE"}
                     readOnly
                     className="form-radio"
                   />
-                  <span>FINAL</span>
+                  <span>Complete</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <input
+                    type="radio"
+                    checked={inspection.reportType === "CONFORMANCE"}
+                    readOnly
+                    className="form-radio"
+                  />
+                  <span>Conformance</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <input
+                    type="radio"
+                    checked={inspection.reportType === "NON_CONFORMANCE"}
+                    readOnly
+                    className="form-radio"
+                  />
+                  <span>Non-conformance</span>
                 </div>
               </div>
             </div>
+
+            {inspection.reportType === "NON_CONFORMANCE" &&
+              inspection.nonConformanceReason && (
+                <div className="mt-3 ml-6">
+                  <p className="font-medium">Reason for Non-conformance:</p>
+                  <p className="border p-2 rounded bg-gray-50 mt-1">
+                    {inspection.nonConformanceReason}
+                  </p>
+                </div>
+              )}
           </div>
 
           {/* Form Grid */}

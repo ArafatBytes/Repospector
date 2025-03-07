@@ -9,8 +9,14 @@ const inspectionSchema = new mongoose.Schema(
     },
     reportType: {
       type: String,
-      enum: ["PROGRESS", "FINAL"],
+      enum: ["INCOMPLETE_WORK", "COMPLETE", "CONFORMANCE", "NON_CONFORMANCE"],
       required: true,
+    },
+    nonConformanceReason: {
+      type: String,
+      required: function () {
+        return this.reportType === "NON_CONFORMANCE";
+      },
     },
     inspectorEmail: {
       type: String,
