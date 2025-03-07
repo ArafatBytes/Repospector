@@ -130,6 +130,79 @@ export async function POST(request) {
         });
       });
 
+      // Special handling for Special Inspection Report images
+      if (reportType === "SPECIAL_INSPECTION") {
+        await page.evaluate(() => {
+          // Find all images in the report
+          const images = document.querySelectorAll(
+            'img:not([src^="/images/logo"])'
+          );
+
+          // Adjust each image
+          images.forEach((img) => {
+            // Set max dimensions
+            img.style.maxWidth = "90%";
+            img.style.maxHeight = "250px";
+            img.style.height = "auto";
+            img.style.objectFit = "contain";
+            img.style.margin = "0 auto";
+
+            // Remove any fixed width/height attributes
+            img.removeAttribute("width");
+            img.removeAttribute("height");
+          });
+
+          // Find the "Comments and additional information, including photographs" section
+          const commentsSection = Array.from(
+            document.querySelectorAll("h2, .text-lg")
+          ).find((el) =>
+            el.textContent.includes("Comments and additional information")
+          );
+
+          if (commentsSection) {
+            // Find the parent container of the section
+            let sectionContainer =
+              commentsSection.closest(".mb-8") ||
+              commentsSection.closest(".border");
+
+            if (sectionContainer) {
+              // Find all images in this section
+              const sectionImages = sectionContainer.querySelectorAll("img");
+
+              sectionImages.forEach((img) => {
+                // Apply more specific styling to these images
+                img.style.maxWidth = "85%";
+                img.style.maxHeight = "180px";
+                img.style.objectFit = "contain";
+                img.style.margin = "0 auto";
+                img.style.display = "block";
+              });
+
+              // Find image grid containers
+              const gridContainers = sectionContainer.querySelectorAll(
+                ".grid, .grid-cols-1, .grid-cols-2, .grid-cols-3"
+              );
+
+              gridContainers.forEach((grid) => {
+                grid.style.display = "grid";
+                grid.style.gridGap = "10px";
+                grid.style.marginBottom = "15px";
+
+                // Find all divs directly inside the grid (image containers)
+                const cells = grid.querySelectorAll(":scope > div");
+                cells.forEach((cell) => {
+                  cell.style.height = "auto";
+                  cell.style.overflow = "hidden";
+                  cell.style.display = "flex";
+                  cell.style.justifyContent = "center";
+                  cell.style.alignItems = "center";
+                });
+              });
+            }
+          }
+        });
+      }
+
       // Add custom styles for PDF
       await page.addStyleTag({
         content: `
@@ -144,6 +217,41 @@ export async function POST(request) {
           .no-print {
             display: none !important;
           }
+          ${
+            reportType === "SPECIAL_INSPECTION"
+              ? `
+          /* Special styles only for Special Inspection Report */
+          img {
+            max-width: 90% !important;
+            max-height: 250px !important;
+            height: auto !important;
+            object-fit: contain !important;
+            margin: 0 auto !important;
+          }
+          
+          /* Target the image grid in the Special Inspection Report */
+          .grid-cols-1 img, .grid-cols-2 img, .grid-cols-3 img {
+            width: auto !important;
+            max-height: 200px !important;
+            object-fit: contain !important;
+            display: block !important;
+            margin: 0 auto !important;
+          }
+          
+          /* Ensure image containers don't overflow */
+          .grid, .grid-cols-1, .grid-cols-2, .grid-cols-3 {
+            display: grid !important;
+            grid-gap: 10px !important;
+          }
+          
+          /* Ensure image containers have proper height */
+          .grid > div, .grid-cols-1 > div, .grid-cols-2 > div, .grid-cols-3 > div {
+            height: auto !important;
+            overflow: hidden !important;
+          }
+          `
+              : ""
+          }
         `,
       });
 
@@ -151,8 +259,8 @@ export async function POST(request) {
       const landscapeReports = ["AIR_BALANCING", "DAILY_FIELD"];
       const isLandscape = landscapeReports.includes(reportType);
 
-      // Generate PDF
-      const pdfBuffer = await page.pdf({
+      // Special PDF settings for Special Inspection Reports
+      const pdfSettings = {
         format: "A4",
         landscape: isLandscape,
         printBackground: false,
@@ -165,7 +273,21 @@ export async function POST(request) {
         preferCSSPageSize: true,
         displayHeaderFooter: false,
         footerTemplate: ``,
-      });
+      };
+
+      // Adjust settings for Special Inspection Reports
+      if (reportType === "SPECIAL_INSPECTION") {
+        pdfSettings.scale = 0.95; // Slightly scale down content
+        pdfSettings.margin = {
+          top: "10mm",
+          right: "0mm",
+          bottom: "10mm",
+          left: "0mm",
+        };
+      }
+
+      // Generate PDF
+      const pdfBuffer = await page.pdf(pdfSettings);
 
       // Close browser
       await browser.close();
