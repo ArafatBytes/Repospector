@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { jwtVerify } from "jose";
+import { getToken } from "next-auth/jwt";
 
 // Array of paths that require authentication
 const protectedPaths = ["/dashboard", "/account", "/create"];
@@ -20,6 +21,30 @@ export async function middleware(request) {
   );
   const isAuthPath = authPaths.some((prefix) => path.startsWith(prefix));
   const isAdminPath = adminPaths.some((prefix) => path.startsWith(prefix));
+
+  // Check if the request is for an API route
+  if (path.startsWith("/api/")) {
+    // Exclude authentication routes
+    if (
+      path.startsWith("/api/login") ||
+      path.startsWith("/api/register") ||
+      path.startsWith("/api/forgot-password") ||
+      path.startsWith("/api/reset-password")
+    ) {
+      return NextResponse.next();
+    }
+
+    // Get the token
+    const apiToken = await getToken({
+      req: request,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
+
+    // If no token, return unauthorized
+    if (!apiToken) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+  }
 
   try {
     if (!token && (isProtectedPath || isAdminPath)) {

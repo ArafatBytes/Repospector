@@ -1,91 +1,67 @@
-export function generateInspectionPDF(
+import { toast } from "react-hot-toast";
+
+export async function generateInspectionPDF(
   inspectionId,
   projectName,
   reportType = "SPECIAL_INSPECTION"
 ) {
-  // Store the current URL to return to
-  const returnUrl = window.location.href;
+  try {
+    // Show loading toast
+    const loadingToast = toast.loading("Generating PDF...");
 
-  // Open inspection view in a new window based on report type
-  const viewUrl =
-    reportType === "AIR_BALANCING"
-      ? `/air-balancing/${inspectionId}`
-      : reportType === "CONCRETE"
-      ? `/concrete/${inspectionId}`
-      : reportType === "DAILY_FIELD"
-      ? `/daily-field/${inspectionId}`
-      : reportType === "FIRESTOPPING"
-      ? `/firestopping/${inspectionId}`
-      : reportType === "INSULATION"
-      ? `/insulation/${inspectionId}`
-      : reportType === "PARAPET"
-      ? `/parapet/${inspectionId}`
-      : reportType === "STRUCTURAL"
-      ? `/structural/${inspectionId}`
-      : `/inspection/${inspectionId}`;
-  const printWindow = window.open(viewUrl, "_blank");
+    // Ensure inspectionId and reportType are valid
+    if (!inspectionId) {
+      throw new Error("Report ID is required");
+    }
 
-  if (!printWindow) {
-    console.error("Failed to open print window");
-    return;
+    // Call our API endpoint to generate the PDF
+    const response = await fetch("/api/pdf", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        reportId: inspectionId,
+        reportType: reportType || "SPECIAL_INSPECTION",
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Failed to generate PDF");
+    }
+
+    // Get the PDF blob from the response
+    const pdfBlob = await response.blob();
+
+    // Create a URL for the blob
+    const pdfUrl = URL.createObjectURL(pdfBlob);
+
+    // Create a filename with fallback for undefined projectName
+    const safeProjectName = (projectName || "report")
+      .toString()
+      .replace(/[^a-z0-9_-]/gi, "_");
+    const fileName = `${(
+      reportType || "report"
+    ).toLowerCase()}_${safeProjectName}.pdf`;
+
+    // Create a temporary link element to trigger the download
+    const downloadLink = document.createElement("a");
+    downloadLink.href = pdfUrl;
+    downloadLink.download = fileName;
+
+    // Append to the document, click it, and remove it
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+
+    // Clean up the URL object
+    setTimeout(() => URL.revokeObjectURL(pdfUrl), 100);
+
+    // Show success toast
+    toast.success("PDF downloaded successfully", { id: loadingToast });
+  } catch (error) {
+    console.error("Error generating PDF:", error);
+    toast.error(error.message || "Failed to generate PDF");
   }
-
-  // Function to check if the page is fully loaded
-  const checkPageLoaded = () => {
-    if (
-      printWindow.document.readyState === "complete" &&
-      printWindow.document.querySelector(".max-w-4xl") // Check for main content container
-    ) {
-      return true;
-    }
-    return false;
-  };
-
-  // Function to handle printing
-  const handlePrint = () => {
-    // Add a small delay to ensure all styles are applied
-    setTimeout(() => {
-      // Trigger print
-      printWindow.print();
-
-      // Add event listener to close window after printing
-      printWindow.document.addEventListener(
-        "mouseover",
-        function closeWindow() {
-          printWindow.document.removeEventListener("mouseover", closeWindow);
-          printWindow.close();
-          window.location.href = returnUrl;
-        }
-      );
-
-      // Fallback for when print dialog is cancelled
-      const checkPrintDialog = setInterval(() => {
-        try {
-          if (!printWindow || printWindow.closed) {
-            clearInterval(checkPrintDialog);
-            window.location.href = returnUrl;
-          }
-        } catch (e) {
-          clearInterval(checkPrintDialog);
-          window.location.href = returnUrl;
-        }
-      }, 500);
-    }, 1000); // 1 second delay after content is loaded
-  };
-
-  // Check if page is loaded
-  const loadCheck = setInterval(() => {
-    if (checkPageLoaded()) {
-      clearInterval(loadCheck);
-      handlePrint();
-    }
-  }, 100); // Check every 100ms
-
-  // Fallback if load check fails
-  setTimeout(() => {
-    clearInterval(loadCheck);
-    if (checkPageLoaded()) {
-      handlePrint();
-    }
-  }, 10000); // 10 second maximum wait time
 }

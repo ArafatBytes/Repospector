@@ -297,17 +297,14 @@ function DashboardContent() {
   };
 
   const handleDownload = async (inspection) => {
-    const loadingToast = toast.loading("Generating PDF...");
     try {
       await generateInspectionPDF(
         inspection._id,
         inspection.projectName || inspection.client,
         inspection.reportType
       );
-      toast.success("PDF downloaded successfully", { id: loadingToast });
     } catch (error) {
       console.error("Error downloading inspection:", error);
-      toast.error("Failed to generate PDF", { id: loadingToast });
     }
   };
 
