@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import puppeteer from "puppeteer";
+import { chromium } from "playwright-core";
 import { jwtVerify } from "jose";
 
 export async function POST(request) {
@@ -77,8 +77,8 @@ export async function POST(request) {
     // Launch browser with proper error handling
     let browser;
     try {
-      browser = await puppeteer.launch({
-        headless: "new",
+      browser = await chromium.launch({
+        headless: true,
         args: ["--no-sandbox", "--disable-setuid-sandbox"],
       });
     } catch (error) {
@@ -90,31 +90,39 @@ export async function POST(request) {
     }
 
     try {
-      const page = await browser.newPage();
+      // Create a new browser context
+      const context = await browser.newContext();
 
-      // Set the cookie for authentication
-      await page.setCookie({
-        name: "token",
-        value: token.value,
-        domain: new URL(baseUrl).hostname,
-        path: "/",
-      });
+      // Add the authentication cookie
+      await context.addCookies([
+        {
+          name: "token",
+          value: token.value,
+          domain: new URL(baseUrl).hostname,
+          path: "/",
+        },
+      ]);
 
-      // Set viewport to a typical page size
-      await page.setViewport({
+      // Create a new page
+      const page = await context.newPage();
+
+      // Set viewport size
+      await page.setViewportSize({
         width: 1200,
         height: 1600,
-        deviceScaleFactor: 1,
       });
 
       // Navigate to the report page
-      await page.goto(reportUrl, { waitUntil: "networkidle0" });
+      console.log(`Navigating to ${reportUrl} for ${reportType} report...`);
+      await page.goto(reportUrl, { waitUntil: "networkidle" });
 
       // Wait for the content to be fully loaded - different reports may have different selectors
       try {
         // Try the most common selector first
+        console.log("Waiting for .max-w-4xl selector...");
         await page.waitForSelector(".max-w-4xl", { timeout: 5000 });
       } catch (error) {
+        console.log("First selector not found, trying alternative...");
         // If that fails, wait for any content to load
         await page.waitForSelector(".min-h-screen", { timeout: 5000 });
       }
@@ -263,31 +271,46 @@ export async function POST(request) {
       const pdfSettings = {
         format: "A4",
         landscape: isLandscape,
-        printBackground: false,
+        printBackground: true,
         margin: {
           top: "10mm",
-          right: "0mm",
-          bottom: "10mm",
-          left: "0mm",
+          right: "10mm",
+          bottom: "20mm",
+          left: "10mm",
         },
-        preferCSSPageSize: true,
-        displayHeaderFooter: false,
-        footerTemplate: ``,
+        displayHeaderFooter: true,
+        headerTemplate: " ",
+        footerTemplate: `
+          <div style="width: 100%; font-size: 10px; text-align: center; color: #666; padding: 0 10mm;">
+            <span>Page <span class="pageNumber"></span> of <span class="totalPages"></span></span>
+            <div style="margin-top: 5px;">Generated on ${new Date().toLocaleDateString()}</div>
+          </div>
+        `,
       };
 
       // Adjust settings for Special Inspection Reports
       if (reportType === "SPECIAL_INSPECTION") {
         pdfSettings.scale = 0.95; // Slightly scale down content
         pdfSettings.margin = {
-          top: "10mm",
-          right: "0mm",
-          bottom: "10mm",
-          left: "0mm",
+          top: "15mm",
+          right: "15mm",
+          bottom: "20mm",
+          left: "15mm",
         };
       }
 
       // Generate PDF
+      console.log(`Generating PDF for ${reportType} report...`);
       const pdfBuffer = await page.pdf(pdfSettings);
+
+      // Verify PDF buffer
+      if (!pdfBuffer || pdfBuffer.length === 0) {
+        throw new Error("PDF generation failed: Empty buffer received");
+      }
+
+      console.log(
+        `PDF generated successfully using Playwright for ${reportType} report with ID: ${reportId} (${pdfBuffer.length} bytes)`
+      );
 
       // Close browser
       await browser.close();
