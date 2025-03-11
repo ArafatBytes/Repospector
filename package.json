@@ -6,13 +6,11 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "postinstall": "playwright install --with-deps"
+    "lint": "next lint"
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^3.8.0",
     "@heroicons/react": "^2.2.0",
-    "@playwright/test": "^1.49.1",
     "bcryptjs": "^2.4.3",
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.7",
@@ -29,7 +27,6 @@
     "next": "15.1.0",
     "next-auth": "^4.24.11",
     "nodemailer": "^6.9.16",
-    "playwright-core": "^1.49.1",
     "postmark": "^4.0.5",
     "puppeteer": "^23.11.1",
     "react": "^19.0.0",
