@@ -1,0 +1,9 @@
+{
+  "functions": {
+    "app/api/pdf/route.js": {
+      "memory": 3008,
+      "maxDuration": 60
+    }
+  },
+  "crons": []
+}

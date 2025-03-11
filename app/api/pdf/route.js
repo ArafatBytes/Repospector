@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
-import { chromium } from "playwright-core";
+import chromium from "@sparticuz/chromium";
+import puppeteer from "puppeteer-core";
 import { jwtVerify } from "jose";
+
+export const maxDuration = 60; // Set maximum execution time to 60 seconds
 
 export async function POST(request) {
   try {
@@ -77,54 +80,60 @@ export async function POST(request) {
     // Launch browser with proper error handling
     let browser;
     try {
-      browser = await chromium.launch({
-        headless: true,
-        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      // Configure browser for serverless environment
+      const executablePath = await chromium.executablePath();
+
+      browser = await puppeteer.launch({
+        args: chromium.args,
+        defaultViewport: chromium.defaultViewport,
+        executablePath,
+        headless: chromium.headless,
+        ignoreHTTPSErrors: true,
       });
     } catch (error) {
       console.error("Error launching browser:", error);
       return NextResponse.json(
-        { error: "Failed to initialize PDF generation" },
+        { error: "Failed to initialize PDF generation: " + error.message },
         { status: 500 }
       );
     }
 
     try {
-      // Create a new browser context
-      const context = await browser.newContext();
+      const page = await browser.newPage();
 
-      // Add the authentication cookie
-      await context.addCookies([
-        {
-          name: "token",
-          value: token.value,
-          domain: new URL(baseUrl).hostname,
-          path: "/",
-        },
-      ]);
-
-      // Create a new page
-      const page = await context.newPage();
-
-      // Set viewport size
-      await page.setViewportSize({
-        width: 1200,
-        height: 1600,
+      // Set the cookie for authentication
+      await page.setCookie({
+        name: "token",
+        value: token.value,
+        domain: new URL(baseUrl).hostname,
+        path: "/",
       });
 
-      // Navigate to the report page
-      console.log(`Navigating to ${reportUrl} for ${reportType} report...`);
-      await page.goto(reportUrl, { waitUntil: "networkidle" });
+      // Set viewport to a typical page size
+      await page.setViewport({
+        width: 1200,
+        height: 1600,
+        deviceScaleFactor: 1,
+      });
+
+      // Set a longer timeout for navigation
+      await page.goto(reportUrl, {
+        waitUntil: "networkidle0",
+        timeout: 30000, // 30 seconds timeout
+      });
 
       // Wait for the content to be fully loaded - different reports may have different selectors
       try {
         // Try the most common selector first
-        console.log("Waiting for .max-w-4xl selector...");
-        await page.waitForSelector(".max-w-4xl", { timeout: 5000 });
+        await page.waitForSelector(".max-w-4xl", { timeout: 10000 });
       } catch (error) {
-        console.log("First selector not found, trying alternative...");
         // If that fails, wait for any content to load
-        await page.waitForSelector(".min-h-screen", { timeout: 5000 });
+        try {
+          await page.waitForSelector(".min-h-screen", { timeout: 10000 });
+        } catch (secondError) {
+          console.error("Error waiting for content:", secondError);
+          // Continue anyway, maybe the page loaded but doesn't have these selectors
+        }
       }
 
       // Hide elements that shouldn't be in the PDF
@@ -278,8 +287,8 @@ export async function POST(request) {
           bottom: "20mm",
           left: "10mm",
         },
+        preferCSSPageSize: true,
         displayHeaderFooter: true,
-        headerTemplate: " ",
         footerTemplate: `
           <div style="width: 100%; font-size: 10px; text-align: center; color: #666; padding: 0 10mm;">
             <span>Page <span class="pageNumber"></span> of <span class="totalPages"></span></span>
@@ -300,17 +309,7 @@ export async function POST(request) {
       }
 
       // Generate PDF
-      console.log(`Generating PDF for ${reportType} report...`);
       const pdfBuffer = await page.pdf(pdfSettings);
-
-      // Verify PDF buffer
-      if (!pdfBuffer || pdfBuffer.length === 0) {
-        throw new Error("PDF generation failed: Empty buffer received");
-      }
-
-      console.log(
-        `PDF generated successfully using Playwright for ${reportType} report with ID: ${reportId} (${pdfBuffer.length} bytes)`
-      );
 
       // Close browser
       await browser.close();
