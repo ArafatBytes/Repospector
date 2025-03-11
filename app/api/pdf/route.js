@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import puppeteer from "puppeteer";
+import chromium from "@sparticuz/chromium";
+import puppeteer from "puppeteer-core";
 import { jwtVerify } from "jose";
 
 export async function POST(request) {
@@ -77,14 +78,20 @@ export async function POST(request) {
     // Launch browser with proper error handling
     let browser;
     try {
+      // Configure Chrome for serverless environment
+      const executablePath = await chromium.executablePath();
+
       browser = await puppeteer.launch({
-        headless: "new",
-        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+        args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
+        defaultViewport: chromium.defaultViewport,
+        executablePath,
+        headless: true,
+        ignoreHTTPSErrors: true,
       });
     } catch (error) {
       console.error("Error launching browser:", error);
       return NextResponse.json(
-        { error: "Failed to initialize PDF generation" },
+        { error: `Failed to initialize PDF generation: ${error.message}` },
         { status: 500 }
       );
     }
@@ -263,26 +270,31 @@ export async function POST(request) {
       const pdfSettings = {
         format: "A4",
         landscape: isLandscape,
-        printBackground: false,
+        printBackground: true,
         margin: {
           top: "10mm",
-          right: "0mm",
-          bottom: "10mm",
-          left: "0mm",
+          right: "10mm",
+          bottom: "20mm",
+          left: "10mm",
         },
         preferCSSPageSize: true,
-        displayHeaderFooter: false,
-        footerTemplate: ``,
+        displayHeaderFooter: true,
+        footerTemplate: `
+          <div style="width: 100%; font-size: 10px; text-align: center; color: #666; padding: 0 10mm;">
+            <span>Page <span class="pageNumber"></span> of <span class="totalPages"></span></span>
+            <div style="margin-top: 5px;">Generated on ${new Date().toLocaleDateString()}</div>
+          </div>
+        `,
       };
 
       // Adjust settings for Special Inspection Reports
       if (reportType === "SPECIAL_INSPECTION") {
         pdfSettings.scale = 0.95; // Slightly scale down content
         pdfSettings.margin = {
-          top: "10mm",
-          right: "0mm",
-          bottom: "10mm",
-          left: "0mm",
+          top: "15mm",
+          right: "15mm",
+          bottom: "20mm",
+          left: "15mm",
         };
       }
 
