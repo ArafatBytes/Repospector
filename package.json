@@ -6,13 +6,11 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "postinstall": "node node_modules/@sparticuz/chromium/install.js"
+    "lint": "next lint"
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^3.8.0",
     "@heroicons/react": "^2.2.0",
-    "@sparticuz/chromium": "^133.0.0",
     "bcryptjs": "^2.4.3",
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.7",
@@ -31,7 +29,6 @@
     "nodemailer": "^6.9.16",
     "postmark": "^4.0.5",
     "puppeteer": "^23.11.1",
-    "puppeteer-core": "^24.4.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hot-toast": "^2.4.1",
