@@ -1,4 +1,16 @@
 import { toast } from "react-hot-toast";
+import { pdf } from "@react-pdf/renderer";
+import { saveAs } from "file-saver";
+
+// Import PDF document components
+import { SpecialInspectionPDF } from "../components/pdf/SpecialInspectionPDF";
+import { AirBalancingPDF } from "../components/pdf/AirBalancingPDF";
+import { ConcretePDF } from "../components/pdf/ConcretePDF";
+import { DailyFieldPDF } from "../components/pdf/DailyFieldPDF";
+import { FirestoppingPDF } from "../components/pdf/FirestoppingPDF";
+import { InsulationPDF } from "../components/pdf/InsulationPDF";
+import { ParapetPDF } from "../components/pdf/ParapetPDF";
+import { StructuralPDF } from "../components/pdf/StructuralPDF";
 
 export async function generateInspectionPDF(
   inspectionId,
@@ -9,35 +21,21 @@ export async function generateInspectionPDF(
     // Show loading toast
     const loadingToast = toast.loading("Generating PDF...");
 
-    // Ensure inspectionId and reportType are valid
+    // Ensure inspectionId is valid
     if (!inspectionId) {
       throw new Error("Report ID is required");
     }
 
-    // Call our API endpoint to generate the PDF
-    const response = await fetch("/api/pdf", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        reportId: inspectionId,
-        reportType: reportType || "SPECIAL_INSPECTION",
-      }),
-    });
-
+    // Fetch the report data
+    const response = await fetch(`/api/inspections/${inspectionId}`);
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.error || "Failed to generate PDF");
+      throw new Error(errorData.error || "Failed to fetch report data");
     }
 
-    // Get the PDF blob from the response
-    const pdfBlob = await response.blob();
+    const reportData = await response.json();
 
-    // Create a URL for the blob
-    const pdfUrl = URL.createObjectURL(pdfBlob);
-
-    // Create a filename with fallback for undefined projectName
+    // Create a safe filename
     const safeProjectName = (projectName || "report")
       .toString()
       .replace(/[^a-z0-9_-]/gi, "_");
@@ -45,18 +43,42 @@ export async function generateInspectionPDF(
       reportType || "report"
     ).toLowerCase()}_${safeProjectName}.pdf`;
 
-    // Create a temporary link element to trigger the download
-    const downloadLink = document.createElement("a");
-    downloadLink.href = pdfUrl;
-    downloadLink.download = fileName;
+    // Select the appropriate PDF component based on report type
+    let PDFDocument;
+    switch (reportType) {
+      case "SPECIAL_INSPECTION":
+        PDFDocument = SpecialInspectionPDF;
+        break;
+      case "AIR_BALANCING":
+        PDFDocument = AirBalancingPDF;
+        break;
+      case "CONCRETE":
+        PDFDocument = ConcretePDF;
+        break;
+      case "DAILY_FIELD":
+        PDFDocument = DailyFieldPDF;
+        break;
+      case "FIRESTOPPING":
+        PDFDocument = FirestoppingPDF;
+        break;
+      case "INSULATION":
+        PDFDocument = InsulationPDF;
+        break;
+      case "PARAPET":
+        PDFDocument = ParapetPDF;
+        break;
+      case "STRUCTURAL":
+        PDFDocument = StructuralPDF;
+        break;
+      default:
+        throw new Error("Invalid report type");
+    }
 
-    // Append to the document, click it, and remove it
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    document.body.removeChild(downloadLink);
+    // Generate the PDF blob
+    const blob = await pdf(<PDFDocument data={reportData} />).toBlob();
 
-    // Clean up the URL object
-    setTimeout(() => URL.revokeObjectURL(pdfUrl), 100);
+    // Save the PDF file
+    saveAs(blob, fileName);
 
     // Show success toast
     toast.success("PDF downloaded successfully", { id: loadingToast });
