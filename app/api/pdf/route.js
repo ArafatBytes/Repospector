@@ -1,9 +1,6 @@
 import { NextResponse } from "next/server";
-import chromium from "@sparticuz/chromium";
-import puppeteer from "puppeteer-core";
+import puppeteer from "puppeteer";
 import { jwtVerify } from "jose";
-
-export const maxDuration = 60; // Set maximum execution time to 60 seconds
 
 export async function POST(request) {
   try {
@@ -80,20 +77,14 @@ export async function POST(request) {
     // Launch browser with proper error handling
     let browser;
     try {
-      // Configure browser for serverless environment
-      const executablePath = await chromium.executablePath();
-
       browser = await puppeteer.launch({
-        args: chromium.args,
-        defaultViewport: chromium.defaultViewport,
-        executablePath,
-        headless: chromium.headless,
-        ignoreHTTPSErrors: true,
+        headless: "new",
+        args: ["--no-sandbox", "--disable-setuid-sandbox"],
       });
     } catch (error) {
       console.error("Error launching browser:", error);
       return NextResponse.json(
-        { error: "Failed to initialize PDF generation: " + error.message },
+        { error: "Failed to initialize PDF generation" },
         { status: 500 }
       );
     }
@@ -116,24 +107,16 @@ export async function POST(request) {
         deviceScaleFactor: 1,
       });
 
-      // Set a longer timeout for navigation
-      await page.goto(reportUrl, {
-        waitUntil: "networkidle0",
-        timeout: 30000, // 30 seconds timeout
-      });
+      // Navigate to the report page
+      await page.goto(reportUrl, { waitUntil: "networkidle0" });
 
       // Wait for the content to be fully loaded - different reports may have different selectors
       try {
         // Try the most common selector first
-        await page.waitForSelector(".max-w-4xl", { timeout: 10000 });
+        await page.waitForSelector(".max-w-4xl", { timeout: 5000 });
       } catch (error) {
         // If that fails, wait for any content to load
-        try {
-          await page.waitForSelector(".min-h-screen", { timeout: 10000 });
-        } catch (secondError) {
-          console.error("Error waiting for content:", secondError);
-          // Continue anyway, maybe the page loaded but doesn't have these selectors
-        }
+        await page.waitForSelector(".min-h-screen", { timeout: 5000 });
       }
 
       // Hide elements that shouldn't be in the PDF
@@ -280,31 +263,26 @@ export async function POST(request) {
       const pdfSettings = {
         format: "A4",
         landscape: isLandscape,
-        printBackground: true,
+        printBackground: false,
         margin: {
           top: "10mm",
-          right: "10mm",
-          bottom: "20mm",
-          left: "10mm",
+          right: "0mm",
+          bottom: "10mm",
+          left: "0mm",
         },
         preferCSSPageSize: true,
-        displayHeaderFooter: true,
-        footerTemplate: `
-          <div style="width: 100%; font-size: 10px; text-align: center; color: #666; padding: 0 10mm;">
-            <span>Page <span class="pageNumber"></span> of <span class="totalPages"></span></span>
-            <div style="margin-top: 5px;">Generated on ${new Date().toLocaleDateString()}</div>
-          </div>
-        `,
+        displayHeaderFooter: false,
+        footerTemplate: ``,
       };
 
       // Adjust settings for Special Inspection Reports
       if (reportType === "SPECIAL_INSPECTION") {
         pdfSettings.scale = 0.95; // Slightly scale down content
         pdfSettings.margin = {
-          top: "15mm",
-          right: "15mm",
-          bottom: "20mm",
-          left: "15mm",
+          top: "10mm",
+          right: "0mm",
+          bottom: "10mm",
+          left: "0mm",
         };
       }
 
