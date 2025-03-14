@@ -4,8 +4,10 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import { ArrowLeftIcon, PrinterIcon } from "@heroicons/react/24/outline";
 import { format } from "date-fns";
+import { printElementAsPDF } from "../../utils/generatePDF";
+import { toast } from "react-hot-toast";
 
 export default function InspectionView() {
   const router = useRouter();
@@ -35,6 +37,18 @@ export default function InspectionView() {
     fetchInspection();
   }, [params?.id]);
 
+  const handlePrint = () => {
+    // Use our utility function to print the report
+    try {
+      printElementAsPDF(
+        "inspection-report",
+        `${inspection.projectName || "Inspection"} Report`
+      );
+    } catch (error) {
+      console.error("Error printing report:", error);
+    }
+  };
+
   if (loading) {
     return <div className="text-center mt-8">Loading inspection...</div>;
   }
@@ -53,17 +67,26 @@ export default function InspectionView() {
 
   return (
     <div className="max-w-4xl mx-auto py-8 px-4">
-      <div className="text-right mb-4">
-        <Link
-          href="/dashboard"
-          className="text-[#4A90E2] hover:text-[#357ABD] transition-colors text-base inline-flex items-center gap-2"
-        >
-          <ArrowLeftIcon className="h-5 w-5" />
-          Back to Dashboard
-        </Link>
+      <div className="text-right mb-4 no-print">
+        <div className="flex justify-between items-center">
+          <Link
+            href="/dashboard"
+            className="text-[#4A90E2] hover:text-[#357ABD] transition-colors text-base inline-flex items-center gap-2"
+          >
+            <ArrowLeftIcon className="h-5 w-5" />
+            Back to Dashboard
+          </Link>
+          <button
+            onClick={handlePrint}
+            className="bg-[#4A90E2] hover:bg-[#357ABD] text-white px-4 py-2 rounded flex items-center gap-2"
+          >
+            <PrinterIcon className="h-5 w-5" />
+            Print Report
+          </button>
+        </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm">
+      <div id="inspection-report" className="bg-white rounded-lg shadow-sm">
         {/* Logo */}
         <div className="flex justify-center mb-8">
           <Image
@@ -76,17 +99,23 @@ export default function InspectionView() {
         </div>
 
         {/* Header */}
-        <div className="bg-[#4A90E2] text-white text-center py-3 rounded-t-lg text-xl font-medium">
+        <div
+          className="bg-[#4A90E2] text-white text-center py-3 rounded-t-lg text-xl font-medium"
+          style={{
+            backgroundColor: "#4A90E2 !important",
+            color: "white !important",
+          }}
+        >
           Special Inspection Report
         </div>
 
         <div className="p-6">
           {/* Report Type */}
           <div className="mb-6">
-            <div className="flex items-center gap-2">
-              <span className="font-medium">REPORT:</span>
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-1">
+            <div className="flex flex-wrap md:flex-nowrap items-center gap-2">
+              <span className="font-medium whitespace-nowrap">REPORT:</span>
+              <div className="flex flex-wrap md:flex-nowrap items-center gap-2 md:gap-4">
+                <div className="flex items-center gap-1 whitespace-nowrap">
                   <input
                     type="radio"
                     checked={inspection.reportType === "INCOMPLETE_WORK"}
@@ -95,7 +124,7 @@ export default function InspectionView() {
                   />
                   <span>Incomplete work</span>
                 </div>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1 whitespace-nowrap">
                   <input
                     type="radio"
                     checked={inspection.reportType === "COMPLETE"}
@@ -104,7 +133,7 @@ export default function InspectionView() {
                   />
                   <span>Complete</span>
                 </div>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1 whitespace-nowrap">
                   <input
                     type="radio"
                     checked={inspection.reportType === "CONFORMANCE"}
@@ -113,7 +142,7 @@ export default function InspectionView() {
                   />
                   <span>Conformance</span>
                 </div>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1 whitespace-nowrap">
                   <input
                     type="radio"
                     checked={inspection.reportType === "NON_CONFORMANCE"}
@@ -373,7 +402,13 @@ export default function InspectionView() {
           {/* Detailed Sections */}
           {inspection.structuralSteelWelding && (
             <div className="col-span-2 mt-8 border-t pt-6">
-              <h3 className="bg-[#4A90E2] text-white text-center py-2 rounded-md text-lg font-medium mb-6">
+              <h3
+                className="bg-[#4A90E2] text-white text-center py-2 rounded-md text-lg font-medium mb-6"
+                style={{
+                  backgroundColor: "#4A90E2 !important",
+                  color: "white !important",
+                }}
+              >
                 Structural Steel - Welding, as per BC 1704.3.1
               </h3>
               <div className="space-y-4">
@@ -677,7 +712,13 @@ export default function InspectionView() {
 
           {inspection.structuralSteelDetails && (
             <div className="col-span-2 mt-8 border-t pt-6">
-              <h3 className="bg-[#4A90E2] text-white text-center py-2 rounded-md text-lg font-medium mb-6">
+              <h3
+                className="bg-[#4A90E2] text-white text-center py-2 rounded-md text-lg font-medium mb-6"
+                style={{
+                  backgroundColor: "#4A90E2 !important",
+                  color: "white !important",
+                }}
+              >
                 Structural Steel - Details, as per BC 1704.3.2
               </h3>
               <div className="space-y-4">
@@ -892,7 +933,13 @@ export default function InspectionView() {
 
           {inspection.structuralSteelBolting && (
             <div className="col-span-2 mt-8 border-t pt-6">
-              <h3 className="bg-[#4A90E2] text-white text-center py-2 rounded-md text-lg font-medium mb-6">
+              <h3
+                className="bg-[#4A90E2] text-white text-center py-2 rounded-md text-lg font-medium mb-6"
+                style={{
+                  backgroundColor: "#4A90E2 !important",
+                  color: "white !important",
+                }}
+              >
                 Structural Steel - High Strength Bolting, as per BC 1704.3.3
               </h3>
               <div className="space-y-4">
@@ -1190,7 +1237,13 @@ export default function InspectionView() {
 
           {inspection.mechanicalSystems && (
             <div className="col-span-2 mt-8 border-t pt-6">
-              <h3 className="bg-[#4A90E2] text-white text-center py-2 rounded-md text-lg font-medium mb-6">
+              <h3
+                className="bg-[#4A90E2] text-white text-center py-2 rounded-md text-lg font-medium mb-6"
+                style={{
+                  backgroundColor: "#4A90E2 !important",
+                  color: "white !important",
+                }}
+              >
                 Mechanical Systems, as per BC 1704.16
               </h3>
               <div className="space-y-4">
@@ -1760,7 +1813,13 @@ export default function InspectionView() {
 
           {inspection.sprinklerSystems && (
             <div className="col-span-2 mt-8 border-t pt-6">
-              <h3 className="bg-[#4A90E2] text-white text-center py-2 rounded-md text-lg font-medium mb-6">
+              <h3
+                className="bg-[#4A90E2] text-white text-center py-2 rounded-md text-lg font-medium mb-6"
+                style={{
+                  backgroundColor: "#4A90E2 !important",
+                  color: "white !important",
+                }}
+              >
                 Sprinkler Systems, as per BC 1704.23
               </h3>
               <div className="space-y-4">
@@ -2169,7 +2228,13 @@ export default function InspectionView() {
 
           {inspection.heatingSystems && (
             <div className="col-span-2 mt-8 border-t pt-6">
-              <h3 className="bg-[#4A90E2] text-white text-center py-2 rounded-md text-lg font-medium mb-6">
+              <h3
+                className="bg-[#4A90E2] text-white text-center py-2 rounded-md text-lg font-medium mb-6"
+                style={{
+                  backgroundColor: "#4A90E2 !important",
+                  color: "white !important",
+                }}
+              >
                 Heating Systems, as per BC 1704.25
               </h3>
               <div className="space-y-4">
@@ -2187,7 +2252,13 @@ export default function InspectionView() {
 
           {inspection.fireResistantPenetrations && (
             <div className="col-span-2 mt-8 border-t pt-6">
-              <h3 className="bg-[#4A90E2] text-white text-center py-2 rounded-md text-lg font-medium mb-6">
+              <h3
+                className="bg-[#4A90E2] text-white text-center py-2 rounded-md text-lg font-medium mb-6"
+                style={{
+                  backgroundColor: "#4A90E2 !important",
+                  color: "white !important",
+                }}
+              >
                 Fire-Resistant Penetrations and Joints, as per BC 1704.27
               </h3>
               <div className="space-y-4">
@@ -2408,7 +2479,13 @@ export default function InspectionView() {
 
           {inspection.postInstalledAnchors && (
             <div className="col-span-2 mt-8 border-t pt-6">
-              <h3 className="bg-[#4A90E2] text-white text-center py-2 rounded-md text-lg font-medium mb-6">
+              <h3
+                className="bg-[#4A90E2] text-white text-center py-2 rounded-md text-lg font-medium mb-6"
+                style={{
+                  backgroundColor: "#4A90E2 !important",
+                  color: "white !important",
+                }}
+              >
                 Post-Installed Anchors (BB# 2014-018, 2014-019), as per BC
                 1704.32
               </h3>
@@ -2654,7 +2731,13 @@ export default function InspectionView() {
 
           {inspection.energyCodeCompliance && (
             <div className="col-span-2 mt-8 border-t pt-6">
-              <h3 className="bg-[#4A90E2] text-white text-center py-2 rounded-md text-lg font-medium mb-6">
+              <h3
+                className="bg-[#4A90E2] text-white text-center py-2 rounded-md text-lg font-medium mb-6"
+                style={{
+                  backgroundColor: "#4A90E2 !important",
+                  color: "white !important",
+                }}
+              >
                 Energy Code Compliance, as per BC 110.3.5
               </h3>
               <div className="space-y-4">
@@ -3569,7 +3652,13 @@ export default function InspectionView() {
 
           {inspection.fireResistanceRated && (
             <div className="col-span-2 mt-8 border-t pt-6">
-              <h3 className="bg-[#4A90E2] text-white text-center py-2 rounded-md text-lg font-medium mb-6">
+              <h3
+                className="bg-[#4A90E2] text-white text-center py-2 rounded-md text-lg font-medium mb-6"
+                style={{
+                  backgroundColor: "#4A90E2 !important",
+                  color: "white !important",
+                }}
+              >
                 Fire-Resistance Rated Construction, as per BC 110.3.4
               </h3>
               <div className="space-y-4">
@@ -3789,7 +3878,13 @@ export default function InspectionView() {
 
           {inspection.finalInspection && (
             <div className="col-span-2 mt-8 border-t pt-6">
-              <h3 className="bg-[#4A90E2] text-white text-center py-2 rounded-md text-lg font-medium mb-6">
+              <h3
+                className="bg-[#4A90E2] text-white text-center py-2 rounded-md text-lg font-medium mb-6"
+                style={{
+                  backgroundColor: "#4A90E2 !important",
+                  color: "white !important",
+                }}
+              >
                 Final Inspection, as per BC 28-116.2.4.2 and Directive 14 of
                 1975
               </h3>
@@ -4074,7 +4169,13 @@ export default function InspectionView() {
 
           {/* Comments and Images Section */}
           <div className="col-span-2 mt-8 border-t pt-6">
-            <h3 className="bg-[#4A90E2] text-white text-center py-2 rounded-md text-lg font-medium mb-6">
+            <h3
+              className="bg-[#4A90E2] text-white text-center py-2 rounded-md text-lg font-medium mb-6"
+              style={{
+                backgroundColor: "#4A90E2 !important",
+                color: "white !important",
+              }}
+            >
               Comments and additional information, including photographs
             </h3>
             {inspection.images && inspection.images.length > 0 ? (

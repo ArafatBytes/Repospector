@@ -1,89 +1,79 @@
+import printJS from "print-js";
 import { toast } from "react-hot-toast";
-import { pdf } from "@react-pdf/renderer";
-import { saveAs } from "file-saver";
 
-// Import PDF document components
-import { SpecialInspectionPDF } from "../components/pdf/SpecialInspectionPDF";
-import { AirBalancingPDF } from "../components/pdf/AirBalancingPDF";
-import { ConcretePDF } from "../components/pdf/ConcretePDF";
-import { DailyFieldPDF } from "../components/pdf/DailyFieldPDF";
-import { FirestoppingPDF } from "../components/pdf/FirestoppingPDF";
-import { InsulationPDF } from "../components/pdf/InsulationPDF";
-import { ParapetPDF } from "../components/pdf/ParapetPDF";
-import { StructuralPDF } from "../components/pdf/StructuralPDF";
-
-export async function generateInspectionPDF(
-  inspectionId,
-  projectName,
-  reportType = "SPECIAL_INSPECTION"
-) {
+/**
+ * Print an HTML element as a PDF
+ *
+ * @param {string} elementId - The ID of the HTML element to print
+ * @param {string} documentTitle - The title for the document
+ */
+export function printElementAsPDF(elementId, documentTitle) {
   try {
-    // Show loading toast
-    const loadingToast = toast.loading("Generating PDF...");
+    // Show a toast to guide the user
+    toast.success(
+      "Print dialog will open. Select 'Save as PDF' option in the destination dropdown to download the PDF. Make sure 'Background graphics' is checked in the More settings section.",
+      { duration: 7000 }
+    );
 
-    // Ensure inspectionId is valid
-    if (!inspectionId) {
-      throw new Error("Report ID is required");
-    }
+    // Add a temporary style tag to force color printing
+    const styleTag = document.createElement("style");
+    styleTag.id = "force-color-print";
+    styleTag.innerHTML = `
+      @media print {
+        * {
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+          color-adjust: exact !important;
+          forced-color-adjust: none !important;
+        }
+        .bg-\\[\\#4A90E2\\], h3.bg-\\[\\#4A90E2\\], #inspection-report h3 {
+          background-color: #4a90e2 !important;
+          color: white !important;
+        }
+      }
+    `;
+    document.head.appendChild(styleTag);
 
-    // Fetch the report data
-    const response = await fetch(`/api/inspections/${inspectionId}`);
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || "Failed to fetch report data");
-    }
+    // Configure the print options for best PDF quality
+    const printOptions = {
+      documentTitle: documentTitle,
+      printable: elementId,
+      type: "html",
+      header: null,
+      footer: null,
+      css: null,
+      scanStyles: true,
+      targetStyles: ["*"],
+      honorMarginPadding: true,
+      honorColor: true,
+      showModal: true, // Show a modal to indicate printing is in progress
+      modalMessage: "Preparing document...",
+      onLoadingEnd: () => {
+        // Remove the temporary style tag after printing
+        const tempStyle = document.getElementById("force-color-print");
+        if (tempStyle) {
+          document.head.removeChild(tempStyle);
+        }
+      },
+    };
 
-    const reportData = await response.json();
+    // Short delay to ensure the toast is seen before print dialog appears
+    setTimeout(() => {
+      // Execute the print command
+      printJS(printOptions);
+    }, 1500);
 
-    // Create a safe filename
-    const safeProjectName = (projectName || "report")
-      .toString()
-      .replace(/[^a-z0-9_-]/gi, "_");
-    const fileName = `${(
-      reportType || "report"
-    ).toLowerCase()}_${safeProjectName}.pdf`;
-
-    // Select the appropriate PDF component based on report type
-    let PDFDocument;
-    switch (reportType) {
-      case "SPECIAL_INSPECTION":
-        PDFDocument = SpecialInspectionPDF;
-        break;
-      case "AIR_BALANCING":
-        PDFDocument = AirBalancingPDF;
-        break;
-      case "CONCRETE":
-        PDFDocument = ConcretePDF;
-        break;
-      case "DAILY_FIELD":
-        PDFDocument = DailyFieldPDF;
-        break;
-      case "FIRESTOPPING":
-        PDFDocument = FirestoppingPDF;
-        break;
-      case "INSULATION":
-        PDFDocument = InsulationPDF;
-        break;
-      case "PARAPET":
-        PDFDocument = ParapetPDF;
-        break;
-      case "STRUCTURAL":
-        PDFDocument = StructuralPDF;
-        break;
-      default:
-        throw new Error("Invalid report type");
-    }
-
-    // Generate the PDF blob
-    const blob = await pdf(<PDFDocument data={reportData} />).toBlob();
-
-    // Save the PDF file
-    saveAs(blob, fileName);
-
-    // Show success toast
-    toast.success("PDF downloaded successfully", { id: loadingToast });
+    return true;
   } catch (error) {
-    console.error("Error generating PDF:", error);
-    toast.error(error.message || "Failed to generate PDF");
+    console.error("Error printing element:", error);
+    toast.error("Error preparing document: " + error.message);
+
+    // Clean up in case of error
+    const tempStyle = document.getElementById("force-color-print");
+    if (tempStyle) {
+      document.head.removeChild(tempStyle);
+    }
+
+    return false;
   }
 }

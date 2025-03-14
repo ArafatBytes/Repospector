@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect, Suspense } from "react";
 import { format, subDays } from "date-fns";
 import toast from "react-hot-toast";
-import { generateInspectionPDF } from "../utils/generatePDF";
 
 function DashboardContent() {
   const router = useRouter();
@@ -298,13 +297,33 @@ function DashboardContent() {
 
   const handleDownload = async (inspection) => {
     try {
-      await generateInspectionPDF(
-        inspection._id,
-        inspection.projectName || inspection.client,
-        inspection.reportType
-      );
+      // Define routes for different report types
+      const reportTypeRoutes = {
+        SPECIAL_INSPECTION: `/inspection/${inspection._id}`,
+        AIR_BALANCING: `/air-balancing/${inspection._id}`,
+        CONCRETE: `/concrete/${inspection._id}`,
+        DAILY_FIELD: `/daily-field/${inspection._id}`,
+        FIRESTOPPING: `/firestopping/${inspection._id}`,
+        INSULATION: `/insulation/${inspection._id}`,
+        PARAPET: `/parapet/${inspection._id}`,
+        STRUCTURAL: `/structural/${inspection._id}`,
+      };
+
+      // Get the correct route based on report type
+      const route = reportTypeRoutes[inspection.reportType];
+
+      if (route) {
+        // Navigate to the appropriate view page
+        router.push(route);
+
+        // Show a message to the user
+        toast.success("Opening report for printing...");
+      } else {
+        toast.error("Unknown report type");
+      }
     } catch (error) {
-      console.error("Error downloading inspection:", error);
+      console.error("Error navigating to report:", error);
+      toast.error("Failed to open the report for printing");
     }
   };
 

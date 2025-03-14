@@ -1,0 +1,150 @@
+/* Print Styles for PDF Generation */
+@media print {
+  /* Hide elements that shouldn't appear in the PDF */
+  .no-print {
+    display: none !important;
+  }
+
+  /* Set page dimensions and margins */
+  @page {
+    size: letter;
+    margin: 0.5in;
+  }
+
+  /* Ensure proper backgrounds and colors */
+  body {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    background-color: white;
+    color: black;
+  }
+
+  /* Ensure images and colors display properly */
+  img {
+    max-width: 100%;
+    page-break-inside: avoid;
+  }
+
+  /* Prevent elements from being split across pages */
+  .section,
+  .section-header,
+  .field-row {
+    page-break-inside: avoid;
+  }
+
+  /* Ensure proper text rendering */
+  * {
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Fix for checkboxes and form elements */
+  input[type="checkbox"],
+  input[type="radio"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border: 1px solid #333;
+    display: inline-block;
+    position: relative;
+  }
+
+  input[type="checkbox"]:checked,
+  input[type="radio"]:checked {
+    background-color: #4a90e2;
+    border-color: #4a90e2;
+  }
+
+  input[type="checkbox"]:checked:after {
+    content: "✓";
+    color: white;
+    position: absolute;
+    font-size: 10px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  /* Make sure tables are properly formatted */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    page-break-inside: auto;
+  }
+
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  /* Fix for the report type section breaking into two lines */
+  #inspection-report .mb-6:first-of-type .flex.items-center.gap-4,
+  #inspection-report .mb-6:first-of-type .flex.items-center.gap-2 {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    width: 100% !important;
+    gap: 10px !important;
+  }
+
+  /* Make radio buttons and their labels stay together */
+  #inspection-report .flex.items-center.gap-1 {
+    white-space: nowrap !important;
+    display: inline-flex !important;
+    margin-right: 5px !important;
+  }
+
+  /* CRITICAL: Force all headers to have blue background and white text */
+  #inspection-report .bg-\[\#4A90E2\],
+  #inspection-report h3.bg-\[\#4A90E2\],
+  #inspection-report .rounded-t-lg,
+  #inspection-report .section-header,
+  #inspection-report div[class*="bg-[#4A90E2]"],
+  #inspection-report > div:nth-child(2),
+  #inspection-report h3 {
+    background-color: #4a90e2 !important;
+    color: white !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    forced-color-adjust: none !important;
+  }
+
+  /* Ensure text colors are visible */
+  .text-white {
+    color: white !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Fix for section headers that might be using different classes */
+  #inspection-report h3,
+  #inspection-report .font-medium.text-center.py-2,
+  #inspection-report .font-medium.text-center.py-3 {
+    background-color: #4a90e2 !important;
+    color: white !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    forced-color-adjust: none !important;
+    padding: 8px 0;
+    border-radius: 4px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+
+  /* Fix for the main header */
+  #inspection-report > div.bg-\[\#4A90E2\] {
+    background-color: #4a90e2 !important;
+    color: white !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    forced-color-adjust: none !important;
+  }
+
+  /* Ensure report type section doesn't break */
+  #inspection-report .mb-6 {
+    page-break-inside: avoid !important;
+  }
+}

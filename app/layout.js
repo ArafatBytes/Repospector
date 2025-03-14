@@ -1,5 +1,6 @@
 import { Jost } from "next/font/google";
 import "./globals.css";
+import "./styles/print.css";
 import { Toaster } from "react-hot-toast";
 
 const jost = Jost({

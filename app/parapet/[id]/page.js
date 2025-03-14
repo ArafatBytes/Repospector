@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import { ReportHeader } from "../../utils/addPrintButton";
 
 export default function ViewParapetReport() {
   const router = useRouter();
@@ -43,17 +44,18 @@ export default function ViewParapetReport() {
 
   return (
     <div className="max-w-4xl mx-auto py-8 px-4">
-      <div className="text-right mb-4">
-        <Link
-          href="/dashboard"
-          className="text-[#0066A1] hover:text-[#004d7a] transition-colors text-base inline-flex items-center gap-2"
-        >
-          <ArrowLeftIcon className="h-5 w-5" />
-          Back to Dashboard
-        </Link>
-      </div>
+      <ReportHeader
+        reportId={report._id}
+        reportName={`Parapet Report - ${report.ownerName || "No Owner"}`}
+        contentId="parapet-report"
+      />
 
-      <div className="bg-white">
+      <div id="parapet-report" className="bg-white rounded-lg shadow-sm p-6">
+        {/* Report Header */}
+        <div className="bg-[#4A90E2] text-white text-center py-3 rounded-t-lg text-xl font-medium -mx-6 -mt-6 mb-6 print-header">
+          Parapet Report
+        </div>
+
         {/* Company Header */}
         <div className="mb-8">
           <h1 className="text-[#0066A1] text-2xl font-bold">SHAHRISH</h1>

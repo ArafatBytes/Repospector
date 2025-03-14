@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { format } from "date-fns";
 import { toast } from "react-hot-toast";
+import { ReportHeader } from "../../utils/addPrintButton";
 
 export default function ViewDailyFieldReport() {
   const router = useRouter();
@@ -48,19 +49,31 @@ export default function ViewDailyFieldReport() {
     <div className="min-h-screen bg-white p-8">
       <div className="max-w-4xl mx-auto">
         {/* Back to Dashboard */}
-        <div className="mb-8">
-          <Link
-            href="/dashboard"
-            className="text-[#0066A1] hover:text-[#004d7a] transition-colors"
-          >
-            ← Back to Dashboard
-          </Link>
-        </div>
+        <ReportHeader
+          reportId={report._id}
+          reportName={`Daily Field Report - ${
+            report.projectName || "No Project"
+          }`}
+          contentId="daily-field-report"
+        />
 
-        {/* Report Content */}
-        <div className="border border-gray-300 p-8">
+        <div
+          id="daily-field-report"
+          className="bg-white rounded-lg shadow-sm p-6"
+        >
+          {/* Report Header */}
+          <div
+            className="bg-[#4A90E2] text-white text-center py-3 rounded-t-lg text-xl font-medium -mx-6 -mt-6 mb-6"
+            style={{
+              backgroundColor: "#4A90E2 !important",
+              color: "white !important",
+            }}
+          >
+            Daily Field Report
+          </div>
+
           {/* Header */}
-          <div className="flex justify-between items-start mb-6">
+          <div className="flex justify-between mb-8">
             {/* Left Side - Company Logo */}
             <div className="flex items-start">
               <div className="flex flex-col">
