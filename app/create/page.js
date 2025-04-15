@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function CreateInspection() {
   const router = useRouter();
@@ -1156,16 +1157,47 @@ export default function CreateInspection() {
   return (
     <div className="min-h-screen bg-white py-8">
       <div className="max-w-5xl mx-auto px-4">
+        {/* Back to Dashboard Button */}
+        <div className="flex justify-end mb-4">
+          <Link
+            href="/dashboard"
+            className="flex items-center text-[#4A90E2] hover:text-[#357ABD] transition-colors"
+          >
+            <svg
+              className="w-5 h-5 mr-1"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              />
+            </svg>
+            Back to Dashboard
+          </Link>
+        </div>
         <div className="bg-white shadow-lg rounded-lg overflow-hidden">
-          {/* Logo */}
-          <div className="flex justify-center mb-8">
-            <Image
-              src="/images/logo.jpg"
-              alt="SHAHRISH"
-              width={300}
-              height={100}
-              priority
-            />
+          {/* Header with Logo and Address */}
+          <div className="flex justify-between items-start p-6 border-b">
+            {/* Logo on the left */}
+            <div>
+              <Image
+                src="/images/logo.jpg"
+                alt="SHAHRISH"
+                width={300}
+                height={100}
+                priority
+              />
+            </div>
+            {/* Company Address on the right */}
+            <div className="text-right text-sm">
+              <p>15 WEST 38TH STREET, 8TH FLOOR (SUITE 808)</p>
+              <p>NEW YORK, NEW YORK 10018</p>
+              <p>T: (212) 632-8430</p>
+            </div>
           </div>
           {/* Header */}
           <div className="bg-[#4A90E2] text-white text-center py-3 text-2xl font-semibold">

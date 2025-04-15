@@ -185,33 +185,24 @@ export default function EditConcreteReport() {
           </Link>
         </div>
 
-        {/* Header */}
-        <div className="flex justify-between mb-8">
-          <div className="flex">
-            <div className="border-r-2 border-[#0066A1] pr-4 mr-4">
-              <div className="text-[#0066A1] text-3xl font-bold tracking-wider">
-                SHAHRISH
-              </div>
-              <div className="text-xs text-[#0066A1] mt-1">
-                ENGINEERING · SURVEYING · CONSTRUCTION INSPECTION
-              </div>
+        {/* Header Section */}
+        <div className="mb-8 border-b border-[#0066A1] pb-6">
+          <div className="flex justify-between items-start">
+            {/* Logo on the left */}
+            <div>
+              <Image
+                src="/images/logo.jpg"
+                alt="SHAHRISH"
+                width={300}
+                height={100}
+                priority
+              />
             </div>
-          </div>
-          <div className="text-xs text-right">
-            <div>NYC DOB SPECIAL INSPECTION AGENCY# 008524</div>
-            <div className="mt-1">
-              NEW YORK OFFICE: 208 WEST 20<sup>TH</sup> STREET, SUITE 603, NEW
-              YORK,
-              <br />
-              NY 10001, T: (646) 797 3518
-            </div>
-            <div className="mt-1">
-              LONG ISLAND OFFICE: 535 BROADHOLLOW ROAD, SUITE B7,
-              <br />
-              MELVILLE, NY 11747, T: (631) 393 6020
-            </div>
-            <div className="mt-1">
-              E: INFO@SHAHRISH.NET | W: WWW.SHAHRISH.NET
+            {/* Company Address on the right */}
+            <div className="text-right text-sm">
+              <p>15 WEST 38TH STREET, 8TH FLOOR (SUITE 808)</p>
+              <p>NEW YORK, NEW YORK 10018</p>
+              <p>T: (212) 632-8430</p>
             </div>
           </div>
         </div>

@@ -145,13 +145,14 @@ export default function CreateStructuralReport() {
 
   return (
     <div className="max-w-4xl mx-auto py-8 px-4">
-      <div className="text-right mb-4">
+      {/* Back to Dashboard Button */}
+      <div className="flex justify-end mb-4">
         <Link
           href="/dashboard"
-          className="text-[#0066A1] hover:text-[#004d7a] transition-colors text-base inline-flex items-center gap-2"
+          className="flex items-center text-[#4A90E2] hover:text-[#357ABD] transition-colors"
         >
           <svg
-            className="w-5 h-5"
+            className="w-5 h-5 mr-1"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -159,8 +160,8 @@ export default function CreateStructuralReport() {
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
-              strokeWidth={1.5}
-              d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+              strokeWidth={2}
+              d="M10 19l-7-7m0 0l7-7m-7 7h18"
             />
           </svg>
           Back to Dashboard
@@ -168,17 +169,23 @@ export default function CreateStructuralReport() {
       </div>
 
       <form onSubmit={handleSubmit} className="bg-white">
-        {/* Company Header */}
-        <div className="mb-8">
-          <h1 className="text-[#0066A1] text-2xl font-bold">SHAHRISH</h1>
-          <p className="text-sm">
-            ENGINEERING | PLANNING | CONSTRUCTION INSPECTION
-          </p>
-          <p className="text-sm">CERTIFIED DB/MBE</p>
-          <div className="text-sm text-right mt-[-40px]">
-            <p>555 Broadhollow Road, Suite 216</p>
-            <p>Melville, NY 11747</p>
-            <p>631.578.2493</p>
+        {/* Header with Logo and Address */}
+        <div className="flex justify-between items-start p-6 border-b">
+          {/* Logo on the left */}
+          <div>
+            <Image
+              src="/images/logo.jpg"
+              alt="SHAHRISH"
+              width={300}
+              height={100}
+              priority
+            />
+          </div>
+          {/* Company Address on the right */}
+          <div className="text-right text-sm">
+            <p>15 WEST 38TH STREET, 8TH FLOOR (SUITE 808)</p>
+            <p>NEW YORK, NEW YORK 10018</p>
+            <p>T: (212) 632-8430</p>
           </div>
         </div>
 

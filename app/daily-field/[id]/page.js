@@ -6,6 +6,7 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { toast } from "react-hot-toast";
 import { ReportHeader } from "../../utils/addPrintButton";
+import Image from "next/image";
 
 export default function ViewDailyFieldReport() {
   const router = useRouter();
@@ -61,6 +62,26 @@ export default function ViewDailyFieldReport() {
           id="daily-field-report"
           className="bg-white rounded-lg shadow-sm p-6"
         >
+          {/* Header with Logo and Address */}
+          <div className="flex justify-between items-start p-6 border-b">
+            {/* Logo on the left */}
+            <div>
+              <Image
+                src="/images/logo.jpg"
+                alt="SHAHRISH"
+                width={300}
+                height={100}
+                priority
+              />
+            </div>
+            {/* Company Address on the right */}
+            <div className="text-right text-sm">
+              <p>15 WEST 38TH STREET, 8TH FLOOR (SUITE 808)</p>
+              <p>NEW YORK, NEW YORK 10018</p>
+              <p>T: (212) 632-8430</p>
+            </div>
+          </div>
+
           {/* Report Header */}
           <div
             className="bg-[#4A90E2] text-white text-center py-3 rounded-t-lg text-xl font-medium -mx-6 -mt-6 mb-6"
@@ -70,50 +91,6 @@ export default function ViewDailyFieldReport() {
             }}
           >
             Daily Field Report
-          </div>
-
-          {/* Header */}
-          <div className="flex justify-between mb-8">
-            {/* Left Side - Company Logo */}
-            <div className="flex items-start">
-              <div className="flex flex-col">
-                <div className="text-2xl font-bold text-[#0066A1] tracking-wider">
-                  SHAHRISH
-                </div>
-                <div className="text-xs text-gray-500 italic">
-                  ENGINEERING • SURVEYING • CONSTRUCTION INSPECTION
-                </div>
-              </div>
-            </div>
-
-            {/* Right Side - Agency Info */}
-            <div className="text-right text-sm">
-              <div className="text-[#0066A1] font-medium">
-                NYC DOB SPECIAL INSPECTION AGENCY# 008524
-              </div>
-              <div>15 WEST 38TH STREET, SUITE 516, NEW YORK, NY 10018,</div>
-              <div>T: (631) 578 2493</div>
-              <div>
-                E:{" "}
-                <a
-                  href="mailto:INSPECTION@SHAHRISH.NET"
-                  className="text-[#0066A1]"
-                >
-                  INSPECTION@SHAHRISH.NET
-                </a>
-              </div>
-              <div>
-                W:{" "}
-                <a
-                  href="http://WWW.SHAHRISHENGINEERING.NET"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[#0066A1]"
-                >
-                  WWW.SHAHRISHENGINEERING.NET
-                </a>
-              </div>
-            </div>
           </div>
 
           {/* Basic Info Grid */}

@@ -87,15 +87,24 @@ export default function InspectionView() {
       </div>
 
       <div id="inspection-report" className="bg-white rounded-lg shadow-sm">
-        {/* Logo */}
-        <div className="flex justify-center mb-8">
-          <Image
-            src="/images/logo.jpg"
-            alt="SHAHRISH"
-            width={300}
-            height={100}
-            priority
-          />
+        {/* Header with Logo and Address */}
+        <div className="flex justify-between items-start p-6 border-b">
+          {/* Logo on the left */}
+          <div>
+            <Image
+              src="/images/logo.jpg"
+              alt="SHAHRISH"
+              width={300}
+              height={100}
+              priority
+            />
+          </div>
+          {/* Company Address on the right */}
+          <div className="text-right text-sm">
+            <p>15 WEST 38TH STREET, 8TH FLOOR (SUITE 808)</p>
+            <p>NEW YORK, NEW YORK 10018</p>
+            <p>T: (212) 632-8430</p>
+          </div>
         </div>
 
         {/* Header */}

@@ -61,6 +61,26 @@ export default function ViewInsulationReport() {
           id="insulation-report"
           className="bg-white rounded-lg shadow-sm p-6"
         >
+          {/* Header with Logo and Address */}
+          <div className="flex justify-between items-start p-6 border-b">
+            {/* Logo on the left */}
+            <div>
+              <Image
+                src="/images/logo.jpg"
+                alt="SHAHRISH"
+                width={300}
+                height={100}
+                priority
+              />
+            </div>
+            {/* Company Address on the right */}
+            <div className="text-right text-sm">
+              <p>15 WEST 38TH STREET, 8TH FLOOR (SUITE 808)</p>
+              <p>NEW YORK, NEW YORK 10018</p>
+              <p>T: (212) 632-8430</p>
+            </div>
+          </div>
+
           {/* Report Header */}
           <div
             className="bg-[#4A90E2] text-white text-center py-3 rounded-t-lg text-xl font-medium -mx-6 -mt-6 mb-6"
@@ -70,36 +90,6 @@ export default function ViewInsulationReport() {
             }}
           >
             Insulation Report
-          </div>
-
-          {/* Header */}
-          <div className="flex justify-between items-start mb-8">
-            {/* Company Info - Left */}
-            <div>
-              <h1 className="text-[#0066A1] text-2xl font-bold mb-1">
-                SHAHRISH
-              </h1>
-              <div className="text-sm">
-                <p>ENGINEERING · SURVEYING · CONSTRUCTION</p>
-                <p>INSPECTION</p>
-              </div>
-            </div>
-
-            {/* Company Details - Right */}
-            <div className="text-sm text-right">
-              <p className="text-[#0066A1] mb-2">
-                NYC DOB SPECIAL INSPECTION AGENCY# 008524
-              </p>
-              <p>
-                NEW YORK OFFICE: 208 WEST 25TH STREET, SUITE# 603, NEW YORK, NY
-                10001, T: (646) 797 5518
-              </p>
-              <p>
-                LONG ISLAND OFFICE: 535 BROADHOLLOW ROAD, SUITE# 87, MELVILLE,
-                NY 11747, T: (631) 393 6020
-              </p>
-              <p>E: INFO@SHAHRISH.NET | W: WWW.SHAHRISH.NET</p>
-            </div>
           </div>
 
           {/* Rest of the report content */}

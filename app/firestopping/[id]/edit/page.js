@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { format } from "date-fns";
 import { toast } from "react-hot-toast";
+import Image from "next/image";
 
 export default function EditFirestoppingReport() {
   const router = useRouter();
@@ -183,33 +184,23 @@ export default function EditFirestoppingReport() {
         <form onSubmit={handleSubmit}>
           {/* Header */}
           <div className="mb-8 border-b pb-6">
-            <div className="flex justify-between items-start">
-              {/* Company Logo and Info */}
+            {/* Header with Logo and Address */}
+            <div className="flex justify-between items-start p-6 border-b">
+              {/* Logo on the left */}
               <div>
-                <h1 className="text-[#0066A1] text-3xl font-bold tracking-wider">
-                  SHAHRISH
-                </h1>
-                <p className="text-gray-500 text-xs mt-1">
-                  ENGINEERING • SURVEYING • CONSTRUCTION INSPECTION
-                </p>
+                <Image
+                  src="/images/logo.jpg"
+                  alt="SHAHRISH"
+                  width={300}
+                  height={100}
+                  priority
+                />
               </div>
-
-              {/* Company Contact Info */}
+              {/* Company Address on the right */}
               <div className="text-right text-sm">
-                <p className="text-[#0066A1] font-semibold">
-                  NYC DOB SPECIAL INSPECTION AGENCY# 008524
-                </p>
-                <div className="mt-1">
-                  <p>
-                    NEW YORK OFFICE: 208 WEST 25TH STREET, SUITE# 603, NEW YORK,
-                    NY 10001, T: (646) 797 3518
-                  </p>
-                  <p>
-                    LONG ISLAND OFFICE: 535 BROADHOLLOW ROAD, SUITE# 87,
-                    MELVILLE, NY 11747, T: (631) 393 6020
-                  </p>
-                  <p>E: INFO@SHAHRISH.NET | W: WWW.SHAHRISH.NET</p>
-                </div>
+                <p>15 WEST 38TH STREET, 8TH FLOOR (SUITE 808)</p>
+                <p>NEW YORK, NEW YORK 10018</p>
+                <p>T: (212) 632-8430</p>
               </div>
             </div>
           </div>

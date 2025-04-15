@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { format } from "date-fns";
 import { toast } from "react-hot-toast";
+import Image from "next/image";
 
 export default function DailyFieldReport() {
   const router = useRouter();
@@ -107,191 +108,178 @@ export default function DailyFieldReport() {
   return (
     <div className="min-h-screen bg-white p-8">
       <div className="max-w-4xl mx-auto">
-        {/* Back to Dashboard */}
-        <div className="mb-8">
+        {/* Back to Dashboard Button */}
+        <div className="flex justify-end mb-4">
           <Link
             href="/dashboard"
-            className="text-[#0066A1] hover:text-[#004d7a] transition-colors"
+            className="flex items-center text-[#4A90E2] hover:text-[#357ABD] transition-colors"
           >
-            ← Back to Dashboard
+            <svg
+              className="w-5 h-5 mr-1"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              />
+            </svg>
+            Back to Dashboard
           </Link>
         </div>
 
         <form onSubmit={handleSubmit}>
-          {/* Header */}
-          <div className="mb-8">
-            <div className="flex justify-between items-start mb-6">
-              {/* Left Side - Company Logo */}
-              <div className="flex items-start">
-                <div className="flex flex-col">
-                  <div className="text-2xl font-bold text-[#0066A1] tracking-wider">
-                    SHAHRISH
-                  </div>
-                  <div className="text-xs text-gray-500 italic">
-                    ENGINEERING • SURVEYING • CONSTRUCTION INSPECTION
-                  </div>
-                </div>
-              </div>
+          {/* Header with Logo and Address */}
+          <div className="flex justify-between items-start p-6 border-b">
+            {/* Logo on the left */}
+            <div>
+              <Image
+                src="/images/logo.jpg"
+                alt="SHAHRISH"
+                width={300}
+                height={100}
+                priority
+              />
+            </div>
+            {/* Company Address on the right */}
+            <div className="text-right text-sm">
+              <p>15 WEST 38TH STREET, 8TH FLOOR (SUITE 808)</p>
+              <p>NEW YORK, NEW YORK 10018</p>
+              <p>T: (212) 632-8430</p>
+            </div>
+          </div>
 
-              {/* Right Side - Agency Info */}
-              <div className="text-right text-sm">
-                <div className="text-[#0066A1] font-medium">
-                  NYC DOB SPECIAL INSPECTION AGENCY# 008524
-                </div>
-                <div>15 WEST 38TH STREET, SUITE 516, NEW YORK, NY 10018,</div>
-                <div>T: (631) 578 2493</div>
-                <div>
-                  E:{" "}
-                  <a
-                    href="mailto:INSPECTION@SHAHRISH.NET"
-                    className="text-[#0066A1]"
-                  >
-                    INSPECTION@SHAHRISH.NET
-                  </a>
-                </div>
-                <div>
-                  W:{" "}
-                  <a
-                    href="http://WWW.SHAHRISHENGINEERING.NET"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[#0066A1]"
-                  >
-                    WWW.SHAHRISHENGINEERING.NET
-                  </a>
-                </div>
+          {/* Form Fields Grid */}
+          <div className="grid grid-cols-2 gap-6">
+            {/* Left Column */}
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Client
+                </label>
+                <input
+                  type="text"
+                  value={formData.client}
+                  onChange={(e) =>
+                    setFormData({ ...formData, client: e.target.value })
+                  }
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Project Site Address
+                </label>
+                <input
+                  type="text"
+                  value={formData.projectSiteAddress}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      projectSiteAddress: e.target.value,
+                    })
+                  }
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  DOB Job Number
+                </label>
+                <input
+                  type="text"
+                  value={formData.dobJobNumber}
+                  onChange={(e) =>
+                    setFormData({ ...formData, dobJobNumber: e.target.value })
+                  }
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Inspector Name
+                </label>
+                <input
+                  type="text"
+                  value={formData.inspectorName}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      inspectorName: e.target.value,
+                    })
+                  }
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                  required
+                />
               </div>
             </div>
 
-            {/* Form Fields Grid */}
-            <div className="grid grid-cols-2 gap-6">
-              {/* Left Column */}
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Client
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.client}
-                    onChange={(e) =>
-                      setFormData({ ...formData, client: e.target.value })
-                    }
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Project Site Address
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.projectSiteAddress}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        projectSiteAddress: e.target.value,
-                      })
-                    }
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    DOB Job Number
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.dobJobNumber}
-                    onChange={(e) =>
-                      setFormData({ ...formData, dobJobNumber: e.target.value })
-                    }
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Inspector Name
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.inspectorName}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        inspectorName: e.target.value,
-                      })
-                    }
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                    required
-                  />
-                </div>
+            {/* Right Column */}
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Inspection Date
+                </label>
+                <input
+                  type="date"
+                  value={formData.inspectionDate}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      inspectionDate: e.target.value,
+                    })
+                  }
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                  required
+                />
               </div>
-
-              {/* Right Column */}
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Inspection Date
-                  </label>
-                  <input
-                    type="date"
-                    value={formData.inspectionDate}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        inspectionDate: e.target.value,
-                      })
-                    }
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Time In/Out
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.timeInOut}
-                    onChange={(e) =>
-                      setFormData({ ...formData, timeInOut: e.target.value })
-                    }
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Report Number
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.reportNumber}
-                    onChange={(e) =>
-                      setFormData({ ...formData, reportNumber: e.target.value })
-                    }
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Site Weather (°F)
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.siteWeather}
-                    onChange={(e) =>
-                      setFormData({ ...formData, siteWeather: e.target.value })
-                    }
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                    required
-                  />
-                </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Time In/Out
+                </label>
+                <input
+                  type="text"
+                  value={formData.timeInOut}
+                  onChange={(e) =>
+                    setFormData({ ...formData, timeInOut: e.target.value })
+                  }
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Report Number
+                </label>
+                <input
+                  type="text"
+                  value={formData.reportNumber}
+                  onChange={(e) =>
+                    setFormData({ ...formData, reportNumber: e.target.value })
+                  }
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Site Weather (°F)
+                </label>
+                <input
+                  type="text"
+                  value={formData.siteWeather}
+                  onChange={(e) =>
+                    setFormData({ ...formData, siteWeather: e.target.value })
+                  }
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                  required
+                />
               </div>
             </div>
           </div>

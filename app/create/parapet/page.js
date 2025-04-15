@@ -186,32 +186,47 @@ export default function CreateParapetReport() {
   return (
     <div className="min-h-screen bg-white py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-8">
+        {/* Back to Dashboard Button */}
+        <div className="flex justify-end mb-4">
           <Link
             href="/dashboard"
-            className="text-[#834CFF] hover:text-[#6617CB] transition-colors"
+            className="flex items-center text-[#4A90E2] hover:text-[#357ABD] transition-colors"
           >
-            ← Back to Dashboard
+            <svg
+              className="w-5 h-5 mr-1"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              />
+            </svg>
+            Back to Dashboard
           </Link>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
-          {/* Company Header */}
-          <div className="flex justify-between items-start border-b pb-6">
+          {/* Header with Logo and Address */}
+          <div className="flex justify-between items-start p-6 border-b">
+            {/* Logo on the left */}
             <div>
-              <h1 className="text-[#0066A1] text-2xl font-bold">SHAHRISH</h1>
-              <p className="text-sm text-gray-600">
-                ENGINEERING | PLANNING | CONSTRUCTION INSPECTION
-              </p>
-              <p className="text-sm text-gray-600">CERTIFIED DB/MBE</p>
+              <Image
+                src="/images/logo.jpg"
+                alt="SHAHRISH"
+                width={300}
+                height={100}
+                priority
+              />
             </div>
-            <div className="text-right">
-              <p className="text-sm text-gray-600">
-                555 Broadhollow Road, Suite 216
-              </p>
-              <p className="text-sm text-gray-600">Melville, NY 11747</p>
-              <p className="text-sm text-gray-600">631.578.2493</p>
+            {/* Company Address on the right */}
+            <div className="text-right text-sm">
+              <p>15 WEST 38TH STREET, 8TH FLOOR (SUITE 808)</p>
+              <p>NEW YORK, NEW YORK 10018</p>
+              <p>T: (212) 632-8430</p>
             </div>
           </div>
 

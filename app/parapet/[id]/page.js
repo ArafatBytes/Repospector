@@ -51,23 +51,29 @@ export default function ViewParapetReport() {
       />
 
       <div id="parapet-report" className="bg-white rounded-lg shadow-sm p-6">
+        {/* Header with Logo and Address */}
+        <div className="flex justify-between items-start p-6 border-b">
+          {/* Logo on the left */}
+          <div>
+            <Image
+              src="/images/logo.jpg"
+              alt="SHAHRISH"
+              width={300}
+              height={100}
+              priority
+            />
+          </div>
+          {/* Company Address on the right */}
+          <div className="text-right text-sm">
+            <p>15 WEST 38TH STREET, 8TH FLOOR (SUITE 808)</p>
+            <p>NEW YORK, NEW YORK 10018</p>
+            <p>T: (212) 632-8430</p>
+          </div>
+        </div>
+
         {/* Report Header */}
         <div className="bg-[#4A90E2] text-white text-center py-3 rounded-t-lg text-xl font-medium -mx-6 -mt-6 mb-6 print-header">
           Parapet Report
-        </div>
-
-        {/* Company Header */}
-        <div className="mb-8">
-          <h1 className="text-[#0066A1] text-2xl font-bold">SHAHRISH</h1>
-          <p className="text-sm">
-            ENGINEERING | PLANNING | CONSTRUCTION INSPECTION
-          </p>
-          <p className="text-sm">CERTIFIED DB/MBE</p>
-          <div className="text-sm text-right mt-[-40px]">
-            <p>555 Broadhollow Road, Suite 216</p>
-            <p>Melville, NY 11747</p>
-            <p>631.578.2493</p>
-          </div>
         </div>
 
         {/* Report Title */}
@@ -94,12 +100,12 @@ export default function ViewParapetReport() {
         {/* Owner Info */}
         <div className="mb-8">
           <div className="mb-4">
-            <label className="font-semibold">Owner's Name:</label>
+            <label className="font-semibold">Owner&apos;s Name:</label>
             <p>{report.ownerName}</p>
           </div>
           <div>
             <label className="font-semibold">
-              Owner's Contact Information:
+              Owner&apos;s Contact Information:
             </label>
             <p>{report.ownerContactInfo}</p>
           </div>

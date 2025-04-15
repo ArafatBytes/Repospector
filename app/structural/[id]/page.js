@@ -62,17 +62,23 @@ export default function ViewStructuralReport() {
         </div>
 
         <div className="bg-white">
-          {/* Company Header */}
-          <div className="mb-8">
-            <h1 className="text-[#0066A1] text-2xl font-bold">SHAHRISH</h1>
-            <p className="text-sm">
-              ENGINEERING | PLANNING | CONSTRUCTION INSPECTION
-            </p>
-            <p className="text-sm">CERTIFIED DB/MBE</p>
-            <div className="text-sm text-right mt-[-40px]">
-              <p>555 Broadhollow Road, Suite 216</p>
-              <p>Melville, NY 11747</p>
-              <p>631.578.2493</p>
+          {/* Header with Logo and Address */}
+          <div className="flex justify-between items-start p-6 border-b">
+            {/* Logo on the left */}
+            <div>
+              <Image
+                src="/images/logo.jpg"
+                alt="SHAHRISH"
+                width={300}
+                height={100}
+                priority
+              />
+            </div>
+            {/* Company Address on the right */}
+            <div className="text-right text-sm">
+              <p>15 WEST 38TH STREET, 8TH FLOOR (SUITE 808)</p>
+              <p>NEW YORK, NEW YORK 10018</p>
+              <p>T: (212) 632-8430</p>
             </div>
           </div>
 

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { format } from "date-fns";
 import { toast } from "react-hot-toast";
+import Image from "next/image";
 
 export default function FirestoppingReport() {
   const router = useRouter();
@@ -119,16 +120,16 @@ export default function FirestoppingReport() {
   };
 
   return (
-    <div className="min-h-screen bg-white py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Back to Dashboard Link */}
-        <div className="mb-8">
+    <div className="min-h-screen bg-white p-8">
+      <div className="max-w-4xl mx-auto">
+        {/* Back to Dashboard Button */}
+        <div className="flex justify-end mb-4">
           <Link
             href="/dashboard"
-            className="text-[#0066A1] hover:text-[#004d7a] transition-colors flex items-center"
+            className="flex items-center text-[#4A90E2] hover:text-[#357ABD] transition-colors"
           >
             <svg
-              className="w-5 h-5 mr-2"
+              className="w-5 h-5 mr-1"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -144,394 +145,392 @@ export default function FirestoppingReport() {
           </Link>
         </div>
 
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex justify-between items-start">
-            {/* Left side - Logo and Company Info */}
+        <form onSubmit={handleSubmit}>
+          {/* Header with Logo and Address */}
+          <div className="flex justify-between items-start p-6 border-b">
+            {/* Logo on the left */}
             <div>
-              <h1 className="text-[#0066A1] text-3xl font-bold tracking-wider">
-                SHAHRISH
-              </h1>
-              <p className="text-gray-500 text-xs italic mt-1">
-                ENGINEERING • SURVEYING • CONSTRUCTION INSPECTION
-              </p>
-            </div>
-
-            {/* Right side - Agency Info */}
-            <div className="text-right ml-20">
-              <p className="text-[#0066A1] font-medium">
-                NYC DOB SPECIAL INSPECTION AGENCY# 008524
-              </p>
-              <div className="mt-2 text-sm">
-                <p>
-                  NEW YORK OFFICE: 208 WEST 25TH STREET, SUITE# 603, NEW YORK,
-                  NY 10001, T: (646) 797 3518
-                </p>
-                <p>
-                  LONG ISLAND OFFICE: 535 BROADHOLLOW ROAD, SUITE# 87, MELVILLE,
-                  NY 11747, T: (631) 393 6020
-                </p>
-                <p>
-                  E:{" "}
-                  <a
-                    href="mailto:INFO@SHAHRISH.NET"
-                    className="text-[#0066A1] hover:underline"
-                  >
-                    INFO@SHAHRISH.NET
-                  </a>{" "}
-                  | W:{" "}
-                  <a
-                    href="http://WWW.SHAHRISH.NET"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[#0066A1] hover:underline"
-                  >
-                    WWW.SHAHRISH.NET
-                  </a>
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Basic Info Grid */}
-          <div className="grid grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Client
-              </label>
-              <input
-                type="text"
-                required
-                value={formData.client}
-                onChange={(e) =>
-                  setFormData({ ...formData, client: e.target.value })
-                }
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#0066A1] focus:border-[#0066A1]"
+              <Image
+                src="/images/logo.jpg"
+                alt="SHAHRISH"
+                width={300}
+                height={100}
+                priority
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Inspection Date
-              </label>
-              <input
-                type="date"
-                required
-                value={formData.inspectionDate}
-                onChange={(e) =>
-                  setFormData({ ...formData, inspectionDate: e.target.value })
-                }
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#0066A1] focus:border-[#0066A1]"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Project Site Address
-              </label>
-              <input
-                type="text"
-                required
-                value={formData.projectSiteAddress}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    projectSiteAddress: e.target.value,
-                  })
-                }
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#0066A1] focus:border-[#0066A1]"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Time In/Out
-              </label>
-              <input
-                type="text"
-                required
-                value={formData.timeInOut}
-                onChange={(e) =>
-                  setFormData({ ...formData, timeInOut: e.target.value })
-                }
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#0066A1] focus:border-[#0066A1]"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                DOB Job Number
-              </label>
-              <input
-                type="text"
-                required
-                value={formData.dobJobNumber}
-                onChange={(e) =>
-                  setFormData({ ...formData, dobJobNumber: e.target.value })
-                }
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#0066A1] focus:border-[#0066A1]"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Report Number
-              </label>
-              <input
-                type="text"
-                required
-                value={formData.reportNumber}
-                onChange={(e) =>
-                  setFormData({ ...formData, reportNumber: e.target.value })
-                }
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#0066A1] focus:border-[#0066A1]"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Inspector Name
-              </label>
-              <input
-                type="text"
-                required
-                value={formData.inspectorName}
-                onChange={(e) =>
-                  setFormData({ ...formData, inspectorName: e.target.value })
-                }
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#0066A1] focus:border-[#0066A1]"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Site Weather (°F)
-              </label>
-              <input
-                type="text"
-                required
-                value={formData.siteWeather}
-                onChange={(e) =>
-                  setFormData({ ...formData, siteWeather: e.target.value })
-                }
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#0066A1] focus:border-[#0066A1]"
-              />
+            {/* Company Address on the right */}
+            <div className="text-right text-sm">
+              <p>15 WEST 38TH STREET, 8TH FLOOR (SUITE 808)</p>
+              <p>NEW YORK, NEW YORK 10018</p>
+              <p>T: (212) 632-8430</p>
             </div>
           </div>
 
-          {/* Form Title */}
-          <div className="bg-[#0066A1] text-white text-center py-2 mb-6">
-            <h2 className="text-xl font-bold">FIRESTOPPING INSPECTION</h2>
-          </div>
-
-          {/* Description */}
-          <p className="text-sm mb-8">
-            The above referenced project was visited to observe the firestopping
-            application for compliance with project drawings, specifications,
-            and NYC Building Code requirements.
-          </p>
-
-          {/* New Fields */}
+          {/* Form */}
           <div className="space-y-6">
-            {/* Site Contact */}
-            <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">
-                SITE CONTACT:
-              </label>
-              <input
-                type="text"
-                required
-                placeholder=""
-                value={formData.siteContact}
-                onChange={(e) =>
-                  setFormData({ ...formData, siteContact: e.target.value })
-                }
-                className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#0066A1] focus:border-[#0066A1]"
-              />
-            </div>
-
-            {/* Plans Referenced */}
-            <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">
-                PLANS REFERENCED:
-              </label>
-              <p className="text-xs text-gray-500 mb-1">
-                (Plans date, Sealed by, Approved date)
-              </p>
-              <input
-                type="text"
-                required
-                placeholder=""
-                value={formData.plansReferenced}
-                onChange={(e) =>
-                  setFormData({ ...formData, plansReferenced: e.target.value })
-                }
-                className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#0066A1] focus:border-[#0066A1]"
-              />
-            </div>
-
-            {/* Area/Location Inspected */}
-            <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">
-                AREA/LOCATION INSPECTED:
-              </label>
-              <p className="text-xs text-gray-500 mb-1">
-                (Floors, Grid Lines, Col btw Fl., Stairs N° btw Fl., etc)
-              </p>
-              <input
-                type="text"
-                required
-                placeholder=""
-                value={formData.areaInspected}
-                onChange={(e) =>
-                  setFormData({ ...formData, areaInspected: e.target.value })
-                }
-                className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#0066A1] focus:border-[#0066A1]"
-              />
-            </div>
-
-            {/* Material Used/Submittal Approved */}
-            <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">
-                MATERIAL USED/ SUBMITTAL APPROVED:
-              </label>
-              <input
-                type="text"
-                required
-                placeholder=""
-                value={formData.materialUsed}
-                onChange={(e) =>
-                  setFormData({ ...formData, materialUsed: e.target.value })
-                }
-                className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#0066A1] focus:border-[#0066A1]"
-              />
-            </div>
-          </div>
-
-          {/* Inspection Outcome Section */}
-          <div className="mt-8 border border-gray-300 p-4">
-            <h3 className="font-bold mb-4">INSPECTION OUTCOME:</h3>
-            <div className="space-y-4">
-              {/* Incomplete Option */}
-              <div className="flex items-center">
+            {/* Basic Info Grid */}
+            <div className="grid grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Client
+                </label>
                 <input
-                  type="radio"
-                  id="incomplete"
-                  name="inspectionOutcome"
-                  value="INCOMPLETE"
-                  checked={formData.inspectionOutcome === "INCOMPLETE"}
+                  type="text"
+                  required
+                  value={formData.client}
+                  onChange={(e) =>
+                    setFormData({ ...formData, client: e.target.value })
+                  }
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#0066A1] focus:border-[#0066A1]"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Inspection Date
+                </label>
+                <input
+                  type="date"
+                  required
+                  value={formData.inspectionDate}
+                  onChange={(e) =>
+                    setFormData({ ...formData, inspectionDate: e.target.value })
+                  }
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#0066A1] focus:border-[#0066A1]"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Project Site Address
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.projectSiteAddress}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      inspectionOutcome: e.target.value,
+                      projectSiteAddress: e.target.value,
                     })
                   }
-                  className="h-4 w-4 text-[#0066A1] focus:ring-[#0066A1]"
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#0066A1] focus:border-[#0066A1]"
                 />
-                <label htmlFor="incomplete" className="ml-2 text-sm">
-                  Incomplete Work: Re-inspection required.
-                </label>
               </div>
-
-              {/* Conformance Option */}
-              <div className="flex items-center">
-                <input
-                  type="radio"
-                  id="conformance"
-                  name="inspectionOutcome"
-                  value="CONFORMANCE"
-                  checked={formData.inspectionOutcome === "CONFORMANCE"}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      inspectionOutcome: e.target.value,
-                    })
-                  }
-                  className="h-4 w-4 text-[#0066A1] focus:ring-[#0066A1]"
-                />
-                <label htmlFor="conformance" className="ml-2 text-sm">
-                  Conformance: Work is in conformance with contract drawings,
-                  specifications and NYC BC.
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Time In/Out
                 </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.timeInOut}
+                  onChange={(e) =>
+                    setFormData({ ...formData, timeInOut: e.target.value })
+                  }
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#0066A1] focus:border-[#0066A1]"
+                />
               </div>
-
-              {/* Non-Conformance Option */}
-              <div className="flex items-center">
-                <input
-                  type="radio"
-                  id="nonConformance"
-                  name="inspectionOutcome"
-                  value="NON_CONFORMANCE"
-                  checked={formData.inspectionOutcome === "NON_CONFORMANCE"}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      inspectionOutcome: e.target.value,
-                    })
-                  }
-                  className="h-4 w-4 text-[#0066A1] focus:ring-[#0066A1]"
-                />
-                <label htmlFor="nonConformance" className="ml-2 text-sm">
-                  Non-Conformance Work: Deficiencies noted and upon correction,
-                  re-inspection required.
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  DOB Job Number
                 </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.dobJobNumber}
+                  onChange={(e) =>
+                    setFormData({ ...formData, dobJobNumber: e.target.value })
+                  }
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#0066A1] focus:border-[#0066A1]"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Report Number
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.reportNumber}
+                  onChange={(e) =>
+                    setFormData({ ...formData, reportNumber: e.target.value })
+                  }
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#0066A1] focus:border-[#0066A1]"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Inspector Name
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.inspectorName}
+                  onChange={(e) =>
+                    setFormData({ ...formData, inspectorName: e.target.value })
+                  }
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#0066A1] focus:border-[#0066A1]"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Site Weather (°F)
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.siteWeather}
+                  onChange={(e) =>
+                    setFormData({ ...formData, siteWeather: e.target.value })
+                  }
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#0066A1] focus:border-[#0066A1]"
+                />
               </div>
             </div>
 
-            {/* Non-Conformance Notes */}
-            <div className="mt-4">
-              <h4 className="font-bold mb-2">Non-Conformance Notes:</h4>
-              <textarea
-                value={formData.nonConformanceNotes}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    nonConformanceNotes: e.target.value,
-                  })
-                }
-                className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#0066A1] focus:border-[#0066A1] min-h-[100px]"
-                placeholder=""
-              />
+            {/* Form Title */}
+            <div className="bg-[#0066A1] text-white text-center py-2 mb-6">
+              <h2 className="text-xl font-bold">FIRESTOPPING INSPECTION</h2>
             </div>
-          </div>
 
-          {/* Checklist Section */}
-          <div className="mt-8">
-            <h3 className="font-bold mb-4">
-              CHECKLIST (Please check all applicable):
-            </h3>
-            <div className="border border-gray-300">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-gray-50">
-                    <th className="py-2 px-4 text-left font-bold w-1/2">
-                      Requirements
-                    </th>
-                    <th className="py-2 px-4 text-center font-bold w-[80px]">
-                      YES
-                    </th>
-                    <th className="py-2 px-4 text-center font-bold w-[80px]">
-                      NO
-                    </th>
-                    <th className="py-2 px-4 text-center font-bold w-[80px]">
-                      N/A
-                    </th>
-                    <th className="py-2 px-4 text-left font-bold">
-                      Inspection Details
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {/* Firestopping Material Row */}
-                  <tr className="border-t border-gray-300">
-                    <td className="py-2 px-4">
-                      a) Is firestopping material used approved?
-                    </td>
-                    {["YES", "NO", "N/A"].map((value) => (
-                      <td key={value} className="py-2 px-4 text-center">
+            {/* Description */}
+            <p className="text-sm mb-8">
+              The above referenced project was visited to observe the
+              firestopping application for compliance with project drawings,
+              specifications, and NYC Building Code requirements.
+            </p>
+
+            {/* New Fields */}
+            <div className="space-y-6">
+              {/* Site Contact */}
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2">
+                  SITE CONTACT:
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder=""
+                  value={formData.siteContact}
+                  onChange={(e) =>
+                    setFormData({ ...formData, siteContact: e.target.value })
+                  }
+                  className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#0066A1] focus:border-[#0066A1]"
+                />
+              </div>
+
+              {/* Plans Referenced */}
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2">
+                  PLANS REFERENCED:
+                </label>
+                <p className="text-xs text-gray-500 mb-1">
+                  (Plans date, Sealed by, Approved date)
+                </p>
+                <input
+                  type="text"
+                  required
+                  placeholder=""
+                  value={formData.plansReferenced}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      plansReferenced: e.target.value,
+                    })
+                  }
+                  className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#0066A1] focus:border-[#0066A1]"
+                />
+              </div>
+
+              {/* Area/Location Inspected */}
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2">
+                  AREA/LOCATION INSPECTED:
+                </label>
+                <p className="text-xs text-gray-500 mb-1">
+                  (Floors, Grid Lines, Col btw Fl., Stairs N° btw Fl., etc)
+                </p>
+                <input
+                  type="text"
+                  required
+                  placeholder=""
+                  value={formData.areaInspected}
+                  onChange={(e) =>
+                    setFormData({ ...formData, areaInspected: e.target.value })
+                  }
+                  className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#0066A1] focus:border-[#0066A1]"
+                />
+              </div>
+
+              {/* Material Used/Submittal Approved */}
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2">
+                  MATERIAL USED/ SUBMITTAL APPROVED:
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder=""
+                  value={formData.materialUsed}
+                  onChange={(e) =>
+                    setFormData({ ...formData, materialUsed: e.target.value })
+                  }
+                  className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#0066A1] focus:border-[#0066A1]"
+                />
+              </div>
+            </div>
+
+            {/* Inspection Outcome Section */}
+            <div className="mt-8 border border-gray-300 p-4">
+              <h3 className="font-bold mb-4">INSPECTION OUTCOME:</h3>
+              <div className="space-y-4">
+                {/* Incomplete Option */}
+                <div className="flex items-center">
+                  <input
+                    type="radio"
+                    id="incomplete"
+                    name="inspectionOutcome"
+                    value="INCOMPLETE"
+                    checked={formData.inspectionOutcome === "INCOMPLETE"}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        inspectionOutcome: e.target.value,
+                      })
+                    }
+                    className="h-4 w-4 text-[#0066A1] focus:ring-[#0066A1]"
+                  />
+                  <label htmlFor="incomplete" className="ml-2 text-sm">
+                    Incomplete Work: Re-inspection required.
+                  </label>
+                </div>
+
+                {/* Conformance Option */}
+                <div className="flex items-center">
+                  <input
+                    type="radio"
+                    id="conformance"
+                    name="inspectionOutcome"
+                    value="CONFORMANCE"
+                    checked={formData.inspectionOutcome === "CONFORMANCE"}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        inspectionOutcome: e.target.value,
+                      })
+                    }
+                    className="h-4 w-4 text-[#0066A1] focus:ring-[#0066A1]"
+                  />
+                  <label htmlFor="conformance" className="ml-2 text-sm">
+                    Conformance: Work is in conformance with contract drawings,
+                    specifications and NYC BC.
+                  </label>
+                </div>
+
+                {/* Non-Conformance Option */}
+                <div className="flex items-center">
+                  <input
+                    type="radio"
+                    id="nonConformance"
+                    name="inspectionOutcome"
+                    value="NON_CONFORMANCE"
+                    checked={formData.inspectionOutcome === "NON_CONFORMANCE"}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        inspectionOutcome: e.target.value,
+                      })
+                    }
+                    className="h-4 w-4 text-[#0066A1] focus:ring-[#0066A1]"
+                  />
+                  <label htmlFor="nonConformance" className="ml-2 text-sm">
+                    Non-Conformance Work: Deficiencies noted and upon
+                    correction, re-inspection required.
+                  </label>
+                </div>
+              </div>
+
+              {/* Non-Conformance Notes */}
+              <div className="mt-4">
+                <h4 className="font-bold mb-2">Non-Conformance Notes:</h4>
+                <textarea
+                  value={formData.nonConformanceNotes}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      nonConformanceNotes: e.target.value,
+                    })
+                  }
+                  className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#0066A1] focus:border-[#0066A1] min-h-[100px]"
+                  placeholder=""
+                />
+              </div>
+            </div>
+
+            {/* Checklist Section */}
+            <div className="mt-8">
+              <h3 className="font-bold mb-4">
+                CHECKLIST (Please check all applicable):
+              </h3>
+              <div className="border border-gray-300">
+                <table className="w-full">
+                  <thead>
+                    <tr className="bg-gray-50">
+                      <th className="py-2 px-4 text-left font-bold w-1/2">
+                        Requirements
+                      </th>
+                      <th className="py-2 px-4 text-center font-bold w-[80px]">
+                        YES
+                      </th>
+                      <th className="py-2 px-4 text-center font-bold w-[80px]">
+                        NO
+                      </th>
+                      <th className="py-2 px-4 text-center font-bold w-[80px]">
+                        N/A
+                      </th>
+                      <th className="py-2 px-4 text-left font-bold">
+                        Inspection Details
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {/* Firestopping Material Row */}
+                    <tr className="border-t border-gray-300">
+                      <td className="py-2 px-4">
+                        a) Is firestopping material used approved?
+                      </td>
+                      {["YES", "NO", "N/A"].map((value) => (
+                        <td key={value} className="py-2 px-4 text-center">
+                          <input
+                            type="radio"
+                            name="firestoppingMaterialApproved"
+                            value={value}
+                            checked={
+                              formData.checklist.firestoppingMaterialApproved
+                                .status === value
+                            }
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                checklist: {
+                                  ...formData.checklist,
+                                  firestoppingMaterialApproved: {
+                                    ...formData.checklist
+                                      .firestoppingMaterialApproved,
+                                    status: e.target.value,
+                                  },
+                                },
+                              })
+                            }
+                            className="h-4 w-4 text-[#0066A1] focus:ring-[#0066A1]"
+                          />
+                        </td>
+                      ))}
+                      <td className="py-2 px-4">
                         <input
-                          type="radio"
-                          name="firestoppingMaterialApproved"
-                          value={value}
-                          checked={
+                          type="text"
+                          value={
                             formData.checklist.firestoppingMaterialApproved
-                              .status === value
+                              .details
                           }
                           onChange={(e) =>
                             setFormData({
@@ -541,55 +540,55 @@ export default function FirestoppingReport() {
                                 firestoppingMaterialApproved: {
                                   ...formData.checklist
                                     .firestoppingMaterialApproved,
-                                  status: e.target.value,
+                                  details: e.target.value,
                                 },
                               },
                             })
                           }
-                          className="h-4 w-4 text-[#0066A1] focus:ring-[#0066A1]"
+                          className="w-full border border-gray-300 rounded px-2 py-1"
                         />
                       </td>
-                    ))}
-                    <td className="py-2 px-4">
-                      <input
-                        type="text"
-                        value={
-                          formData.checklist.firestoppingMaterialApproved
-                            .details
-                        }
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            checklist: {
-                              ...formData.checklist,
-                              firestoppingMaterialApproved: {
-                                ...formData.checklist
-                                  .firestoppingMaterialApproved,
-                                details: e.target.value,
-                              },
-                            },
-                          })
-                        }
-                        className="w-full border border-gray-300 rounded px-2 py-1"
-                      />
-                    </td>
-                  </tr>
+                    </tr>
 
-                  {/* Penetrations Properly Sealed Row */}
-                  <tr className="border-t border-gray-300">
-                    <td className="py-2 px-4">
-                      b) Are all penetrations or areas that require firestopping
-                      sealed properly?
-                    </td>
-                    {["YES", "NO", "N/A"].map((value) => (
-                      <td key={value} className="py-2 px-4 text-center">
+                    {/* Penetrations Properly Sealed Row */}
+                    <tr className="border-t border-gray-300">
+                      <td className="py-2 px-4">
+                        b) Are all penetrations or areas that require
+                        firestopping sealed properly?
+                      </td>
+                      {["YES", "NO", "N/A"].map((value) => (
+                        <td key={value} className="py-2 px-4 text-center">
+                          <input
+                            type="radio"
+                            name="penetrationsProperlySealed"
+                            value={value}
+                            checked={
+                              formData.checklist.penetrationsProperlySealed
+                                .status === value
+                            }
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                checklist: {
+                                  ...formData.checklist,
+                                  penetrationsProperlySealed: {
+                                    ...formData.checklist
+                                      .penetrationsProperlySealed,
+                                    status: e.target.value,
+                                  },
+                                },
+                              })
+                            }
+                            className="h-4 w-4 text-[#0066A1] focus:ring-[#0066A1]"
+                          />
+                        </td>
+                      ))}
+                      <td className="py-2 px-4">
                         <input
-                          type="radio"
-                          name="penetrationsProperlySealed"
-                          value={value}
-                          checked={
+                          type="text"
+                          value={
                             formData.checklist.penetrationsProperlySealed
-                              .status === value
+                              .details
                           }
                           onChange={(e) =>
                             setFormData({
@@ -599,136 +598,114 @@ export default function FirestoppingReport() {
                                 penetrationsProperlySealed: {
                                   ...formData.checklist
                                     .penetrationsProperlySealed,
-                                  status: e.target.value,
+                                  details: e.target.value,
                                 },
                               },
                             })
                           }
-                          className="h-4 w-4 text-[#0066A1] focus:ring-[#0066A1]"
+                          className="w-full border border-gray-300 rounded px-2 py-1"
                         />
                       </td>
-                    ))}
-                    <td className="py-2 px-4">
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Inspection Observations Section */}
+            <div className="mt-8">
+              <h3 className="font-bold mb-4">
+                INSPECTION OBSERVATIONS / REMARKS:
+              </h3>
+              <div className="border border-gray-300 p-4">
+                <textarea
+                  value={formData.inspectionObservations}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      inspectionObservations: e.target.value,
+                    })
+                  }
+                  className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#0066A1] focus:border-[#0066A1] min-h-[150px]"
+                  placeholder=""
+                />
+              </div>
+            </div>
+
+            {/* Inspector's Signature Section */}
+            <div className="mt-8">
+              <h3 className="font-bold mb-4">INSPECTOR&apos;S SIGNATURE:</h3>
+              <div className="border border-gray-300 p-4">
+                <input
+                  type="text"
+                  required
+                  value={formData.inspectorSignature}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      inspectorSignature: e.target.value,
+                    })
+                  }
+                  placeholder="Type your full name"
+                  className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#0066A1] focus:border-[#0066A1]"
+                />
+              </div>
+            </div>
+
+            {/* Photographs Section */}
+            <div className="mb-6">
+              <h3 className="font-bold mb-2">PHOTOGRAPHS:</h3>
+              <div className="space-y-4">
+                {formData.photographs.map((photo, index) => (
+                  <div key={index} className="border p-4 rounded">
+                    <div className="mb-2">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handlePhotoChange(index, e)}
+                        className="w-full"
+                      />
+                    </div>
+                    <div className="mb-2">
                       <input
                         type="text"
-                        value={
-                          formData.checklist.penetrationsProperlySealed.details
-                        }
+                        placeholder="Add caption"
+                        value={photo.caption || ""}
                         onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            checklist: {
-                              ...formData.checklist,
-                              penetrationsProperlySealed: {
-                                ...formData.checklist
-                                  .penetrationsProperlySealed,
-                                details: e.target.value,
-                              },
-                            },
-                          })
+                          handleCaptionChange(index, e.target.value)
                         }
-                        className="w-full border border-gray-300 rounded px-2 py-1"
+                        className="w-full p-2 border rounded"
                       />
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* Inspection Observations Section */}
-          <div className="mt-8">
-            <h3 className="font-bold mb-4">
-              INSPECTION OBSERVATIONS / REMARKS:
-            </h3>
-            <div className="border border-gray-300 p-4">
-              <textarea
-                value={formData.inspectionObservations}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    inspectionObservations: e.target.value,
-                  })
-                }
-                className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#0066A1] focus:border-[#0066A1] min-h-[150px]"
-                placeholder=""
-              />
-            </div>
-          </div>
-
-          {/* Inspector's Signature Section */}
-          <div className="mt-8">
-            <h3 className="font-bold mb-4">INSPECTOR&apos;S SIGNATURE:</h3>
-            <div className="border border-gray-300 p-4">
-              <input
-                type="text"
-                required
-                value={formData.inspectorSignature}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    inspectorSignature: e.target.value,
-                  })
-                }
-                placeholder="Type your full name"
-                className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-[#0066A1] focus:border-[#0066A1]"
-              />
-            </div>
-          </div>
-
-          {/* Photographs Section */}
-          <div className="mb-6">
-            <h3 className="font-bold mb-2">PHOTOGRAPHS:</h3>
-            <div className="space-y-4">
-              {formData.photographs.map((photo, index) => (
-                <div key={index} className="border p-4 rounded">
-                  <div className="mb-2">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => handlePhotoChange(index, e)}
-                      className="w-full"
-                    />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={(e) => handleDeletePhoto(e, index)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      Delete Photo
+                    </button>
                   </div>
-                  <div className="mb-2">
-                    <input
-                      type="text"
-                      placeholder="Add caption"
-                      value={photo.caption || ""}
-                      onChange={(e) =>
-                        handleCaptionChange(index, e.target.value)
-                      }
-                      className="w-full p-2 border rounded"
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    onClick={(e) => handleDeletePhoto(e, index)}
-                    className="text-red-500 hover:text-red-700"
-                  >
-                    Delete Photo
-                  </button>
-                </div>
-              ))}
+                ))}
+                <button
+                  type="button"
+                  onClick={handleAddPhoto}
+                  className="bg-[#834CFF] text-white px-4 py-2 rounded hover:bg-[#6617CB] transition-colors"
+                >
+                  Add Photo
+                </button>
+              </div>
+            </div>
+
+            {/* Submit Button */}
+            <div className="flex justify-end mt-6">
               <button
-                type="button"
-                onClick={handleAddPhoto}
-                className="bg-[#834CFF] text-white px-4 py-2 rounded hover:bg-[#6617CB] transition-colors"
+                type="submit"
+                disabled={loading}
+                className="bg-[#0066A1] text-white px-4 py-2 rounded-md hover:bg-[#004d7a] focus:outline-none focus:ring-2 focus:ring-[#0066A1] focus:ring-offset-2 disabled:opacity-50 transition-colors"
               >
-                Add Photo
+                {loading ? "Submitting..." : "Submit Report"}
               </button>
             </div>
-          </div>
-
-          {/* Submit Button */}
-          <div className="flex justify-end mt-6">
-            <button
-              type="submit"
-              disabled={loading}
-              className="bg-[#0066A1] text-white px-4 py-2 rounded-md hover:bg-[#004d7a] focus:outline-none focus:ring-2 focus:ring-[#0066A1] focus:ring-offset-2 disabled:opacity-50 transition-colors"
-            >
-              {loading ? "Submitting..." : "Submit Report"}
-            </button>
           </div>
         </form>
       </div>

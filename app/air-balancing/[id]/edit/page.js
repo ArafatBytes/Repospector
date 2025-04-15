@@ -5,6 +5,7 @@ import { useRouter, useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { format } from "date-fns";
 import { toast } from "react-hot-toast";
+import Image from "next/image";
 
 export default function EditAirBalancingReport() {
   const router = useRouter();
@@ -152,47 +153,23 @@ export default function EditAirBalancingReport() {
           ← Back to Dashboard
         </Link>
 
-        {/* Header Section */}
-        <div className="mb-8 border-b border-[#0066A1] pb-6">
-          <div className="flex justify-between items-start">
-            {/* Logo and Company Info */}
-            <div className="flex items-start">
-              <div className="border-r-2 border-[#0066A1] pr-4 mr-4">
-                <div className="text-3xl font-bold text-[#0066A1] tracking-wider">
-                  SHAHRISH
-                </div>
-                <div className="text-[0.65rem] text-[#0066A1] tracking-wider mt-0.5">
-                  ENGINEERING • SURVEYING • CONSTRUCTION INSPECTION
-                </div>
-              </div>
-            </div>
-
-            {/* Company Details */}
-            <div className="text-[0.65rem] text-right">
-              <div className="font-bold mb-1">
-                NYC DOB SPECIAL INSPECTION AGENCY# 008524
-              </div>
-              <div>
-                <span className="font-bold">NEW YORK OFFICE:</span> 208 WEST 29
-                <sup>TH</sup> STREET, SUITE 603, NEW YORK,
-              </div>
-              <div className="mb-1">NY 10001, T: (646) 797 3518</div>
-              <div>
-                <span className="font-bold">LONG ISLAND OFFICE:</span> 535
-                BROADHOLLOW ROAD, SUITE B7,
-              </div>
-              <div className="mb-1">MELVILLE, NY 11747, T: (631) 393 6020</div>
-              <div>
-                E:{" "}
-                <a href="mailto:INFO@SHAHRISH.NET" className="text-[#0066A1]">
-                  INFO@SHAHRISH.NET
-                </a>{" "}
-                | W:{" "}
-                <a href="http://WWW.SHAHRISH.NET" className="text-[#0066A1]">
-                  WWW.SHAHRISH.NET
-                </a>
-              </div>
-            </div>
+        {/* Header with Logo and Address */}
+        <div className="flex justify-between items-start p-6 border-b">
+          {/* Logo on the left */}
+          <div>
+            <Image
+              src="/images/logo.jpg"
+              alt="SHAHRISH"
+              width={300}
+              height={100}
+              priority
+            />
+          </div>
+          {/* Company Address on the right */}
+          <div className="text-right text-sm">
+            <p>15 WEST 38TH STREET, 8TH FLOOR (SUITE 808)</p>
+            <p>NEW YORK, NEW YORK 10018</p>
+            <p>T: (212) 632-8430</p>
           </div>
         </div>
 
