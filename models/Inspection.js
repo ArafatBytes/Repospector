@@ -5,12 +5,10 @@ const inspectionSchema = new mongoose.Schema(
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
     },
     reportType: {
       type: String,
       enum: ["INCOMPLETE_WORK", "COMPLETE", "CONFORMANCE", "NON_CONFORMANCE"],
-      required: true,
     },
     nonConformanceReason: {
       type: String,
@@ -20,55 +18,42 @@ const inspectionSchema = new mongoose.Schema(
     },
     inspectorEmail: {
       type: String,
-      required: true,
     },
     client: {
       type: String,
-      required: true,
     },
     amaaProjectNumber: {
       type: String,
-      required: true,
     },
     sentTo: {
       type: String,
-      required: true,
     },
     projectName: {
       type: String,
-      required: true,
     },
     cityCounty: {
       type: String,
-      required: true,
     },
     address: {
       type: String,
-      required: true,
     },
     floor: {
       type: String,
-      required: true,
     },
     date: {
       type: Date,
-      required: true,
     },
     timeArrived: {
       type: String,
-      required: true,
     },
     timeDeparted: {
       type: String,
-      required: true,
     },
     personsMet: {
       type: String,
-      required: true,
     },
     dobApplication: {
       type: String,
-      required: true,
     },
     inspectionItems: [
       {

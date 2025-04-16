@@ -56,6 +56,12 @@ export default function EditAirBalancingReport() {
         remarks: "",
       },
     ],
+    photos: [],
+  });
+
+  const [currentPhoto, setCurrentPhoto] = useState({
+    image: "",
+    description: "",
   });
 
   useEffect(() => {
@@ -111,6 +117,49 @@ export default function EditAirBalancingReport() {
     setFormData((prev) => ({
       ...prev,
       measurements: newMeasurements,
+    }));
+  };
+
+  const handlePhotoUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCurrentPhoto((prev) => ({
+          ...prev,
+          image: reader.result,
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleAddPhoto = () => {
+    if (currentPhoto.image) {
+      setFormData((prev) => ({
+        ...prev,
+        photos: [...prev.photos, currentPhoto],
+      }));
+      setCurrentPhoto({ image: "", description: "" });
+    }
+  };
+
+  const handleRemovePhoto = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      photos: prev.photos.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handlePhotoDescriptionChange = (index, description) => {
+    const newPhotos = [...formData.photos];
+    newPhotos[index] = {
+      ...newPhotos[index],
+      description,
+    };
+    setFormData((prev) => ({
+      ...prev,
+      photos: newPhotos,
     }));
   };
 
@@ -662,6 +711,108 @@ export default function EditAirBalancingReport() {
               >
                 Add Line
               </button>
+            </div>
+          </div>
+
+          {/* Photos Section */}
+          <div className="mt-8">
+            <h2 className="text-lg font-semibold mb-4">Photos</h2>
+            <div className="space-y-4">
+              {/* Current Photo Upload */}
+              <div className="border border-gray-300 p-4 rounded-md">
+                <div className="flex items-center space-x-4">
+                  <div className="flex-1">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handlePhotoUpload}
+                      className="block w-full text-sm text-gray-500
+                        file:mr-4 file:py-2 file:px-4
+                        file:rounded-md file:border-0
+                        file:text-sm file:font-semibold
+                        file:bg-[#0066A1] file:text-white
+                        hover:file:bg-[#0055A1]"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleAddPhoto}
+                    disabled={!currentPhoto.image}
+                    className="px-4 py-2 text-sm font-medium text-white bg-[#0066A1] border border-transparent rounded-md hover:bg-[#0055A1] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0066A1] disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Add Photo
+                  </button>
+                </div>
+                {currentPhoto.image && (
+                  <div className="mt-4">
+                    <div className="relative w-full max-w-md mx-auto">
+                      <img
+                        src={currentPhoto.image}
+                        alt="Preview"
+                        className="w-full h-auto rounded-md"
+                      />
+                    </div>
+                    <textarea
+                      value={currentPhoto.description}
+                      onChange={(e) =>
+                        setCurrentPhoto((prev) => ({
+                          ...prev,
+                          description: e.target.value,
+                        }))
+                      }
+                      placeholder="Add a description for this photo..."
+                      className="mt-2 w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0066A1] focus:border-transparent"
+                      rows={3}
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Uploaded Photos */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {formData.photos.map((photo, index) => (
+                  <div
+                    key={index}
+                    className="border border-gray-300 p-4 rounded-md"
+                  >
+                    <div className="relative">
+                      <img
+                        src={photo.image}
+                        alt={`Photo ${index + 1}`}
+                        className="w-full h-auto rounded-md"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemovePhoto(index)}
+                        className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                      >
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M6 18L18 6M6 6l12 12"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                    <textarea
+                      value={photo.description}
+                      onChange={(e) =>
+                        handlePhotoDescriptionChange(index, e.target.value)
+                      }
+                      placeholder="Add a description for this photo..."
+                      className="mt-2 w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0066A1] focus:border-transparent"
+                      rows={3}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 

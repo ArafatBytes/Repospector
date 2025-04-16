@@ -340,8 +340,40 @@ export default function ViewAirBalancingReport() {
                 ))}
               </div>
             </div>
+
+            {/* Photos Section */}
+            {report.photos && report.photos.length > 0 && (
+              <div className="mt-8">
+                <h2 className="text-lg font-semibold mb-4">Photos</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {report.photos.map((photo, index) => (
+                    <div
+                      key={index}
+                      className="border border-gray-300 p-4 rounded-md"
+                    >
+                      <div className="relative">
+                        <img
+                          src={photo.image}
+                          alt={`Photo ${index + 1}`}
+                          className="w-full h-auto rounded-md"
+                        />
+                      </div>
+                      {photo.description && (
+                        <p className="mt-2 text-sm text-gray-600">
+                          {photo.description}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
+      </div>
+
+      <div className="flex justify-end space-x-4 mt-6">
+        {/* ... existing code ... */}
       </div>
     </div>
   );

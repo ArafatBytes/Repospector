@@ -11,6 +11,11 @@ const measurementSchema = new mongoose.Schema({
   remarks: String,
 });
 
+const photoSchema = new mongoose.Schema({
+  image: String, // Base64 encoded image
+  description: String,
+});
+
 const airBalancingReportSchema = new mongoose.Schema(
   {
     userId: {
@@ -55,6 +60,9 @@ const airBalancingReportSchema = new mongoose.Schema(
 
     // Measurements
     measurements: [measurementSchema],
+
+    // Photos
+    photos: [photoSchema],
 
     // Report Type (for dashboard filtering)
     reportType: {
