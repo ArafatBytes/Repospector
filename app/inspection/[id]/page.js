@@ -81,7 +81,7 @@ export default function InspectionView() {
             className="bg-[#4A90E2] hover:bg-[#357ABD] text-white px-4 py-2 rounded flex items-center gap-2"
           >
             <PrinterIcon className="h-5 w-5" />
-            Print Report
+            Download Report
           </button>
         </div>
       </div>
