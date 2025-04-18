@@ -317,13 +317,13 @@ function DashboardContent() {
         router.push(route);
 
         // Show a message to the user
-        toast.success("Opening report for printing...");
+        toast.success("Opening report for downloading...");
       } else {
         toast.error("Unknown report type");
       }
     } catch (error) {
       console.error("Error navigating to report:", error);
-      toast.error("Failed to open the report for printing");
+      toast.error("Failed to open the report for downloading");
     }
   };
 

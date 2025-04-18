@@ -52,9 +52,8 @@ export default function ViewConcreteReport() {
   if (!report) return null;
 
   return (
-    <div className="min-h-screen bg-white p-8">
-      <div className="max-w-4xl mx-auto">
-        {/* Back to Dashboard Link */}
+    <div className="min-h-screen bg-white py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <ReportHeader
           reportId={report._id}
           reportName={`Concrete Report - ${report.client || "No Client"}`}
@@ -62,25 +61,24 @@ export default function ViewConcreteReport() {
         />
 
         <div id="concrete-report" className="bg-white rounded-lg shadow-sm p-6">
-          {/* Header Section */}
-          <div className="mb-8 border-b border-[#0066A1] pb-6">
-            <div className="flex justify-between items-start">
-              {/* Logo on the left */}
-              <div>
-                <Image
-                  src="/images/logo.jpg"
-                  alt="SHAHRISH"
-                  width={300}
-                  height={100}
-                  priority
-                />
-              </div>
-              {/* Company Address on the right */}
-              <div className="text-right text-sm">
-                <p>15 WEST 38TH STREET, 8TH FLOOR (SUITE 808)</p>
-                <p>NEW YORK, NEW YORK 10018</p>
-                <p>T: (212) 632-8430</p>
-              </div>
+          {/* Header with Logo and Address */}
+          <div className="flex justify-between items-start p-6 border-b">
+            {/* Logo on the left */}
+            <div>
+              <img
+                src="/images/logo.jpg"
+                alt="SHAHRISH"
+                width={300}
+                height={100}
+                style={{ width: "300px", height: "auto", objectFit: "contain" }}
+                className="logo-image"
+              />
+            </div>
+            {/* Company Address on the right */}
+            <div className="text-right text-sm">
+              <p>15 WEST 38TH STREET, 8TH FLOOR (SUITE 808)</p>
+              <p>NEW YORK, NEW YORK 10018</p>
+              <p>T: (212) 632-8430</p>
             </div>
           </div>
 
@@ -92,7 +90,7 @@ export default function ViewConcreteReport() {
               color: "white !important",
             }}
           >
-            Concrete Report
+            REBAR INSPECTION REPORT
           </div>
 
           <div className="border-t border-[#0066A1] mb-8" />

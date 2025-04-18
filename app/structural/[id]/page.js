@@ -42,36 +42,29 @@ export default function ViewStructuralReport() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto py-8 px-4">
-      <ReportHeader
-        reportId={report._id}
-        reportName={`Structural Report - ${report.projectName || "No Project"}`}
-        contentId="structural-report"
-      />
+    <div className="min-h-screen bg-white py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <ReportHeader
+          reportId={report._id}
+          reportName={`Structural Report - ${report.client || "No Client"}`}
+          contentId="structural-report"
+        />
 
-      <div id="structural-report" className="bg-white rounded-lg shadow-sm p-6">
-        {/* Report Header */}
         <div
-          className="bg-[#4A90E2] text-white text-center py-3 rounded-t-lg text-xl font-medium -mx-6 -mt-6 mb-6"
-          style={{
-            backgroundColor: "#4A90E2 !important",
-            color: "white !important",
-          }}
+          id="structural-report"
+          className="bg-white rounded-lg shadow-sm p-6"
         >
-          Structural Report
-        </div>
-
-        <div className="bg-white">
           {/* Header with Logo and Address */}
           <div className="flex justify-between items-start p-6 border-b">
             {/* Logo on the left */}
             <div>
-              <Image
+              <img
                 src="/images/logo.jpg"
                 alt="SHAHRISH"
                 width={300}
                 height={100}
-                priority
+                style={{ width: "300px", height: "auto", objectFit: "contain" }}
+                className="logo-image"
               />
             </div>
             {/* Company Address on the right */}

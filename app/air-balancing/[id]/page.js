@@ -6,7 +6,6 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { toast } from "react-hot-toast";
 import { ReportHeader } from "../../utils/addPrintButton";
-import Image from "next/image";
 
 export default function ViewAirBalancingReport() {
   const router = useRouter();
@@ -64,12 +63,13 @@ export default function ViewAirBalancingReport() {
           <div className="flex justify-between items-start p-6 border-b">
             {/* Logo on the left */}
             <div>
-              <Image
+              <img
                 src="/images/logo.jpg"
                 alt="SHAHRISH"
                 width={300}
                 height={100}
-                priority
+                style={{ width: "300px", height: "auto", objectFit: "contain" }}
+                className="logo-image"
               />
             </div>
             {/* Company Address on the right */}
@@ -343,13 +343,13 @@ export default function ViewAirBalancingReport() {
 
             {/* Photos Section */}
             {report.photos && report.photos.length > 0 && (
-              <div className="mt-8">
+              <div className="mt-8 print-break-before photos-section">
                 <h2 className="text-lg font-semibold mb-4">Photos</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {report.photos.map((photo, index) => (
                     <div
                       key={index}
-                      className="border border-gray-300 p-4 rounded-md"
+                      className="border border-gray-300 p-4 rounded-md photo-container"
                     >
                       <div className="relative">
                         <img

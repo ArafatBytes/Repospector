@@ -6,7 +6,6 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { toast } from "react-hot-toast";
 import { ReportHeader } from "../../utils/addPrintButton";
-import Image from "next/image";
 
 export default function ViewFirestoppingReport() {
   const router = useRouter();
@@ -43,9 +42,8 @@ export default function ViewFirestoppingReport() {
   }
 
   return (
-    <div className="min-h-screen bg-white p-8">
-      <div className="max-w-4xl mx-auto">
-        {/* Back Button */}
+    <div className="min-h-screen bg-white py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <ReportHeader
           reportId={report._id}
           reportName={`Firestopping Report - ${report.client || "No Client"}`}
@@ -60,12 +58,13 @@ export default function ViewFirestoppingReport() {
           <div className="flex justify-between items-start p-6 border-b">
             {/* Logo on the left */}
             <div>
-              <Image
+              <img
                 src="/images/logo.jpg"
                 alt="SHAHRISH"
                 width={300}
                 height={100}
-                priority
+                style={{ width: "300px", height: "auto", objectFit: "contain" }}
+                className="logo-image"
               />
             </div>
             {/* Company Address on the right */}

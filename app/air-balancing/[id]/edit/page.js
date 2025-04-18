@@ -206,12 +206,13 @@ export default function EditAirBalancingReport() {
         <div className="flex justify-between items-start p-6 border-b">
           {/* Logo on the left */}
           <div>
-            <Image
+            <img
               src="/images/logo.jpg"
               alt="SHAHRISH"
               width={300}
               height={100}
-              priority
+              style={{ width: "300px", height: "auto", objectFit: "contain" }}
+              className="logo-image"
             />
           </div>
           {/* Company Address on the right */}

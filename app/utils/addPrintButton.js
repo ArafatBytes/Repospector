@@ -1,6 +1,6 @@
 import { ArrowLeftIcon, PrinterIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { printElementAsPDF } from "./generatePDF";
+import { generatePDF } from "./generatePDF";
 
 /**
  * Creates a header section with back button and print button
@@ -20,7 +20,7 @@ export function ReportHeader({
 }) {
   const handlePrint = () => {
     try {
-      printElementAsPDF(contentId, `${reportName || "Report"}`);
+      generatePDF(contentId, reportName || "Report");
     } catch (error) {
       console.error("Error printing report:", error);
     }
@@ -40,7 +40,7 @@ export function ReportHeader({
         className="bg-[#4A90E2] hover:bg-[#357ABD] text-white px-4 py-2 rounded flex items-center gap-2"
       >
         <PrinterIcon className="h-5 w-5" />
-        Print Report
+        Download Report
       </button>
     </div>
   );

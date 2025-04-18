@@ -6,7 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeftIcon, PrinterIcon } from "@heroicons/react/24/outline";
 import { format } from "date-fns";
-import { printElementAsPDF } from "../../utils/generatePDF";
+import { generatePDF } from "../../utils/generatePDF";
 import { toast } from "react-hot-toast";
 
 export default function InspectionView() {
@@ -40,7 +40,7 @@ export default function InspectionView() {
   const handlePrint = () => {
     // Use our utility function to print the report
     try {
-      printElementAsPDF(
+      generatePDF(
         "inspection-report",
         `${inspection.projectName || "Inspection"} Report`
       );
@@ -91,12 +91,13 @@ export default function InspectionView() {
         <div className="flex justify-between items-start p-6 border-b">
           {/* Logo on the left */}
           <div>
-            <Image
+            <img
               src="/images/logo.jpg"
               alt="SHAHRISH"
               width={300}
               height={100}
-              priority
+              style={{ width: "300px", height: "auto", objectFit: "contain" }}
+              className="logo-image"
             />
           </div>
           {/* Company Address on the right */}
