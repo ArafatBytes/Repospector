@@ -6,13 +6,13 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "postinstall": "puppeteer browsers install chrome"
+    "lint": "next lint"
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^3.8.0",
     "@heroicons/react": "^2.2.0",
     "@react-pdf/renderer": "^4.3.0",
+    "@sparticuz/chromium": "^133.0.0",
     "bcryptjs": "^2.4.3",
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.7",
@@ -33,6 +33,7 @@
     "postmark": "^4.0.5",
     "print-js": "^1.6.0",
     "puppeteer": "^24.6.1",
+    "puppeteer-core": "^24.6.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hot-toast": "^2.4.1",
