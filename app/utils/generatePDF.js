@@ -37,6 +37,44 @@ async function convertImageToBase64(imgElement) {
 }
 
 /**
+ * Creates a header template for PDF pages
+ * @returns {string} HTML template for the header
+ */
+function createHeaderTemplate() {
+  return `
+    <div style="
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 100px;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      background-color: white;
+      z-index: 1000;
+    ">
+      <!-- Logo on the left -->
+      <div>
+        <img
+          src="/images/logo.jpg"
+          alt="SHAHRISH"
+          style="width: 300px; height: auto; object-fit: contain;"
+          class="logo-image"
+        />
+      </div>
+      <!-- Company Address on the right -->
+      <div style="text-align: right; font-size: 12px;">
+        <p>15 WEST 38TH STREET, 8TH FLOOR (SUITE 808)</p>
+        <p>NEW YORK, NEW YORK 10018</p>
+        <p>T: (212) 632-8430</p>
+      </div>
+    </div>
+  `;
+}
+
+/**
  * Generates a PDF from an HTML element using server-side Puppeteer
  * @param {string} elementId - The ID of the HTML element to convert to PDF
  * @param {string} fileName - The name of the PDF file
@@ -103,6 +141,7 @@ export async function generatePDF(elementId, fileName) {
               body {
                 margin: 0;
                 padding: 0;
+                padding-top: 120px; /* Add top padding to account for header */
               }
               .logo-image {
                 width: 300px !important;
@@ -144,6 +183,7 @@ export async function generatePDF(elementId, fileName) {
           <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
         </head>
         <body>
+          ${createHeaderTemplate()}
           ${clonedElement.outerHTML}
         </body>
       </html>

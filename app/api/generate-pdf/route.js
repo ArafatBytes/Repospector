@@ -50,13 +50,36 @@ export async function POST(request) {
       format: "A4",
       printBackground: true,
       margin: {
-        top: "20px",
+        top: "120px", // Increased top margin to accommodate header
         right: "20px",
         bottom: "20px",
         left: "20px",
       },
       preferCSSPageSize: true,
       scale: 1,
+      displayHeaderFooter: true,
+      headerTemplate: `
+        <div style="
+          width: 100%;
+          height: 100px;
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          padding: 10px 20px;
+          font-size: 12px;
+        ">
+          <div>
+            <img src="/images/logo.jpg" style="width: 300px; height: auto;" />
+          </div>
+          <div style="text-align: right;">
+            <p>15 WEST 38TH STREET, 8TH FLOOR (SUITE 808)</p>
+            <p>NEW YORK, NEW YORK 10018</p>
+            <p>T: (212) 632-8430</p>
+          </div>
+        </div>
+      `,
+      footerTemplate:
+        '<div style="width: 100%; text-align: center; font-size: 10px; padding: 10px;">Page <span class="pageNumber"></span> of <span class="totalPages"></span></div>',
     });
 
     // Close the browser
