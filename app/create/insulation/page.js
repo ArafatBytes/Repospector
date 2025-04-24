@@ -170,6 +170,9 @@ export default function CreateInsulationReport() {
             </div>
             {/* Company Address on the right */}
             <div className="text-right text-sm">
+              <p>
+                <strong>NYC DOB SIA# 008524</strong>
+              </p>
               <p>15 WEST 38TH STREET, 8TH FLOOR (SUITE 808)</p>
               <p>NEW YORK, NEW YORK 10018</p>
               <p>T: (212) 632-8430</p>
