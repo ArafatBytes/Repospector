@@ -49,6 +49,7 @@ function DashboardContent() {
       const structuralUrl = userId
         ? `/api/structural?userId=${userId}`
         : "/api/structural";
+      const facadeUrl = userId ? `/api/facade?userId=${userId}` : "/api/facade";
 
       const [
         inspectionsResponse,
@@ -59,6 +60,7 @@ function DashboardContent() {
         insulationResponse,
         parapetResponse,
         structuralResponse,
+        facadeResponse,
       ] = await Promise.all([
         fetch(url),
         fetch(airBalancingUrl),
@@ -68,6 +70,7 @@ function DashboardContent() {
         fetch(insulationUrl),
         fetch(parapetUrl),
         fetch(structuralUrl),
+        fetch(facadeUrl),
       ]);
 
       if (
@@ -78,7 +81,8 @@ function DashboardContent() {
         firestoppingResponse.status === 403 ||
         insulationResponse.status === 403 ||
         parapetResponse.status === 403 ||
-        structuralResponse.status === 403
+        structuralResponse.status === 403 ||
+        facadeResponse.status === 403
       ) {
         router.push("/dashboard");
         return;
@@ -92,7 +96,8 @@ function DashboardContent() {
         !firestoppingResponse.ok ||
         !insulationResponse.ok ||
         !parapetResponse.ok ||
-        !structuralResponse.ok
+        !structuralResponse.ok ||
+        !facadeResponse.ok
       ) {
         throw new Error("Failed to fetch reports");
       }
@@ -105,6 +110,7 @@ function DashboardContent() {
       const insulationData = await insulationResponse.json();
       const parapetData = await parapetResponse.json();
       const structuralData = await structuralResponse.json();
+      const facadeData = await facadeResponse.json();
 
       // Combine all types of reports
       const allReports = [
@@ -139,6 +145,10 @@ function DashboardContent() {
         ...structuralData.map((report) => ({
           ...report,
           reportType: "STRUCTURAL",
+        })),
+        ...facadeData.map((report) => ({
+          ...report,
+          reportType: "FACADE",
         })),
       ];
 
@@ -273,6 +283,8 @@ function DashboardContent() {
           ? `/api/parapet/${inspectionToDelete}`
           : reportToDelete.reportType === "STRUCTURAL"
           ? `/api/structural/${inspectionToDelete}`
+          : reportToDelete.reportType === "FACADE"
+          ? `/api/facade/${inspectionToDelete}`
           : `/api/inspections/${inspectionToDelete}`;
 
       const response = await fetch(endpoint, {
@@ -307,6 +319,7 @@ function DashboardContent() {
         INSULATION: `/insulation/${inspection._id}`,
         PARAPET: `/parapet/${inspection._id}`,
         STRUCTURAL: `/structural/${inspection._id}`,
+        FACADE: `/facade/${inspection._id}`,
       };
 
       // Get the correct route based on report type
@@ -407,6 +420,7 @@ function DashboardContent() {
               <option value="INSULATION">Insulation</option>
               <option value="PARAPET">Parapet Inspection</option>
               <option value="STRUCTURAL">Structural Inspection</option>
+              <option value="FACADE">Facade Inspection</option>
             </select>
           </div>
 
@@ -440,6 +454,7 @@ function DashboardContent() {
       INSULATION: `/insulation/${inspection._id}`,
       PARAPET: `/parapet/${inspection._id}`,
       STRUCTURAL: `/structural/${inspection._id}`,
+      FACADE: `/facade/${inspection._id}`,
     };
 
     const route = reportTypeRoutes[inspection.reportType];
@@ -458,6 +473,7 @@ function DashboardContent() {
       INSULATION: `/insulation/${inspection._id}/edit`,
       PARAPET: `/parapet/${inspection._id}/edit`,
       STRUCTURAL: `/structural/${inspection._id}/edit`,
+      FACADE: `/facade/${inspection._id}/edit`,
     };
 
     const route = reportTypeRoutes[inspection.reportType];
@@ -574,7 +590,8 @@ function DashboardContent() {
                       : inspection.projectName || inspection.client}
                   </h3>
                   <p className="text-gray-600 text-xl">
-                    {inspection.projectSiteAddress ||
+                    {inspection.projectAddress ||
+                      inspection.projectSiteAddress ||
                       inspection.address ||
                       inspection.location ||
                       inspection.cityCounty ||
