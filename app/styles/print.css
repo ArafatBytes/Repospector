@@ -29,8 +29,34 @@
   /* Prevent elements from being split across pages */
   .section,
   .section-header,
-  .field-row {
-    page-break-inside: avoid;
+  .field-row,
+  .photos-section,
+  .photo-container,
+  .print-section,
+  .print-section-header,
+  .print-field-row,
+  .avoid-break {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Ensure images are not split across pages */
+  img,
+  .photo-container img,
+  .photos-section img {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    display: block !important;
+  }
+
+  /* Prevent table rows from being split */
+  table,
+  tr,
+  thead,
+  tbody,
+  tfoot {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
 
   /* Ensure proper text rendering */
@@ -146,5 +172,23 @@
   /* Ensure report type section doesn't break */
   #inspection-report .mb-6 {
     page-break-inside: avoid !important;
+  }
+
+  /* Utility class for any element that should not be split */
+  .avoid-break {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    font-size: 90% !important;
+  }
+
+  /* If a section or image is too large, reduce font size and image size to fit on one page */
+  .photo-container.avoid-break {
+    font-size: 85% !important;
+  }
+  .photo-container.avoid-break img,
+  .photos-section.avoid-break img {
+    max-height: 7in !important;
+    width: auto !important;
+    object-fit: contain !important;
   }
 }

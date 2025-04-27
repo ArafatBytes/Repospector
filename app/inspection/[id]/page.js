@@ -88,7 +88,7 @@ export default function InspectionView() {
 
       <div id="inspection-report" className="bg-white rounded-lg shadow-sm">
         {/* Header with Logo and Address */}
-        <div className="flex justify-between items-start p-6 border-b">
+        <div className="flex justify-between items-start p-6 border-b section avoid-break">
           {/* Logo on the left */}
           <div>
             <img
@@ -124,7 +124,7 @@ export default function InspectionView() {
 
         <div className="p-6">
           {/* Report Type */}
-          <div className="mb-6">
+          <div className="mb-6 section avoid-break">
             <div className="flex flex-wrap md:flex-nowrap items-center gap-2">
               <span className="font-medium whitespace-nowrap">REPORT:</span>
               <div className="flex flex-wrap md:flex-nowrap items-center gap-2 md:gap-4">
@@ -179,7 +179,7 @@ export default function InspectionView() {
           </div>
 
           {/* Form Grid */}
-          <div className="grid grid-cols-2 gap-x-8 gap-y-4">
+          <div className="grid grid-cols-2 gap-x-8 gap-y-4 section avoid-break">
             <div>
               <label className="block text-sm font-medium mb-1">Date:</label>
               <p className="border-b border-gray-300 py-1">
@@ -281,7 +281,7 @@ export default function InspectionView() {
           </div>
 
           {/* Notice Text */}
-          <div className="col-span-2 mt-8">
+          <div className="col-span-2 mt-8 section avoid-break">
             <div className="text-sm text-gray-600 mb-6">
               In accordance with applicable sections of the New York City
               Building Code (BC) of 2014, special inspections have been provided
@@ -371,7 +371,7 @@ export default function InspectionView() {
           </div>
 
           {/* Health & Safety Plan */}
-          <div className="col-span-2 mt-6">
+          <div className="col-span-2 mt-6 section avoid-break">
             <div className="flex items-center gap-6">
               <span className="font-medium">Health & Safety Plan:</span>
               <div className="flex items-center gap-4">
@@ -407,14 +407,14 @@ export default function InspectionView() {
           </div>
 
           {/* Legend */}
-          <div className="col-span-2 mt-6 text-sm text-gray-600">
+          <div className="col-span-2 mt-6 text-sm text-gray-600 section avoid-break">
             Required Inspection(s): A=Approved, D=Disapproved, NA=Not
             Applicable, Not checked=Not Completed
           </div>
 
           {/* Detailed Sections */}
           {inspection.structuralSteelWelding && (
-            <div className="col-span-2 mt-8 border-t pt-6">
+            <div className="col-span-2 mt-8 border-t pt-6 section avoid-break">
               <h3
                 className="bg-[#4A90E2] text-white text-center py-2 rounded-md text-lg font-medium mb-6"
                 style={{
@@ -724,7 +724,7 @@ export default function InspectionView() {
           )}
 
           {inspection.structuralSteelDetails && (
-            <div className="col-span-2 mt-8 border-t pt-6">
+            <div className="col-span-2 mt-8 border-t pt-6 section avoid-break">
               <h3
                 className="bg-[#4A90E2] text-white text-center py-2 rounded-md text-lg font-medium mb-6"
                 style={{
@@ -945,7 +945,7 @@ export default function InspectionView() {
           )}
 
           {inspection.structuralSteelBolting && (
-            <div className="col-span-2 mt-8 border-t pt-6">
+            <div className="col-span-2 mt-8 border-t pt-6 section avoid-break">
               <h3
                 className="bg-[#4A90E2] text-white text-center py-2 rounded-md text-lg font-medium mb-6"
                 style={{
@@ -1249,7 +1249,7 @@ export default function InspectionView() {
           )}
 
           {inspection.mechanicalSystems && (
-            <div className="col-span-2 mt-8 border-t pt-6">
+            <div className="col-span-2 mt-8 border-t pt-6 section avoid-break">
               <h3
                 className="bg-[#4A90E2] text-white text-center py-2 rounded-md text-lg font-medium mb-6"
                 style={{
@@ -1825,7 +1825,7 @@ export default function InspectionView() {
           )}
 
           {inspection.sprinklerSystems && (
-            <div className="col-span-2 mt-8 border-t pt-6">
+            <div className="col-span-2 mt-8 border-t pt-6 section avoid-break">
               <h3
                 className="bg-[#4A90E2] text-white text-center py-2 rounded-md text-lg font-medium mb-6"
                 style={{
@@ -2240,7 +2240,7 @@ export default function InspectionView() {
           )}
 
           {inspection.heatingSystems && (
-            <div className="col-span-2 mt-8 border-t pt-6">
+            <div className="col-span-2 mt-8 border-t pt-6 section avoid-break">
               <h3
                 className="bg-[#4A90E2] text-white text-center py-2 rounded-md text-lg font-medium mb-6"
                 style={{
@@ -2264,7 +2264,7 @@ export default function InspectionView() {
           )}
 
           {inspection.fireResistantPenetrations && (
-            <div className="col-span-2 mt-8 border-t pt-6">
+            <div className="col-span-2 mt-8 border-t pt-6 section avoid-break">
               <h3
                 className="bg-[#4A90E2] text-white text-center py-2 rounded-md text-lg font-medium mb-6"
                 style={{
@@ -2491,7 +2491,7 @@ export default function InspectionView() {
           )}
 
           {inspection.postInstalledAnchors && (
-            <div className="col-span-2 mt-8 border-t pt-6">
+            <div className="col-span-2 mt-8 border-t pt-6 section avoid-break">
               <h3
                 className="bg-[#4A90E2] text-white text-center py-2 rounded-md text-lg font-medium mb-6"
                 style={{
@@ -2743,7 +2743,7 @@ export default function InspectionView() {
           )}
 
           {inspection.energyCodeCompliance && (
-            <div className="col-span-2 mt-8 border-t pt-6">
+            <div className="col-span-2 mt-8 border-t pt-6 section avoid-break">
               <h3
                 className="bg-[#4A90E2] text-white text-center py-2 rounded-md text-lg font-medium mb-6"
                 style={{
@@ -3664,7 +3664,7 @@ export default function InspectionView() {
           )}
 
           {inspection.fireResistanceRated && (
-            <div className="col-span-2 mt-8 border-t pt-6">
+            <div className="col-span-2 mt-8 border-t pt-6 section avoid-break">
               <h3
                 className="bg-[#4A90E2] text-white text-center py-2 rounded-md text-lg font-medium mb-6"
                 style={{
@@ -3890,7 +3890,7 @@ export default function InspectionView() {
           )}
 
           {inspection.finalInspection && (
-            <div className="col-span-2 mt-8 border-t pt-6">
+            <div className="col-span-2 mt-8 border-t pt-6 section avoid-break">
               <h3
                 className="bg-[#4A90E2] text-white text-center py-2 rounded-md text-lg font-medium mb-6"
                 style={{
@@ -4181,7 +4181,7 @@ export default function InspectionView() {
           )}
 
           {/* Comments and Images Section */}
-          <div className="col-span-2 mt-8 border-t pt-6">
+          <div className="col-span-2 mt-8 border-t pt-6 section avoid-break">
             <h3
               className="bg-[#4A90E2] text-white text-center py-2 rounded-md text-lg font-medium mb-6"
               style={{
@@ -4192,16 +4192,19 @@ export default function InspectionView() {
               Comments and additional information, including photographs
             </h3>
             {inspection.images && inspection.images.length > 0 ? (
-              <div className="space-y-6">
+              <div className="space-y-6 photos-section avoid-break">
                 {inspection.images.map((imageGroup, index) =>
                   imageGroup.urls && imageGroup.urls.length > 0 ? (
                     <div
                       key={index}
-                      className="border rounded-lg overflow-hidden shadow-sm"
+                      className="border rounded-lg overflow-hidden shadow-sm photo-container avoid-break"
                     >
                       <div className="flex flex-wrap gap-4 p-4">
                         {imageGroup.urls.map((url, urlIndex) => (
-                          <div key={urlIndex} className="flex-shrink-0">
+                          <div
+                            key={urlIndex}
+                            className="flex-shrink-0 avoid-break"
+                          >
                             <Image
                               src={url}
                               alt={`Inspection image ${index + 1}-${
