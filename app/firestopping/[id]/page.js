@@ -6,6 +6,7 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { toast } from "react-hot-toast";
 import { ReportHeader } from "../../utils/addPrintButton";
+import Image from "next/image";
 
 export default function ViewFirestoppingReport() {
   const router = useRouter();
@@ -50,12 +51,9 @@ export default function ViewFirestoppingReport() {
           contentId="firestopping-report"
         />
 
-        <div
-          id="firestopping-report"
-          className="bg-white rounded-lg shadow-sm p-6"
-        >
+        <div id="firestopping-report" className="bg-white rounded-lg shadow-sm">
           {/* Header with Logo and Address */}
-          <div className="flex justify-between items-start p-6 border-b">
+          <div className="flex justify-between items-start p-6 border-b section avoid-break">
             {/* Logo on the left */}
             <div>
               <img
@@ -78,9 +76,9 @@ export default function ViewFirestoppingReport() {
             </div>
           </div>
 
-          {/* Report Header */}
+          {/* Header */}
           <div
-            className="bg-[#4A90E2] text-white text-center py-3 rounded-t-lg text-xl font-medium -mx-6 -mt-6 mb-6"
+            className="bg-[#4A90E2] text-white text-center py-3 rounded-t-lg text-xl font-medium section avoid-break"
             style={{
               backgroundColor: "#4A90E2 !important",
               color: "white !important",
@@ -89,257 +87,261 @@ export default function ViewFirestoppingReport() {
             Firestopping Report
           </div>
 
-          {/* Basic Info */}
-          <div className="grid grid-cols-2 gap-6 mb-6">
-            <div>
-              <p>
-                <span className="font-semibold">Client:</span> {report.client}
-              </p>
-              <p>
-                <span className="font-semibold">Project Site Address:</span>{" "}
-                {report.projectSiteAddress}
-              </p>
-              <p>
-                <span className="font-semibold">Project ID:</span>{" "}
-                {report.dobJobNumber}
-              </p>
-              <p>
-                <span className="font-semibold">Inspector Name:</span>{" "}
-                {report.inspectorName}
-              </p>
-            </div>
-            <div>
-              <p>
-                <span className="font-semibold">Inspection Date:</span>{" "}
-                {format(new Date(report.inspectionDate), "MM/dd/yyyy")}
-              </p>
-              <p>
-                <span className="font-semibold">Time In/Out:</span>{" "}
-                {report.timeInOut}
-              </p>
-              <p>
-                <span className="font-semibold">Report Number:</span>{" "}
-                {report.reportNumber}
-              </p>
-              <p>
-                <span className="font-semibold">Site Weather (°F):</span>{" "}
-                {report.siteWeather}
-              </p>
-            </div>
-          </div>
-
-          {/* Report Title */}
-          <div className="bg-[#0066A1] text-white text-center py-2 mb-6">
-            <h2 className="text-xl font-bold">FIRESTOPPING INSPECTION</h2>
-          </div>
-
-          <div className="text-sm mb-6">
-            <p className="italic">
-              The above referenced project was visited to observe the
-              firestopping application for compliance with project drawings,
-              specifications, and NYC Building Code requirements.
-            </p>
-          </div>
-
-          {/* Site Contact */}
-          <div className="mb-6">
-            <h3 className="font-bold mb-2">SITE CONTACT:</h3>
-            <div className="border p-2">{report.siteContact}</div>
-          </div>
-
-          {/* Plans Referenced */}
-          <div className="mb-6">
-            <h3 className="font-bold mb-2">PLANS REFERENCED:</h3>
-            <div className="border p-2">{report.plansReferenced}</div>
-            <p className="text-sm text-gray-500 mt-1">
-              (Plans date, Sealed by, Approved date)
-            </p>
-          </div>
-
-          {/* Area/Location Inspected */}
-          <div className="mb-6">
-            <h3 className="font-bold mb-2">AREA/LOCATION INSPECTED:</h3>
-            <div className="border p-2">{report.areaInspected}</div>
-            <p className="text-sm text-gray-500 mt-1">
-              (Floors, Grid Lines, Col btw Fl., Stairs N° btw Fl., etc)
-            </p>
-          </div>
-
-          {/* Material Used */}
-          <div className="mb-6">
-            <h3 className="font-bold mb-2">
-              MATERIAL USED/SUBMITTAL APPROVED:
-            </h3>
-            <div className="border p-2">{report.materialUsed}</div>
-          </div>
-
-          {/* Inspection Outcome */}
-          <div className="mb-6">
-            <h3 className="font-bold mb-2">INSPECTION OUTCOME:</h3>
-            <div className="border p-2">
-              {report.inspectionOutcome === "CONFORMANCE" && (
-                <span className="text-green-600">CONFORMANCE</span>
-              )}
-              {report.inspectionOutcome === "NON_CONFORMANCE" && (
-                <span className="text-red-600">NON-CONFORMANCE</span>
-              )}
-              {report.inspectionOutcome === "INCOMPLETE" && (
-                <span className="text-yellow-600">INCOMPLETE</span>
-              )}
-            </div>
-          </div>
-
-          {/* Non-Conformance Notes */}
-          {report.inspectionOutcome === "NON_CONFORMANCE" &&
-            report.nonConformanceNotes && (
-              <div className="mb-6">
-                <h3 className="font-bold mb-2">NON-CONFORMANCE NOTES:</h3>
-                <div className="border p-2 whitespace-pre-wrap">
-                  {report.nonConformanceNotes}
-                </div>
+          <div className="p-6">
+            {/* Basic Info Grid */}
+            <div className="grid grid-cols-2 gap-x-8 gap-y-4 section avoid-break">
+              <div>
+                <p>
+                  <span className="font-semibold">Client:</span> {report.client}
+                </p>
+                <p>
+                  <span className="font-semibold">Project Site Address:</span>{" "}
+                  {report.projectSiteAddress}
+                </p>
+                <p>
+                  <span className="font-semibold">Project ID:</span>{" "}
+                  {report.dobJobNumber}
+                </p>
+                <p>
+                  <span className="font-semibold">Inspector Name:</span>{" "}
+                  {report.inspectorName}
+                </p>
               </div>
-            )}
-
-          {/* Checklist */}
-          <div className="mb-6">
-            <h3 className="font-bold mb-2">
-              CHECKLIST (Please check all applicable):
-            </h3>
-            <table className="w-full border">
-              <thead>
-                <tr className="bg-gray-50">
-                  <th className="border p-2 text-left">Requirements</th>
-                  <th className="border p-2 w-16 text-center">YES</th>
-                  <th className="border p-2 w-16 text-center">NO</th>
-                  <th className="border p-2 w-16 text-center">N/A</th>
-                  <th className="border p-2">Inspection Details</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="border p-2">
-                    a) Is firestopping material used approved?
-                  </td>
-                  <td className="border p-2 text-center">
-                    <div
-                      className={`w-4 h-4 mx-auto rounded-full ${
-                        report.checklist.firestoppingMaterialApproved.status ===
-                        "YES"
-                          ? "bg-[#0066A1]"
-                          : "bg-white border"
-                      }`}
-                    />
-                  </td>
-                  <td className="border p-2 text-center">
-                    <div
-                      className={`w-4 h-4 mx-auto rounded-full ${
-                        report.checklist.firestoppingMaterialApproved.status ===
-                        "NO"
-                          ? "bg-[#0066A1]"
-                          : "bg-white border"
-                      }`}
-                    />
-                  </td>
-                  <td className="border p-2 text-center">
-                    <div
-                      className={`w-4 h-4 mx-auto rounded-full ${
-                        report.checklist.firestoppingMaterialApproved.status ===
-                        "N/A"
-                          ? "bg-[#0066A1]"
-                          : "bg-white border"
-                      }`}
-                    />
-                  </td>
-                  <td className="border p-2">
-                    {report.checklist.firestoppingMaterialApproved.details}
-                  </td>
-                </tr>
-                <tr>
-                  <td className="border p-2">
-                    b) Are all penetrations or areas that require firestopping
-                    sealed properly?
-                  </td>
-                  <td className="border p-2 text-center">
-                    <div
-                      className={`w-4 h-4 mx-auto rounded-full ${
-                        report.checklist.penetrationsProperlySealed.status ===
-                        "YES"
-                          ? "bg-[#0066A1]"
-                          : "bg-white border"
-                      }`}
-                    />
-                  </td>
-                  <td className="border p-2 text-center">
-                    <div
-                      className={`w-4 h-4 mx-auto rounded-full ${
-                        report.checklist.penetrationsProperlySealed.status ===
-                        "NO"
-                          ? "bg-[#0066A1]"
-                          : "bg-white border"
-                      }`}
-                    />
-                  </td>
-                  <td className="border p-2 text-center">
-                    <div
-                      className={`w-4 h-4 mx-auto rounded-full ${
-                        report.checklist.penetrationsProperlySealed.status ===
-                        "N/A"
-                          ? "bg-[#0066A1]"
-                          : "bg-white border"
-                      }`}
-                    />
-                  </td>
-                  <td className="border p-2">
-                    {report.checklist.penetrationsProperlySealed.details}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          {/* Inspection Observations */}
-          <div className="mb-6">
-            <h3 className="font-bold mb-2">
-              INSPECTION OBSERVATIONS / REMARKS:
-            </h3>
-            <div className="border p-2 min-h-[100px]">
-              {report.inspectionObservations}
+              <div>
+                <p>
+                  <span className="font-semibold">Inspection Date:</span>{" "}
+                  {format(new Date(report.inspectionDate), "MM/dd/yyyy")}
+                </p>
+                <p>
+                  <span className="font-semibold">Time In/Out:</span>{" "}
+                  {report.timeInOut}
+                </p>
+                <p>
+                  <span className="font-semibold">Report Number:</span>{" "}
+                  {report.reportNumber}
+                </p>
+                <p>
+                  <span className="font-semibold">Site Weather (°F):</span>{" "}
+                  {report.siteWeather}
+                </p>
+              </div>
             </div>
-          </div>
 
-          {/* Inspector's Signature */}
-          <div className="mb-6">
-            <h3 className="font-bold mb-2">INSPECTOR&apos;S SIGNATURE:</h3>
-            <div className="border p-2">{report.inspectorSignature}</div>
-          </div>
+            {/* Site Inspector Section */}
+            <div className="px-10 mb-6 section avoid-break">
+              <h3 className="font-bold mb-2">SITE CONTACT:</h3>
+              <div className="border p-2">{report.siteContact}</div>
+            </div>
 
-          {/* Photographs */}
-          {report.photographs && report.photographs.length > 0 && (
-            <div className="mb-6">
-              <h3 className="font-bold mb-2">PHOTOGRAPHS:</h3>
-              <div className="grid grid-cols-2 gap-4">
-                {report.photographs.map(
-                  (photo, index) =>
-                    photo.image && (
-                      <div key={index} className="border">
-                        <div className="aspect-w-4 aspect-h-3">
-                          <img
-                            src={photo.image}
-                            alt={photo.caption}
-                            className="object-cover w-full h-full"
-                          />
-                        </div>
-                        <div className="p-2 border-t">
-                          <p className="text-sm">
-                            Photo {index + 1}: {photo.caption}
-                          </p>
-                        </div>
-                      </div>
-                    )
+            {/* Location Map Section */}
+            <div className="flex flex-col items-center mb-8 section avoid-break">
+              <h3 className="font-bold mb-2">PLANS REFERENCED:</h3>
+              <div className="border p-2">{report.plansReferenced}</div>
+              <p className="text-sm text-gray-500 mt-1">
+                (Plans date, Sealed by, Approved date)
+              </p>
+            </div>
+
+            {/* Building Details Section */}
+            <div className="px-10 mb-10 section avoid-break">
+              <h3 className="font-bold mb-2">AREA/LOCATION INSPECTED:</h3>
+              <div className="border p-2">{report.areaInspected}</div>
+              <p className="text-sm text-gray-500 mt-1">
+                (Floors, Grid Lines, Col btw Fl., Stairs N° btw Fl., etc)
+              </p>
+            </div>
+
+            {/* Material Used */}
+            <div className="px-10 mb-10 section avoid-break">
+              <h3 className="font-bold mb-2">
+                MATERIAL USED/SUBMITTAL APPROVED:
+              </h3>
+              <div className="border p-2">{report.materialUsed}</div>
+            </div>
+
+            {/* Inspection Outcome */}
+            <div className="px-10 mb-10 section avoid-break">
+              <h3 className="font-bold mb-2">INSPECTION OUTCOME:</h3>
+              <div className="border p-2">
+                {report.inspectionOutcome === "CONFORMANCE" && (
+                  <span className="text-green-600">CONFORMANCE</span>
+                )}
+                {report.inspectionOutcome === "NON_CONFORMANCE" && (
+                  <span className="text-red-600">NON-CONFORMANCE</span>
+                )}
+                {report.inspectionOutcome === "INCOMPLETE" && (
+                  <span className="text-yellow-600">INCOMPLETE</span>
                 )}
               </div>
             </div>
-          )}
+
+            {/* Non-Conformance Notes */}
+            {report.inspectionOutcome === "NON_CONFORMANCE" &&
+              report.nonConformanceNotes && (
+                <div className="px-10 mb-10 section avoid-break">
+                  <h3 className="font-bold mb-2">NON-CONFORMANCE NOTES:</h3>
+                  <div className="border p-2 whitespace-pre-wrap">
+                    {report.nonConformanceNotes}
+                  </div>
+                </div>
+              )}
+
+            {/* Checklist */}
+            <div className="px-10 mb-10 section avoid-break">
+              <h3 className="font-bold mb-2">
+                CHECKLIST (Please check all applicable):
+              </h3>
+              <table className="w-full border">
+                <thead>
+                  <tr className="bg-gray-50">
+                    <th className="border p-2 text-left">Requirements</th>
+                    <th className="border p-2 w-16 text-center">YES</th>
+                    <th className="border p-2 w-16 text-center">NO</th>
+                    <th className="border p-2 w-16 text-center">N/A</th>
+                    <th className="border p-2">Inspection Details</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className="border p-2">
+                      a) Is firestopping material used approved?
+                    </td>
+                    <td className="border p-2 text-center">
+                      <div
+                        className={`w-4 h-4 mx-auto rounded-full ${
+                          report.checklist.firestoppingMaterialApproved
+                            .status === "YES"
+                            ? "bg-[#0066A1]"
+                            : "bg-white border"
+                        }`}
+                      />
+                    </td>
+                    <td className="border p-2 text-center">
+                      <div
+                        className={`w-4 h-4 mx-auto rounded-full ${
+                          report.checklist.firestoppingMaterialApproved
+                            .status === "NO"
+                            ? "bg-[#0066A1]"
+                            : "bg-white border"
+                        }`}
+                      />
+                    </td>
+                    <td className="border p-2 text-center">
+                      <div
+                        className={`w-4 h-4 mx-auto rounded-full ${
+                          report.checklist.firestoppingMaterialApproved
+                            .status === "N/A"
+                            ? "bg-[#0066A1]"
+                            : "bg-white border"
+                        }`}
+                      />
+                    </td>
+                    <td className="border p-2">
+                      {report.checklist.firestoppingMaterialApproved.details}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="border p-2">
+                      b) Are all penetrations or areas that require firestopping
+                      sealed properly?
+                    </td>
+                    <td className="border p-2 text-center">
+                      <div
+                        className={`w-4 h-4 mx-auto rounded-full ${
+                          report.checklist.penetrationsProperlySealed.status ===
+                          "YES"
+                            ? "bg-[#0066A1]"
+                            : "bg-white border"
+                        }`}
+                      />
+                    </td>
+                    <td className="border p-2 text-center">
+                      <div
+                        className={`w-4 h-4 mx-auto rounded-full ${
+                          report.checklist.penetrationsProperlySealed.status ===
+                          "NO"
+                            ? "bg-[#0066A1]"
+                            : "bg-white border"
+                        }`}
+                      />
+                    </td>
+                    <td className="border p-2 text-center">
+                      <div
+                        className={`w-4 h-4 mx-auto rounded-full ${
+                          report.checklist.penetrationsProperlySealed.status ===
+                          "N/A"
+                            ? "bg-[#0066A1]"
+                            : "bg-white border"
+                        }`}
+                      />
+                    </td>
+                    <td className="border p-2">
+                      {report.checklist.penetrationsProperlySealed.details}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            {/* Inspection Observations */}
+            <div className="px-10 mb-10 section avoid-break">
+              <h3 className="font-bold mb-2">
+                INSPECTION OBSERVATIONS / REMARKS:
+              </h3>
+              <div className="border p-2 min-h-[100px]">
+                {report.inspectionObservations}
+              </div>
+            </div>
+
+            {/* Inspector's Signature */}
+            <div className="px-10 mb-10 section avoid-break">
+              <h3 className="font-bold mb-2">INSPECTOR&apos;S SIGNATURE:</h3>
+              <div className="border p-2">{report.inspectorSignature}</div>
+            </div>
+
+            {/* Photographs Section */}
+            <div className="flex flex-col items-center mb-10 photos-section avoid-break">
+              <h2 className="text-2xl font-bold underline mb-4 text-center">
+                PHOTOGRAPHS
+              </h2>
+              {report.photographs && report.photographs.length === 0 && (
+                <div className="text-gray-500">No photographs uploaded</div>
+              )}
+              {report.photographs &&
+                report.photographs.map((img, idx) => (
+                  <div
+                    key={idx}
+                    className="flex flex-col items-center mb-6 w-full photo-container avoid-break"
+                  >
+                    <Image
+                      src={img.file}
+                      alt={`Photograph ${idx + 1}`}
+                      width={0}
+                      height={0}
+                      sizes="100vw"
+                      className="w-auto h-auto max-w-full avoid-break"
+                    />
+                    <div className="mt-4 text-center">
+                      <p className="text-gray-700">{img.description}</p>
+                    </div>
+                  </div>
+                ))}
+            </div>
+
+            {/* Recommendations and Remarks Section */}
+            <div className="px-10 mb-10 section avoid-break">
+              <h2 className="text-2xl font-bold underline mb-4 text-center">
+                RECOMMENDATIONS AND REMARKS
+              </h2>
+              <div className="text-sm mb-6">
+                <p className="italic">
+                  The above referenced project was visited to observe the
+                  firestopping application for compliance with project drawings,
+                  specifications, and NYC Building Code requirements.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

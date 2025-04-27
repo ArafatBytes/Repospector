@@ -6,6 +6,7 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { toast } from "react-hot-toast";
 import { ReportHeader } from "../../utils/addPrintButton";
+import Image from "next/image";
 
 export default function ViewAirBalancingReport() {
   const router = useRouter();
@@ -57,10 +58,10 @@ export default function ViewAirBalancingReport() {
 
         <div
           id="air-balancing-report"
-          className="bg-white rounded-lg shadow-sm p-6"
+          className="bg-white rounded-lg shadow-sm"
         >
           {/* Header with Logo and Address */}
-          <div className="flex justify-between items-start p-6 border-b">
+          <div className="flex justify-between items-start p-6 border-b section avoid-break">
             {/* Logo on the left */}
             <div>
               <img
@@ -83,9 +84,9 @@ export default function ViewAirBalancingReport() {
             </div>
           </div>
 
-          {/* Report Header */}
+          {/* Header */}
           <div
-            className="bg-[#4A90E2] text-white text-center py-3 rounded-t-lg text-xl font-medium -mx-6 -mt-6 mb-6"
+            className="bg-[#4A90E2] text-white text-center py-3 rounded-t-lg text-xl font-medium section avoid-break"
             style={{
               backgroundColor: "#4A90E2 !important",
               color: "white !important",
@@ -94,10 +95,9 @@ export default function ViewAirBalancingReport() {
             Air Balancing Report
           </div>
 
-          {/* Report Content */}
-          <div className="space-y-8">
-            {/* Basic Info Section */}
-            <div className="grid grid-cols-2 gap-x-12 gap-y-4">
+          <div className="p-6">
+            {/* Basic Info Grid */}
+            <div className="grid grid-cols-2 gap-x-8 gap-y-4 section avoid-break">
               <div>
                 <div className="mb-4">
                   <span className="text-sm font-medium">Client:</span>
@@ -142,11 +142,8 @@ export default function ViewAirBalancingReport() {
               </div>
             </div>
 
-            {/* Blue divider */}
-            <div className="h-0.5 bg-[#0066A1] my-8"></div>
-
             {/* HVAC Unit Details Section */}
-            <div className="border border-gray-300">
+            <div className="px-10 mb-6 section avoid-break">
               {/* Unit Details Row */}
               <div className="grid grid-cols-4 border-b border-gray-300">
                 <div className="p-4 border-r border-gray-300">
@@ -281,7 +278,7 @@ export default function ViewAirBalancingReport() {
             </div>
 
             {/* Measurements Table */}
-            <div className="mt-8">
+            <div className="px-10 mb-6 section avoid-break">
               <div className="border border-gray-300">
                 {/* Table Header */}
                 <div className="grid grid-cols-8 border-b border-gray-300 bg-gray-50">
@@ -344,33 +341,34 @@ export default function ViewAirBalancingReport() {
               </div>
             </div>
 
-            {/* Photos Section */}
-            {report.photos && report.photos.length > 0 && (
-              <div className="mt-8 print-break-before photos-section">
-                <h2 className="text-lg font-semibold mb-4">Photos</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {report.photos.map((photo, index) => (
-                    <div
-                      key={index}
-                      className="border border-gray-300 p-4 rounded-md photo-container"
-                    >
-                      <div className="relative">
-                        <img
-                          src={photo.image}
-                          alt={`Photo ${index + 1}`}
-                          className="w-full h-auto rounded-md"
-                        />
-                      </div>
-                      {photo.description && (
-                        <p className="mt-2 text-sm text-gray-600">
-                          {photo.description}
-                        </p>
-                      )}
+            {/* Photographs Section */}
+            <div className="flex flex-col items-center mb-10 photos-section avoid-break">
+              <h2 className="text-2xl font-bold underline mb-4 text-center">
+                PHOTOGRAPHS
+              </h2>
+              {report.photos && report.photos.length === 0 && (
+                <div className="text-gray-500">No photographs uploaded</div>
+              )}
+              {report.photos &&
+                report.photos.map((img, idx) => (
+                  <div
+                    key={idx}
+                    className="flex flex-col items-center mb-6 w-full photo-container avoid-break"
+                  >
+                    <Image
+                      src={img.image}
+                      alt={`Photograph ${idx + 1}`}
+                      width={0}
+                      height={0}
+                      sizes="100vw"
+                      className="w-auto h-auto max-w-full avoid-break"
+                    />
+                    <div className="mt-4 text-center">
+                      <p className="text-gray-700">{img.description}</p>
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
+                  </div>
+                ))}
+            </div>
           </div>
         </div>
       </div>

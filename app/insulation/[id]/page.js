@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
 import { ReportHeader } from "../../utils/addPrintButton";
+import Image from "next/image";
 
 export default function ViewInsulationReport() {
   const [report, setReport] = useState(null);
@@ -55,12 +56,9 @@ export default function ViewInsulationReport() {
           contentId="insulation-report"
         />
 
-        <div
-          id="insulation-report"
-          className="bg-white rounded-lg shadow-sm p-6"
-        >
+        <div id="insulation-report" className="bg-white rounded-lg shadow-sm">
           {/* Header with Logo and Address */}
-          <div className="flex justify-between items-start p-6 border-b">
+          <div className="flex justify-between items-start p-6 border-b section avoid-break">
             {/* Logo on the left */}
             <div>
               <img
@@ -85,7 +83,7 @@ export default function ViewInsulationReport() {
 
           {/* Report Header */}
           <div
-            className="bg-[#4A90E2] text-white text-center py-3 rounded-t-lg text-xl font-medium -mx-6 -mt-6 mb-6"
+            className="bg-[#4A90E2] text-white text-center py-3 rounded-t-lg text-xl font-medium section avoid-break"
             style={{
               backgroundColor: "#4A90E2 !important",
               color: "white !important",
@@ -95,9 +93,9 @@ export default function ViewInsulationReport() {
           </div>
 
           {/* Rest of the report content */}
-          <div className="space-y-6">
+          <div className="p-6">
             {/* Basic Info */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-x-8 gap-y-4 section avoid-break">
               <div>
                 <div className="mb-4">
                   <label className="font-semibold">Client:</label>
@@ -367,30 +365,33 @@ export default function ViewInsulationReport() {
             </div>
 
             {/* Photographs */}
-            {report.hasPhotographs && report.photographs.length > 0 && (
-              <div className="print:break-before-page">
-                <h3 className="font-bold mb-2">PHOTOGRAPHS:</h3>
-                <div className="grid grid-cols-2 gap-4 print:gap-8">
-                  {report.photographs.map((photo, index) => (
-                    <div
-                      key={index}
-                      className="border p-2 print:break-inside-avoid"
-                    >
-                      <div className="relative aspect-[4/3]">
-                        <img
-                          src={photo.image}
-                          alt={`Photo ${index + 1}`}
-                          className="w-full h-full object-contain print:object-contain"
-                        />
-                      </div>
-                      <p className="text-sm text-gray-600 mt-2">
-                        Photo {index + 1}: {photo.caption}
-                      </p>
+            <div className="flex flex-col items-center mb-10 photos-section avoid-break">
+              <h2 className="text-2xl font-bold underline mb-4 text-center">
+                PHOTOGRAPHS
+              </h2>
+              {report.photographs && report.photographs.length === 0 && (
+                <div className="text-gray-500">No photographs uploaded</div>
+              )}
+              {report.photographs &&
+                report.photographs.map((img, idx) => (
+                  <div
+                    key={idx}
+                    className="flex flex-col items-center mb-6 w-full photo-container avoid-break"
+                  >
+                    <Image
+                      src={img.file}
+                      alt={`Photograph ${idx + 1}`}
+                      width={0}
+                      height={0}
+                      sizes="100vw"
+                      className="w-auto h-auto max-w-full avoid-break"
+                    />
+                    <div className="mt-4 text-center">
+                      <p className="text-gray-700">{img.description}</p>
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
+                  </div>
+                ))}
+            </div>
           </div>
         </div>
       </div>
