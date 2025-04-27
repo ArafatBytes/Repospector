@@ -2,17 +2,31 @@ import puppeteer from "puppeteer-core";
 import chromium from "@sparticuz/chromium";
 import { NextResponse } from "next/server";
 
+// Only import puppeteer (not puppeteer-core) for local
+let localPuppeteer = null;
+if (process.env.NODE_ENV !== "production") {
+  localPuppeteer = require("puppeteer");
+}
+
 export async function POST(request) {
   try {
     const { html, fileName } = await request.json();
 
-    // Launch Puppeteer
-    const browser = await puppeteer.launch({
-      args: chromium.args,
-      defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath(),
-      headless: chromium.headless,
-    });
+    let browser;
+    if (process.env.NODE_ENV === "production") {
+      // Production (Render, Vercel, etc)
+      browser = await puppeteer.launch({
+        args: chromium.args,
+        defaultViewport: chromium.defaultViewport,
+        executablePath: await chromium.executablePath(),
+        headless: chromium.headless,
+      });
+    } else {
+      // Local development
+      browser = await localPuppeteer.launch({
+        headless: true,
+      });
+    }
 
     const page = await browser.newPage();
 
