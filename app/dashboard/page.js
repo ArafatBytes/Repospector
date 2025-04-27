@@ -50,6 +50,7 @@ function DashboardContent() {
         ? `/api/structural?userId=${userId}`
         : "/api/structural";
       const facadeUrl = userId ? `/api/facade?userId=${userId}` : "/api/facade";
+      const garageUrl = userId ? `/api/garage?userId=${userId}` : "/api/garage";
 
       const [
         inspectionsResponse,
@@ -61,6 +62,7 @@ function DashboardContent() {
         parapetResponse,
         structuralResponse,
         facadeResponse,
+        garageResponse,
       ] = await Promise.all([
         fetch(url),
         fetch(airBalancingUrl),
@@ -71,6 +73,7 @@ function DashboardContent() {
         fetch(parapetUrl),
         fetch(structuralUrl),
         fetch(facadeUrl),
+        fetch(garageUrl),
       ]);
 
       if (
@@ -82,7 +85,8 @@ function DashboardContent() {
         insulationResponse.status === 403 ||
         parapetResponse.status === 403 ||
         structuralResponse.status === 403 ||
-        facadeResponse.status === 403
+        facadeResponse.status === 403 ||
+        garageResponse.status === 403
       ) {
         router.push("/dashboard");
         return;
@@ -97,7 +101,8 @@ function DashboardContent() {
         !insulationResponse.ok ||
         !parapetResponse.ok ||
         !structuralResponse.ok ||
-        !facadeResponse.ok
+        !facadeResponse.ok ||
+        !garageResponse.ok
       ) {
         throw new Error("Failed to fetch reports");
       }
@@ -111,6 +116,7 @@ function DashboardContent() {
       const parapetData = await parapetResponse.json();
       const structuralData = await structuralResponse.json();
       const facadeData = await facadeResponse.json();
+      const garageData = await garageResponse.json();
 
       // Combine all types of reports
       const allReports = [
@@ -149,6 +155,10 @@ function DashboardContent() {
         ...facadeData.map((report) => ({
           ...report,
           reportType: "FACADE",
+        })),
+        ...garageData.map((report) => ({
+          ...report,
+          reportType: "GARAGE",
         })),
       ];
 
@@ -285,6 +295,8 @@ function DashboardContent() {
           ? `/api/structural/${inspectionToDelete}`
           : reportToDelete.reportType === "FACADE"
           ? `/api/facade/${inspectionToDelete}`
+          : reportToDelete.reportType === "GARAGE"
+          ? `/api/garage/${inspectionToDelete}`
           : `/api/inspections/${inspectionToDelete}`;
 
       const response = await fetch(endpoint, {
@@ -320,6 +332,7 @@ function DashboardContent() {
         PARAPET: `/parapet/${inspection._id}`,
         STRUCTURAL: `/structural/${inspection._id}`,
         FACADE: `/facade/${inspection._id}`,
+        GARAGE: `/garage/${inspection._id}`,
       };
 
       // Get the correct route based on report type
@@ -421,6 +434,7 @@ function DashboardContent() {
               <option value="PARAPET">Parapet Inspection</option>
               <option value="STRUCTURAL">Structural Inspection</option>
               <option value="FACADE">Facade Inspection</option>
+              <option value="GARAGE">Garage Inspection</option>
             </select>
           </div>
 
@@ -455,6 +469,7 @@ function DashboardContent() {
       PARAPET: `/parapet/${inspection._id}`,
       STRUCTURAL: `/structural/${inspection._id}`,
       FACADE: `/facade/${inspection._id}`,
+      GARAGE: `/garage/${inspection._id}`,
     };
 
     const route = reportTypeRoutes[inspection.reportType];
@@ -474,6 +489,7 @@ function DashboardContent() {
       PARAPET: `/parapet/${inspection._id}/edit`,
       STRUCTURAL: `/structural/${inspection._id}/edit`,
       FACADE: `/facade/${inspection._id}/edit`,
+      GARAGE: `/garage/${inspection._id}/edit`,
     };
 
     const route = reportTypeRoutes[inspection.reportType];
