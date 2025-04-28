@@ -80,7 +80,7 @@ export default function ViewFacadeReport() {
 
         {/* Header */}
         <div
-          className="bg-[#4A90E2] text-white text-center py-3 rounded-t-lg text-xl font-medium section avoid-break"
+          className="bg-[#4A90E2] text-white text-center py-3 rounded-t-lg text-2xl font-medium section avoid-break"
           style={{
             backgroundColor: "#4A90E2 !important",
             color: "white !important",
@@ -119,26 +119,35 @@ export default function ViewFacadeReport() {
           </div>
 
           {/* Site Inspector Section */}
-          <div className="px-10 mb-6 section avoid-break">
+          <div className="mb-6 section avoid-break">
             <div className="flex flex-col items-center gap-6">
-              <div className="w-full max-w-md">
-                <label className="font-bold block mb-2 text-center">
+              <div className="w-full max-w-md mt-8">
+                <label className="font-bold block mb-2 text-center text-xl">
                   Site Inspector:
                 </label>
                 <div className="text-center border-b border-gray-300 py-1">
                   {report.siteInspector}
                 </div>
               </div>
-              {report.inspectorImage && (
-                <div className="flex flex-col items-center">
-                  <Image
+              {report.inspectorImage ? (
+                <div className="flex flex-col items-center w-full photo-container avoid-break scale-down-on-break">
+                  <img
                     src={report.inspectorImage}
                     alt="Site Inspector"
-                    width={0}
-                    height={0}
-                    sizes="100vw"
-                    className="w-auto h-auto max-w-full"
+                    className="avoid-break scale-down-on-break"
+                    style={{
+                      maxWidth: "100%",
+                      height: "auto",
+                      display: "block",
+                      margin: "0 auto",
+                      background: "#f3f4f6",
+                      borderRadius: "8px",
+                    }}
                   />
+                </div>
+              ) : (
+                <div className="w-full flex items-center justify-center bg-gray-100 text-gray-400 h-64 rounded-md">
+                  No Inspector Image
                 </div>
               )}
             </div>
@@ -150,7 +159,7 @@ export default function ViewFacadeReport() {
           </div>
 
           {/* Building Details Section */}
-          <div className="px-10 mb-10 section avoid-break">
+          <div className="mb-10 section avoid-break">
             <h2 className="text-xl font-bold text-center mb-6">
               Building Details:
             </h2>
@@ -248,33 +257,116 @@ export default function ViewFacadeReport() {
             {/* ... existing report structure content ... */}
           </div>
 
-          {/* Photographs Section */}
-          <div className="flex flex-col items-center mb-10 photos-section avoid-break">
-            <h2 className="text-2xl font-bold underline mb-4 text-center">
-              PHOTOGRAPHS
-            </h2>
-            {report.photographs && report.photographs.length === 0 && (
-              <div className="text-gray-500">No photographs uploaded</div>
-            )}
-            {report.photographs &&
-              report.photographs.map((img, idx) => (
-                <div
-                  key={idx}
-                  className="flex flex-col items-center mb-6 w-full photo-container avoid-break"
-                >
-                  <Image
-                    src={img.file}
-                    alt={`Photograph ${idx + 1}`}
-                    width={0}
-                    height={0}
-                    sizes="100vw"
-                    className="w-auto h-auto max-w-full avoid-break"
-                  />
-                  <div className="mt-4 text-center">
-                    <p className="text-gray-700">{img.description}</p>
+          {/* Structural Design Section */}
+          <div className="mb-6 section avoid-break">
+            <h2 className="text-xl font-bold mb-6">STRUCTURAL DESIGN</h2>
+            <div className="space-y-8">
+              {report.structuralDesignImages &&
+              report.structuralDesignImages.length > 0 ? (
+                report.structuralDesignImages.map((image, index) => (
+                  <div
+                    key={image.id || index}
+                    className="border border-gray-200 rounded-lg p-6 photo-container avoid-break scale-down-on-break flex flex-col items-center"
+                  >
+                    {image.file ? (
+                      <img
+                        src={image.file}
+                        alt={
+                          image.description ||
+                          `Structural design image ${index + 1}`
+                        }
+                        className="avoid-break scale-down-on-break"
+                        style={{
+                          maxWidth: "100%",
+                          height: "auto",
+                          display: "block",
+                          margin: "0 auto",
+                          background: "#f3f4f6",
+                          borderRadius: "8px",
+                        }}
+                      />
+                    ) : (
+                      <div className="w-full flex items-center justify-center bg-gray-100 text-gray-400 h-64 rounded-md">
+                        No Image
+                      </div>
+                    )}
+                    <div className="mt-4 text-center text-sm text-gray-700">
+                      {image.description || `Image ${index + 1}`}
+                    </div>
                   </div>
+                ))
+              ) : (
+                <div className="text-gray-500 text-center">
+                  No structural design images uploaded
                 </div>
-              ))}
+              )}
+            </div>
+          </div>
+
+          {/* Observations Section */}
+          <div className="mb-6 section avoid-break">
+            <h2 className="text-xl font-bold mb-6">OBSERVATIONS</h2>
+            <div className="space-y-6">
+              {report.observations && report.observations.length > 0 ? (
+                report.observations.map((observation, index) => (
+                  <div
+                    key={observation.id || index}
+                    className="border border-gray-200 rounded-lg p-4"
+                  >
+                    <div className="flex items-start mb-2">
+                      <span className="font-bold mr-2">{index + 1}.</span>
+                      <span>{observation.text}</span>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-gray-500 text-center">
+                  No observations added
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Photographs Section */}
+          <div className="mb-6 section avoid-break">
+            <h2 className="text-xl font-bold mb-6">PHOTOGRAPHS</h2>
+            <div className="space-y-8">
+              {report.images && report.images.length > 0 ? (
+                report.images.map((image, index) => (
+                  <div
+                    key={image.id || index}
+                    className="border border-gray-200 rounded-lg p-6 photo-container avoid-break scale-down-on-break flex flex-col items-center"
+                  >
+                    {image.file ? (
+                      <img
+                        src={image.file}
+                        alt={image.description || `Report image ${index + 1}`}
+                        className="avoid-break scale-down-on-break"
+                        style={{
+                          maxWidth: "100%",
+                          height: "auto",
+                          display: "block",
+                          margin: "0 auto",
+                          background: "#f3f4f6",
+                          borderRadius: "8px",
+                        }}
+                      />
+                    ) : (
+                      <div className="w-full flex items-center justify-center bg-gray-100 text-gray-400 h-64 rounded-md">
+                        No Image
+                      </div>
+                    )}
+                    <div className="mt-4 text-center text-sm text-gray-700">
+                      {image.description || `Image ${index + 1}`}
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-gray-500 text-center">
+                  No photographs uploaded
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Recommendations and Remarks Section */}

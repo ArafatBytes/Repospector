@@ -87,7 +87,7 @@ export default function ViewGarageReport() {
 
         <div className="p-6">
           {/* Project Details Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 section avoid-break">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12 section avoid-break">
             <div>
               <label className="font-bold block mb-2">PROJECT NAME:</label>
               <div className="border-b border-gray-300 py-1">
@@ -114,49 +114,53 @@ export default function ViewGarageReport() {
             </div>
           </div>
 
-          {/* ATTN Section */}
-          <div className="px-10 mb-6 section avoid-break">
-            <h3 className="font-bold mb-2">ATTN</h3>
-            <div className="mb-2">{report.attnName}</div>
-            <div className="mb-2">{report.attnCompany}</div>
-            <div className="mb-2">{report.attnAddress}</div>
-            <div>{report.attnEmail}</div>
-          </div>
+          <div className="section avoid-break border p-4 rounded-md">
+            {/* ATTN Section */}
+            <div className="mb-6 section avoid-break">
+              <h3 className="font-bold mb-2">ATTN</h3>
+              <div className="mb-2">{report.attnName}</div>
+              <div className="mb-2">{report.attnCompany}</div>
+              <div className="mb-2">{report.attnAddress}</div>
+              <div>{report.attnEmail}</div>
+            </div>
 
-          {/* RE Section */}
-          <div className="px-10 mb-6 section avoid-break">
-            <h3 className="font-bold mb-2">RE</h3>
-            <div>{report.re}</div>
-          </div>
+            {/* RE Section */}
+            <div className="mb-6 section avoid-break">
+              <h3 className="font-bold mb-2">RE</h3>
+              <div>{report.re}</div>
+            </div>
 
-          {/* Application Body Section */}
-          <div className="px-10 mb-6 section avoid-break">
-            <h3 className="font-bold mb-2">Application Body</h3>
-            <div className="whitespace-pre-line">{report.applicationBody}</div>
+            {/* Application Body Section */}
+            <div className="mb-6 section avoid-break">
+              <h3 className="font-bold mb-2">Application Body</h3>
+              <div className="whitespace-pre-line">
+                {report.applicationBody}
+              </div>
+            </div>
           </div>
 
           {/* Location Map Section */}
           <div className="flex flex-col items-center mb-8 section avoid-break">
-            <h2 className="text-2xl font-bold underline mb-4 text-center">
+            <h2 className="text-2xl font-bold underline mb-4 mt-8 text-center">
               Location Map:
             </h2>
             {report.locationMap && (
-              <div className="flex flex-col items-center">
+              <div className="border border-gray-200 rounded-lg p-6 photo-container avoid-break scale-down-on-break flex flex-col items-center">
                 <Image
                   src={report.locationMap}
                   alt="Location Map"
                   width={0}
                   height={0}
                   sizes="100vw"
-                  className="w-auto h-auto max-w-full"
+                  className="w-auto h-auto max-w-full avoid-break scale-down-on-break"
                 />
               </div>
             )}
           </div>
 
           {/* Building Details Section */}
-          <div className="px-10 mb-10 section avoid-break">
-            <h2 className="text-3xl font-extrabold underline text-center mb-8 mt-8 tracking-wide">
+          <div className="mb-10 section avoid-break">
+            <h2 className="text-2xl font-extrabold underline text-center mb-8 mt-8 tracking-wide">
               BUILDING DETAILS
             </h2>
             <div className="mb-8">
@@ -216,7 +220,7 @@ export default function ViewGarageReport() {
               report.parkingOverlayImages.map((img, idx) => (
                 <div
                   key={idx}
-                  className="flex flex-col items-center mb-6 w-full"
+                  className="border border-gray-200 rounded-lg p-6 mb-6 photo-container avoid-break scale-down-on-break flex flex-col items-center"
                 >
                   <Image
                     src={img}
@@ -224,15 +228,15 @@ export default function ViewGarageReport() {
                     width={0}
                     height={0}
                     sizes="100vw"
-                    className="w-auto h-auto max-w-full"
+                    className="w-auto h-auto max-w-full avoid-break scale-down-on-break"
                   />
                 </div>
               ))}
           </div>
 
           {/* Report on Parking Structure Section */}
-          <div className="px-10 mb-10 section avoid-break">
-            <h2 className="text-3xl font-extrabold underline text-center mb-8 mt-8 tracking-wide">
+          <div className="mb-10 section avoid-break">
+            <h2 className="text-2xl font-extrabold underline text-center mb-8 mt-8 tracking-wide">
               REPORT ON PARKING STRUCTURE:
             </h2>
             <div className="space-y-8">
@@ -276,7 +280,7 @@ export default function ViewGarageReport() {
               report.photographs.map((img, idx) => (
                 <div
                   key={idx}
-                  className="flex flex-col items-center mb-6 w-full photo-container avoid-break"
+                  className="border border-gray-200 rounded-lg p-6 mb-6 photo-container avoid-break scale-down-on-break flex flex-col items-center"
                 >
                   <Image
                     src={img.file}
@@ -284,7 +288,7 @@ export default function ViewGarageReport() {
                     width={0}
                     height={0}
                     sizes="100vw"
-                    className="w-auto h-auto max-w-full avoid-break"
+                    className="w-auto h-auto max-w-full avoid-break scale-down-on-break"
                   />
                   <div className="mt-4 text-center">
                     <p className="text-gray-700">{img.description}</p>
@@ -294,7 +298,7 @@ export default function ViewGarageReport() {
           </div>
 
           {/* Recommendations and Remarks Section */}
-          <div className="px-10 mb-10 section avoid-break">
+          <div className="mb-10 section avoid-break">
             <h2 className="text-2xl font-bold mb-6 text-center">
               RECOMMENDATIONS AND REMARKS
             </h2>

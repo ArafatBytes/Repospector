@@ -4197,13 +4197,13 @@ export default function InspectionView() {
                   imageGroup.urls && imageGroup.urls.length > 0 ? (
                     <div
                       key={index}
-                      className="border rounded-lg overflow-hidden shadow-sm photo-container avoid-break"
+                      className="border rounded-lg overflow-hidden shadow-sm photo-container avoid-break scale-down-on-break"
                     >
                       <div className="flex flex-wrap gap-4 p-4">
                         {imageGroup.urls.map((url, urlIndex) => (
                           <div
                             key={urlIndex}
-                            className="flex-shrink-0 avoid-break"
+                            className="flex-shrink-0 photo-container avoid-break scale-down-on-break"
                           >
                             <Image
                               src={url}
@@ -4212,7 +4212,7 @@ export default function InspectionView() {
                               }`}
                               width={800}
                               height={600}
-                              className="rounded max-w-full h-auto"
+                              className="rounded max-w-full h-auto avoid-break scale-down-on-break"
                               style={{
                                 maxWidth: "min(100%, 500px)",
                                 objectFit: "contain",

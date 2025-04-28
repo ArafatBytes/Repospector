@@ -171,7 +171,13 @@ export default function ViewConcreteReport() {
             </div>
 
             {/* Site Inspector Section */}
-            <div className="px-10 mb-6 section avoid-break">
+            <div className=" mb-6 section avoid-break">
+              {/* Description Text */}
+              <div className="text-sm mb-8 mt-8">
+                The above referenced project was visited to observe the concrete
+                installation for compliance with project drawings,
+                specifications, and NYC Building Code requirements BC 1704.4
+              </div>
               {/* Site Contact */}
               <div className="mb-6">
                 <div className="font-bold mb-2">SITE CONTACT:</div>
@@ -307,6 +313,215 @@ export default function ViewConcreteReport() {
                   <span>No</span>
                 </div>
               </div>
+
+              {/* Checklist Table */}
+              <div className="mb-8 mt-8">
+                <h3 className="text-lg font-semibold mb-4">
+                  CHECKLIST (Describe all applicable):
+                </h3>
+                <div className="border border-gray-300">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-gray-300">
+                        <th className="border-r border-gray-300 p-2 text-left w-1/3">
+                          Requirements
+                        </th>
+                        <th className="border-r border-gray-300 p-2 text-center w-16">
+                          YES
+                        </th>
+                        <th className="border-r border-gray-300 p-2 text-center w-16">
+                          NO
+                        </th>
+                        <th className="border-r border-gray-300 p-2 text-center w-16">
+                          N/A
+                        </th>
+                        <th className="p-2 text-left">Inspection Details</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        {
+                          key: "shopDrawings",
+                          label: "Shop Drawings are approved and are on-site.",
+                        },
+                        {
+                          key: "gradeOfSteel",
+                          label: "Grade of steel delivered as required.",
+                        },
+                        {
+                          key: "spacingCoordinated",
+                          label:
+                            "Spacing coordinated to suit masonry/concrete units.",
+                        },
+                        {
+                          key: "requiredClearance",
+                          label:
+                            "Required clearance of steel from forms provided.",
+                        },
+                        {
+                          key: "lengthOfSplices",
+                          label:
+                            "Length of splices and staggered splices are required.",
+                        },
+                        {
+                          key: "bendsWithinRadii",
+                          label:
+                            "Bends within radii and tolerance are uniformly made.",
+                        },
+                        {
+                          key: "additionalBars",
+                          label:
+                            "Additional bars at intersections, openings, and corners provided.",
+                        },
+                        {
+                          key: "barsCleaned",
+                          label: "Bars cleaned of material that effect bond.",
+                        },
+                        {
+                          key: "dowelsForMarginal",
+                          label: "Dowels for marginal bars at opening.",
+                        },
+                        {
+                          key: "barsTiedAndSupported",
+                          label:
+                            "Bars tied and supported to avoid displacement.",
+                        },
+                        {
+                          key: "spacersTieWires",
+                          label: "Spacers, tie wires, chairs as required.",
+                        },
+                        {
+                          key: "conduitSeparated",
+                          label:
+                            "Conduit is separated by 3 conduit diameter minimum.",
+                        },
+                        {
+                          key: "noConduitBelow",
+                          label:
+                            "No conduit or pipe placed below rebar material except where approved.",
+                        },
+                        {
+                          key: "noContactWithMetals",
+                          label:
+                            "No contact of bars is made with dissimilar metals.",
+                        },
+                        {
+                          key: "barNotNearSurface",
+                          label:
+                            "Bar not near surface which may cause rusting.",
+                        },
+                        {
+                          key: "adequateClearance",
+                          label:
+                            "Adequate Clearance provided for deposit of concrete.",
+                        },
+                        {
+                          key: "specialCoating",
+                          label: "Special coating as required.",
+                        },
+                        {
+                          key: "noBentBars",
+                          label:
+                            "No bent bars and tension members installed except where approved.",
+                        },
+                        {
+                          key: "noBoxingOut",
+                          label:
+                            "Unless approved, boxing out is not approved for subsequent grouting out.",
+                        },
+                      ].map((item) => (
+                        <tr key={item.key} className="border-b border-gray-300">
+                          <td className="border-r border-gray-300 p-2">
+                            {item.label}
+                          </td>
+                          <td className="border-r border-gray-300 p-2 text-center">
+                            <input
+                              type="radio"
+                              name={item.key}
+                              value="YES"
+                              checked={report.checklist?.[item.key] === "YES"}
+                              readOnly
+                            />
+                          </td>
+                          <td className="border-r border-gray-300 p-2 text-center">
+                            <input
+                              type="radio"
+                              name={item.key}
+                              value="NO"
+                              checked={report.checklist?.[item.key] === "NO"}
+                              readOnly
+                            />
+                          </td>
+                          <td className="border-r border-gray-300 p-2 text-center">
+                            <input
+                              type="radio"
+                              name={item.key}
+                              value="N/A"
+                              checked={report.checklist?.[item.key] === "N/A"}
+                              readOnly
+                            />
+                          </td>
+                          <td className="p-2">
+                            {report.checklist?.[`${item.key}Details`] || ""}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Inspection Observations/Remarks */}
+              <div className="mb-8">
+                <h3 className="text-lg font-semibold mb-4">
+                  INSPECTION OBSERVATIONS / REMARKS:
+                </h3>
+                <div className="w-full border border-gray-300 rounded-md p-4 min-h-[100px]">
+                  {report.remarks || "No observations or remarks provided."}
+                </div>
+              </div>
+
+              {/* Photographs Section */}
+              <div className="mb-8">
+                <h3 className="text-lg font-semibold mb-4">PHOTOGRAPHS</h3>
+                <div className="flex flex-col gap-8">
+                  {report.photographs && report.photographs.length === 0 && (
+                    <div className="text-gray-500 text-center">
+                      No photographs uploaded
+                    </div>
+                  )}
+                  {report.photographs &&
+                    report.photographs.map((photo, idx) => (
+                      <div
+                        key={idx}
+                        className="border border-gray-300 rounded-md p-4 flex flex-col items-center photo-container avoid-break scale-down-on-break"
+                      >
+                        {photo.image ? (
+                          <img
+                            src={photo.image}
+                            alt={`Photo ${idx + 1}`}
+                            className="avoid-break scale-down-on-break"
+                            style={{
+                              maxWidth: "100%",
+                              height: "auto",
+                              display: "block",
+                              margin: "0 auto",
+                              background: "#f3f4f6",
+                              borderRadius: "8px",
+                            }}
+                          />
+                        ) : (
+                          <div className="w-full flex items-center justify-center bg-gray-100 text-gray-400 h-64 rounded-md">
+                            No Image
+                          </div>
+                        )}
+                        <div className="mt-2 text-center text-sm text-gray-700">
+                          {photo.caption || `Photo ${idx + 1}`}
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </div>
             </div>
 
             {/* Location Map Section */}
@@ -317,40 +532,6 @@ export default function ViewConcreteReport() {
             {/* Building Details Section */}
             <div className="px-10 mb-10 section avoid-break">
               {/* ... existing building details content ... */}
-            </div>
-
-            {/* Photographs Section */}
-            <div className="flex flex-col items-center mb-10 photos-section avoid-break">
-              <h2 className="text-2xl font-bold underline mb-4 text-center">
-                PHOTOGRAPHS
-              </h2>
-              {report.photographs && report.photographs.length === 0 && (
-                <div className="text-gray-500">No photographs uploaded</div>
-              )}
-              {report.photographs &&
-                report.photographs.map((img, idx) => (
-                  <div
-                    key={idx}
-                    className="flex flex-col items-center mb-6 w-full photo-container avoid-break"
-                  >
-                    <Image
-                      src={img.file}
-                      alt={`Photograph ${idx + 1}`}
-                      width={0}
-                      height={0}
-                      sizes="100vw"
-                      className="w-auto h-auto max-w-full avoid-break"
-                    />
-                    <div className="mt-4 text-center">
-                      <p className="text-gray-700">{img.description}</p>
-                    </div>
-                  </div>
-                ))}
-            </div>
-
-            {/* Recommendations and Remarks Section */}
-            <div className="px-10 mb-10 section avoid-break">
-              {/* ... existing remarks content ... */}
             </div>
           </div>
         </div>
