@@ -77,7 +77,7 @@ export default function ViewStructuralReport() {
 
           {/* Header */}
           <div
-            className="bg-[#4A90E2] text-white text-center py-3 rounded-t-lg text-xl font-medium section avoid-break"
+            className="bg-[#4A90E2] text-white text-center py-3 rounded-t-lg text-2xl font-medium section avoid-break"
             style={{
               backgroundColor: "#4A90E2 !important",
               color: "white !important",
@@ -90,21 +90,27 @@ export default function ViewStructuralReport() {
             {/* Basic Info Grid */}
             <div className="grid grid-cols-2 gap-x-8 gap-y-4 section avoid-break">
               <div>
-                <label className="font-semibold block mb-2">Location:</label>
+                <label className="font-semibold block mb-2 text-xl">
+                  Location:
+                </label>
                 <p className="border-b border-gray-300 py-1">
                   {report.location}
                 </p>
               </div>
 
               <div>
-                <label className="font-semibold block mb-2">Description:</label>
+                <label className="font-semibold block mb-2 text-xl">
+                  Description:
+                </label>
                 <p className="border-b border-gray-300 py-1">
                   {report.description}
                 </p>
               </div>
 
               <div>
-                <label className="font-semibold block mb-2">Issues:</label>
+                <label className="font-semibold block mb-2 text-xl">
+                  Issues:
+                </label>
                 <div className="space-y-2">
                   {report.issues.map((issue, index) => (
                     <p key={index} className="border-b border-gray-300 py-1">
@@ -131,32 +137,45 @@ export default function ViewStructuralReport() {
             </div>
 
             {/* Photographs Section */}
-            <div className="flex flex-col items-center mb-10 photos-section avoid-break">
-              <h2 className="text-2xl font-bold underline mb-4 text-center">
-                PHOTOGRAPHS
-              </h2>
-              {report.photographs && report.photographs.length === 0 && (
-                <div className="text-gray-500">No photographs uploaded</div>
-              )}
-              {report.photographs &&
-                report.photographs.map((img, idx) => (
-                  <div
-                    key={idx}
-                    className="flex flex-col items-center mb-6 w-full photo-container avoid-break"
-                  >
-                    <Image
-                      src={img.file}
-                      alt={`Photograph ${idx + 1}`}
-                      width={0}
-                      height={0}
-                      sizes="100vw"
-                      className="w-auto h-auto max-w-full avoid-break"
-                    />
-                    <div className="mt-4 text-center">
-                      <p className="text-gray-700">{img.description}</p>
-                    </div>
+            <div className="mb-8">
+              <h3 className="text-xl font-semibold mb-4">PHOTOGRAPHS</h3>
+              <div className="flex flex-col gap-8">
+                {report.photographs && report.photographs.length === 0 && (
+                  <div className="text-gray-500 text-center">
+                    No photographs uploaded
                   </div>
-                ))}
+                )}
+                {report.photographs &&
+                  report.photographs.map((photo, idx) => (
+                    <div
+                      key={idx}
+                      className="border border-gray-300 rounded-md p-4 flex flex-col items-center photo-container avoid-break scale-down-on-break"
+                    >
+                      {photo.image ? (
+                        <img
+                          src={photo.image}
+                          alt={`Photo ${idx + 1}`}
+                          className="avoid-break scale-down-on-break"
+                          style={{
+                            maxWidth: "100%",
+                            height: "auto",
+                            display: "block",
+                            margin: "0 auto",
+                            background: "#f3f4f6",
+                            borderRadius: "8px",
+                          }}
+                        />
+                      ) : (
+                        <div className="w-full flex items-center justify-center bg-gray-100 text-gray-400 h-64 rounded-md">
+                          No Image
+                        </div>
+                      )}
+                      <div className="mt-2 text-center text-sm text-gray-700">
+                        {photo.caption || `Photo ${idx + 1}`}
+                      </div>
+                    </div>
+                  ))}
+              </div>
             </div>
 
             {/* Recommendations and Remarks Section */}

@@ -86,7 +86,7 @@ export default function ViewAirBalancingReport() {
 
           {/* Header */}
           <div
-            className="bg-[#4A90E2] text-white text-center py-3 rounded-t-lg text-xl font-medium section avoid-break"
+            className="bg-[#4A90E2] text-white text-center py-3 rounded-t-lg text-2xl font-medium section avoid-break"
             style={{
               backgroundColor: "#4A90E2 !important",
               color: "white !important",
@@ -97,44 +97,44 @@ export default function ViewAirBalancingReport() {
 
           <div className="p-6">
             {/* Basic Info Grid */}
-            <div className="grid grid-cols-2 gap-x-8 gap-y-4 section avoid-break">
+            <div className="grid grid-cols-2 gap-x-8 gap-y-4 mb-8 section avoid-break">
               <div>
                 <div className="mb-4">
-                  <span className="text-sm font-medium">Client:</span>
+                  <span className="text-xl font-medium">Client:</span>
                   <p className="mt-1">{report.client}</p>
                 </div>
                 <div className="mb-4">
-                  <span className="text-sm font-medium">
+                  <span className="text-xl font-medium">
                     Project Site Address:
                   </span>
                   <p className="mt-1">{report.projectSiteAddress}</p>
                 </div>
                 <div className="mb-4">
-                  <span className="text-sm font-medium">Project ID:</span>
+                  <span className="text-xl font-medium">Project ID:</span>
                   <p className="mt-1">{report.projectId}</p>
                 </div>
                 <div className="mb-4">
-                  <span className="text-sm font-medium">Inspector Name:</span>
+                  <span className="text-xl font-medium">Inspector Name:</span>
                   <p className="mt-1">{report.inspectorName}</p>
                 </div>
               </div>
               <div>
                 <div className="mb-4">
-                  <span className="text-sm font-medium">Inspection Date:</span>
+                  <span className="text-xl font-medium">Inspection Date:</span>
                   <p className="mt-1">
                     {format(new Date(report.inspectionDate), "MM/dd/yyyy")}
                   </p>
                 </div>
                 <div className="mb-4">
-                  <span className="text-sm font-medium">Time In/Out:</span>
+                  <span className="text-xl font-medium">Time In/Out:</span>
                   <p className="mt-1">{report.timeInOut}</p>
                 </div>
                 <div className="mb-4">
-                  <span className="text-sm font-medium">Report Number:</span>
+                  <span className="text-xl font-medium">Report Number:</span>
                   <p className="mt-1">{report.reportNumber}</p>
                 </div>
                 <div className="mb-4">
-                  <span className="text-sm font-medium">
+                  <span className="text-xl font-medium">
                     Site Weather (°F):
                   </span>
                   <p className="mt-1">{report.siteWeather}</p>
@@ -143,19 +143,19 @@ export default function ViewAirBalancingReport() {
             </div>
 
             {/* HVAC Unit Details Section */}
-            <div className="px-10 mb-6 section avoid-break">
+            <div className=" mb-8 section avoid-break">
               {/* Unit Details Row */}
               <div className="grid grid-cols-4 border-b border-gray-300">
                 <div className="p-4 border-r border-gray-300">
-                  <div className="text-xs font-bold mb-1">UNIT NO.</div>
+                  <div className="text-sm font-bold mb-1">UNIT NO.</div>
                   <div>{report.unitNo}</div>
                 </div>
                 <div className="p-4 border-r border-gray-300">
-                  <div className="text-xs font-bold mb-1">TYPE & SIZE</div>
+                  <div className="text-sm font-bold mb-1">TYPE & SIZE</div>
                   <div>{report.typeAndSize}</div>
                 </div>
                 <div className="p-4 border-r border-gray-300">
-                  <div className="text-xs font-bold mb-1">MANUFACTURER</div>
+                  <div className="text-sm font-bold mb-1">MANUFACTURER</div>
                   <div>{report.manufacturer}</div>
                 </div>
                 <div className="p-4">
@@ -185,22 +185,22 @@ export default function ViewAirBalancingReport() {
               {/* Fan Details Row */}
               <div className="border-b border-gray-300">
                 <div className="p-4">
-                  <div className="text-xs font-bold mb-2 text-center">FAN</div>
+                  <div className="text-sm font-bold mb-2 text-center">FAN</div>
                   <div className="grid grid-cols-4">
                     <div className="text-center border-r border-gray-300">
-                      <div className="text-xs font-bold mb-1">CFM</div>
+                      <div className="text-sm font-bold mb-1">CFM</div>
                       <div>{report.fanCfmRated}</div>
                     </div>
                     <div className="text-center border-r border-gray-300">
-                      <div className="text-xs font-bold mb-1">SP</div>
+                      <div className="text-sm font-bold mb-1">SP</div>
                       <div>{report.fanSpRated}</div>
                     </div>
                     <div className="text-center border-r border-gray-300">
-                      <div className="text-xs font-bold mb-1">RPM</div>
+                      <div className="text-sm font-bold mb-1">RPM</div>
                       <div>{report.fanRpmRated}</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-xs font-bold mb-1">AMPS</div>
+                      <div className="text-sm font-bold mb-1">AMPS</div>
                       <div>{report.fanAmpsRated}</div>
                     </div>
                   </div>
@@ -210,20 +210,20 @@ export default function ViewAirBalancingReport() {
               {/* Motor Details Row */}
               <div className="border-b border-gray-300">
                 <div className="p-4">
-                  <div className="text-xs font-bold mb-2 text-center">
+                  <div className="text-sm font-bold mb-2 text-center">
                     MOTOR
                   </div>
                   <div className="grid grid-cols-4">
                     <div className="text-center border-r border-gray-300">
-                      <div className="text-xs font-bold mb-1">VOLTS</div>
+                      <div className="text-sm font-bold mb-1">VOLTS</div>
                       <div>{report.motorVolts}</div>
                     </div>
                     <div className="text-center border-r border-gray-300">
-                      <div className="text-xs font-bold mb-1">RPM</div>
+                      <div className="text-sm font-bold mb-1">RPM</div>
                       <div>{report.motorRpm}</div>
                     </div>
                     <div className="text-center border-r border-gray-300">
-                      <div className="text-xs font-bold mb-1">HP</div>
+                      <div className="text-sm font-bold mb-1">HP</div>
                       <div>{report.motorHp}</div>
                     </div>
                     <div className="text-center">
@@ -237,11 +237,11 @@ export default function ViewAirBalancingReport() {
               <div className="grid grid-cols-2">
                 <div className="p-4 border-r border-gray-300">
                   <div>
-                    <span className="text-xs font-bold">AREA SERVED:</span>
+                    <span className="text-sm font-bold">AREA SERVED:</span>
                     <span className="ml-2">{report.areaServed}</span>
                   </div>
                   <div className="mt-2">
-                    <span className="text-xs font-bold">INSTRUMENTS:</span>
+                    <span className="text-sm font-bold">INSTRUMENTS:</span>
                     <span className="ml-2">{report.instruments}</span>
                   </div>
                 </div>
@@ -278,32 +278,32 @@ export default function ViewAirBalancingReport() {
             </div>
 
             {/* Measurements Table */}
-            <div className="px-10 mb-6 section avoid-break">
+            <div className="mb-8 section avoid-break">
               <div className="border border-gray-300">
                 {/* Table Header */}
                 <div className="grid grid-cols-8 border-b border-gray-300 bg-gray-50">
-                  <div className="p-2 text-xs font-bold text-center border-r border-gray-300">
+                  <div className="p-2 text-sm font-bold text-center border-r border-gray-300">
                     FLOOR NO.
                   </div>
-                  <div className="p-2 text-xs font-bold text-center border-r border-gray-300">
+                  <div className="p-2 text-sm font-bold text-center border-r border-gray-300">
                     TYPE OF OUTLET
                   </div>
-                  <div className="p-2 text-xs font-bold text-center border-r border-gray-300">
+                  <div className="p-2 text-sm font-bold text-center border-r border-gray-300">
                     SIZE IN.
                   </div>
-                  <div className="p-2 text-xs font-bold text-center border-r border-gray-300">
+                  <div className="p-2 text-sm font-bold text-center border-r border-gray-300">
                     AREA FT²
                   </div>
-                  <div className="p-2 text-xs font-bold text-center border-r border-gray-300">
+                  <div className="p-2 text-sm font-bold text-center border-r border-gray-300">
                     VEL FPM
                   </div>
-                  <div className="p-2 text-xs font-bold text-center border-r border-gray-300">
+                  <div className="p-2 text-sm font-bold text-center border-r border-gray-300">
                     ACTUAL CFM
                   </div>
-                  <div className="p-2 text-xs font-bold text-center border-r border-gray-300">
+                  <div className="p-2 text-sm font-bold text-center border-r border-gray-300">
                     REQ&apos;D CFM
                   </div>
-                  <div className="p-2 text-xs font-bold text-center">
+                  <div className="p-2 text-sm font-bold text-center">
                     REMARKS
                   </div>
                 </div>
@@ -353,7 +353,7 @@ export default function ViewAirBalancingReport() {
                 report.photos.map((img, idx) => (
                   <div
                     key={idx}
-                    className="flex flex-col items-center mb-6 w-full photo-container avoid-break"
+                    className="border border-gray-200 rounded-lg p-6 mb-6 photo-container avoid-break scale-down-on-break flex flex-col items-center"
                   >
                     <Image
                       src={img.image}
@@ -361,7 +361,7 @@ export default function ViewAirBalancingReport() {
                       width={0}
                       height={0}
                       sizes="100vw"
-                      className="w-auto h-auto max-w-full avoid-break"
+                      className="w-auto h-auto max-w-full avoid-break scale-down-on-break"
                     />
                     <div className="mt-4 text-center">
                       <p className="text-gray-700">{img.description}</p>
